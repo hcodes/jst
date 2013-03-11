@@ -157,6 +157,7 @@ var Compiler = {
     fileMark: function () {
         return '\n\n/* --- ' + this._fileName  + ' --- */\n';
     },
+    _sameTemplateName: {},
     _build: function (text) {
         var inFile = this._inFile();
         
@@ -218,6 +219,12 @@ var Compiler = {
                 }
             };
         }
+        
+        if (typeof this._sameTemplateName[name] != 'undefined') {
+            console.log('Одинаковое название шаблона (name) "' + name + '". Файлы: ' + [this._fileName, this._sameTemplateName[name]].join(', '));
+        } else {
+            this._sameTemplateName[name] = this._fileName;
+        }        
         
         if (!this.checkParams(params)) {
             return {
@@ -399,7 +406,7 @@ var Compiler = {
     },
     // Экранирование одинарной кавычки
     quot: function (text) {
-        return ('' + text).replace(/'/g, "\\'");
+        return ('' + text).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
     },
     // Экранирование одинарной кавычки в шаблоне
     fixQuotes: function (text) {

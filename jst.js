@@ -53,32 +53,6 @@ jst.forEach = function (template, data, context) {
 };
 
 /**
- * Шаблон лего-блока
- *
- * @param {string} selector - имя тега блока
- * @param {string} block - имя блока
- * @param {*} params - параметры блока
- * @return {string}
-*/
-jst.block = function (selector, blockName, params) {
-    if (arguments.length < 3) {
-        params = blockName;
-        blockName = selector;
-        selector = 'div';
-    }
-    var selectorParts = selector.split('.');
-    var tagName = selectorParts.shift();
-    var className = selectorParts.join(' ');
-    
-    return BEM.HTML.build({
-        block: blockName,
-        js: params,
-        tag: tagName,
-        cls: className
-    });
-};
-
-/**
  * Привязка шаблона с данными к DOM ноде
  *
  * @param {string|DOMNode} - id или DOM нода вставки результаты выполнения шаблона
@@ -164,14 +138,14 @@ jst.filter = {
     },
     // Удаление HTML-тегов
     stripTags: function (str) {
-        return  ('' + str).replace(/<\/?[^>]+>/g, '') : '';
+        return  ('' + str).replace(/<\/?[^>]+>/g, '');
     },
     // Экранирование урла
     uri: function (str) {
         return encodeURI('' + str).replace(/%5B/g, '[').replace(/%5D/g, ']');
     },
     // Обрезание строки нужной длины
-    truncate: function (str) {
+    truncate: function (str, length) {
         str = '' + str;
         if (!str || str.length <= length) { return str; }
         
@@ -205,7 +179,7 @@ jst.filter = {
     },
     // Повторить строку нужное количество раз
     repeat: function (str, num) {
-        return new Array(num || 1).join(str);
+        return new Array(num || 1).join('' + str);
     },
     // К переносам строки добавляем нужный отступ
     indent: function (str) {
@@ -214,7 +188,8 @@ jst.filter = {
     },
     // Удаление текста по рег. выражению 
     remove: function (str) {
-        return ('' + str).split(str).join('');
+        str = '' + str;
+        return str.split(str).join('');
     },
     // Замена текста по рег. выражению 
     replace: function (str, search, replace) {
@@ -255,7 +230,7 @@ jst._cnt = {};
  * @return {number} - число раз
 */
 jst.count = function (name) {
-    return this._cnt[name];
+    return jst._cnt[name];
 };
 
 /**
@@ -264,7 +239,7 @@ jst.count = function (name) {
  * @param {string|function} template - шаблона
 */
 jst.add = function (name, template) {
-    this._tmpl[name] = template;
+    jst._tmpl[name] = template;
 };
 
 /**
@@ -272,8 +247,8 @@ jst.add = function (name, template) {
  * @param {string} name - имя шаблона
 */
 jst.remove = function (name) {
-    delete this._tmpl[name];
-    delete this._cnt[name];
+    delete jst._tmpl[name];
+    delete jst._cnt[name];
 };
 
 /**
@@ -282,7 +257,7 @@ jst.remove = function (name) {
  * @return {string|function} - шаблон
 */
 jst.get = function (name) {
-    return this._tmpl[name];
+    return jst._tmpl[name];
 };
 
 /**
@@ -291,7 +266,7 @@ jst.get = function (name) {
  * @return {boolean}
 */
 jst.has = function (name) {
-    return !!this.get(name);
+    return !!jst.get(name);
 };
 
 /**

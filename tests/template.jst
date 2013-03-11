@@ -1,7 +1,66 @@
-<template name="test" params="a">
+<template name="trim">
+                                            
+                                            
+                                                    
+                                                    
+                                                       
+</template>
+
+<template name="without-trim" trim="false">
+      123     
+</template>
+
+<template name="without-trim-delete-spaces" trim="false" delete-spaces="false">
+      123     
+</template>
+
+
+<template name="trim-with-number">
+            <%= 1  %>                
+            
+            
+</template>
+
+<template name="new-line" trim="false" delete-spaces="false">
+
+
+
+
+
+</template>
+
+<template name="undef_null" params="param">
+    <%= 1  %><%= param %><%= 2 %>
+</template>
+
+<template name="without-inline-js" params="a, b, c">
+    Hello world!
+</template>
+
+<template name="with-inline-js" params="a, b, c">
+    Hello <%= a %>world!
+</template>
+
+<template name="with-4-params" params="a, b, c, d">
+    <%= a%> <%= b %>
+</template>
+
+<template name="same-template-name" params="a">
     <%= a %>
 </template>
 
-<template name="test2" params="a">
-    <%= a %>
+<template name="same-template-name" params="a">
+    <%= a + 10 %>
+</template>
+
+<template name="quotes" params="a">
+    '''   
+</template>
+
+<template name="quotes-with-slash" params="a">
+    \'\'\'  <%= a + '\'' %> ''' \'\'\'
+</template>
+
+<template name="empty-string">
+    <%= %>
 </template>
