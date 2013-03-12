@@ -59,7 +59,7 @@
       </template>
       
       <!-- Более подробно -->
-      <template name="example" namespace="Tpl._cache" params="x, y, z" trim="false">
+      <template name="example" params="x, y, z" trim="false">
         x: <%= x %><br />
         <% if (y > 5) { %>
         y: <%= y %><br />
@@ -160,7 +160,7 @@ var Compiler = {
                 ['', 'var forEach = jst.forEach;',
                     'var filter = jst.filter;',
                     'var block = jst.block;',
-                    'var template = jst;'].join('\n    ') + res + '\n\n)();';
+                    'var template = jst;'].join('\n    ') + res + '\n\n})();';
         }
         
         return this.autoGen(res);
@@ -214,7 +214,6 @@ var Compiler = {
         var buf = text.match(/(?:\<template)(?:.*\>)(([\n\r]|.)*)(?:\<\/template\>)/m);
         
         var params = this.getAttr(text, 'params');
-        var namespace = this.getAttr(text, 'namespace');
         var name =  this.getAttr(text, 'name');
         var trimm = this.getAttr(text, 'trim');
         var deleteSpaces = this.getAttr(text, 'delete-spaces');
@@ -245,17 +244,6 @@ var Compiler = {
                 }
             };
         }
-
-        if (!this.checkNamespace(namespace)) {
-            return {
-                error: {
-                    code: 3,
-                    text: 'Некорректное пространство имен (namespace) у шаблона "' + name + '" - "' + namespace + '"' + inFile
-                }
-            };
-        }
-
-        namespace = namespace || this.defaultNamespace;
         
         if (this.isOn(trimm)) {
             content = content.trim();
@@ -267,7 +255,7 @@ var Compiler = {
         
         var f = this.transform({
             name: name,
-            namespace: namespace,
+            namespace: this.defaultNamespace,
             params: params,
             concatenation: concatenation,
             content: content
@@ -415,20 +403,6 @@ var Compiler = {
         text = text.replace(/ {2,}/g, ' ');
         
         return text;
-    },
-    // Проверка на корректность пространство имен шаблона
-    checkNamespace: function (namespace) {
-        var isError = false;
-        if (namespace) {
-            var buf = namespace.split('.');
-            buf.forEach(function (el) {
-                if (!el || !this.isCorrectNameVariable(el)) {
-                    isError = true;
-                }
-            }, this);
-        }
-        
-        return !isError;
     },
     // Проверка на корректность названия параметров у шаблона и значений по умолчанию
     checkParams: function (params) {
