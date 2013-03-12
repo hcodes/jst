@@ -62,5 +62,17 @@
 </template>
 
 <template name="empty-string">
+<<<<<<< HEAD:tests/main.jst
     <%= %> <% %>
+=======
+    <%= %>
+</template>
+
+<template name="call-template" params="a">
+    <%= a %>__<%= template('call-template2', 1) %>__<%= a %>
+</template>
+
+<template name="call-template2" params="a">
+    <%= a + 10 %>
+>>>>>>> origin/master:tests/template.jst
 </template>
