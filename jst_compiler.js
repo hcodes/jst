@@ -132,7 +132,7 @@
 */
 
 var Compiler = {
-    version: '1.6',
+    version: '1.7',
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов
@@ -307,7 +307,9 @@ var Compiler = {
     },
     // Построение из шаблона строки (без логики и вставки переменных)
     withoutInlineJS: function (data) {
-        var text = ' = \'' + this.fixQuotes(data.content).replace(/[\r\t\n]/g, " ") + '\';';
+        var text = ' = \'' + this.fixQuotes(data.content)
+            .replace(/\r\n/g, "\n")
+            .replace(/[\r\t\n]/g, " ") + '\';';
         
         return {
             test: 'var a' + text,
@@ -321,39 +323,27 @@ var Compiler = {
         var js = '';
         js += this.defaultValues(data.params);
 
-        var forEach = '';
-        var filter = '';
+        var vars = [];
         var content = data.content;
-            
+        
         if (content.search(/forEach\(/) != -1) {
-            forEach = tab + 'var forEach = jst.forEach;\n';
+            vars.push('var forEach = jst.forEach;');
         }
         
         if (content.search(/block\(/) != -1) {
-            forEach = tab + 'var block = jst.block;\n';
+            vars.push('var block = jst.block;');
         }
         
         if (content.search(/filter\./) != -1 || content.search(/<%=/) != -1) {
-            filter = tab + 'var filter = jst.filter;\n';
+            vars.push('var filter = jst.filter;');
         }
 
         if (content.search(/template\(/) != -1) {
-            filter = tab + 'var template = jst;\n';
+            vars.push('var template = jst;');
         }
         
         content = this.fixQuotes(content);
-        
-/*        var js = "    var _=[];\n"
-            + "_.push('"
-            + content
-              .replace(/[\r\t\n]/g, " ")
-              .split("<%").join("\t")
-              .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-              .replace(/\t=(.*?)%>/g, "',$1,'")
-              .split("\t").join("');\n")
-              .split("%>").join("_.push('")
-              .split("\r").join("'")
-            + "');\nreturn _.join('');";    */
+
         var concatenation = {
             'string': {
                 init: "''",
@@ -375,7 +365,8 @@ var Compiler = {
         js += tab + "var __jst = " + con.init + ";\n"
             + tab +  con.push
             + content
-              .replace(/[\r\t\n]/g, " ") // замена переносов строки и таба на пробелы
+              .replace(/\r\n/g, "\n")
+              .replace(/[\t\n]/g, " ") // замена переносов строки и таба на пробелы
               .replace(/ +(<%[^=\+])/g, '$1') // удаление пробелов между HTML-тегами и тегами шаблонизатора
               .replace(/ +(<%=[^\+])/g, '$1')
               .replace(/([^\+]%>) +/g, '$1')
@@ -394,8 +385,7 @@ var Compiler = {
             + con.close + "\n\n" + tab + "return " + con.ret + ";";
             
         var text = ' = function (' + this.params(data.params) + ') {\n';
-        text += filter;
-        text += forEach;
+        text += vars.length ? tab + vars.join(tab + '\n') + '\n' : '';
         text += js;
         text += '\n};';
         

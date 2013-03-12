@@ -63,5 +63,20 @@ jst._tmpl['empty-string'] = function () {
 
     return __jst;
 };
+jst._tmpl['call-template'] = function (a) {
+    var filter = jst.filter;    
+var template = jst;
+    var __jst = '';
+    __jst += '' + filter._undef(a) + '__' + filter._undef(template('call-template2', 1)) + '__' + filter._undef(a) + '';
+
+    return __jst;
+};
+jst._tmpl['call-template2'] = function (a) {
+    var filter = jst.filter;
+    var __jst = '';
+    __jst += '' + filter._undef(a + 10) + '';
+
+    return __jst;
+};
 
 /* Шаблон автоматически сгенерирован с помощью jst, не редактируйте его. */
