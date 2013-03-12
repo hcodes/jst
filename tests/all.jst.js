@@ -133,13 +133,6 @@ jst._tmpl['trim-with-number'] = function () {
     return __jst;
 };
 jst._tmpl['new-line'] = '      ';
-jst._tmpl['undef_null'] = function (param) {
-    var filter = jst.filter;
-    var __jst = '';
-    __jst += filter._undef(1) + filter._undef(param) + filter._undef(2);
-
-    return __jst;
-};
 jst._tmpl['without-inline-js'] = 'Hello world!';
 jst._tmpl['with-inline-js'] = function (a, b, c) {
     var filter = jst.filter;
@@ -199,14 +192,14 @@ jst._tmpl['call-template'] = function (a) {
     var filter = jst.filter;    
 var template = jst;
     var __jst = '';
-    __jst += '' + filter._undef(a) + '__' + filter._undef(template('call-template2', 1)) + '__' + filter._undef(a) + '';
+    __jst += filter._undef(a) + '__' + filter._undef(template('call-template2', 1)) + '__' + filter._undef(a);
 
     return __jst;
 };
 jst._tmpl['call-template2'] = function (a) {
     var filter = jst.filter;
     var __jst = '';
-    __jst += '' + filter._undef(a + 10) + '';
+    __jst += filter._undef(a + 10);
 
     return __jst;
 };
