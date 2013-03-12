@@ -149,7 +149,7 @@ jst.filter = {
         str = '' + str;
         if (!str || str.length <= length) { return str; }
         
-       return str.substr(0, length - 1);    
+       return str.substr(0, length);    
     },
     // Удаление пробелов с начала и конца строки
     trim: function (str) {
@@ -179,17 +179,26 @@ jst.filter = {
     },
     // Повторить строку нужное количество раз
     repeat: function (str, num) {
-        return new Array(num || 1).join('' + str);
+        num = num || 1;
+        num++;
+        
+        return new Array(num).join('' + str);
     },
     // К переносам строки добавляем нужный отступ
-    indent: function (str) {
-        str = ('' + str).replace(/\r/g, '');
-        return str.split('\n').join('\n' + str);
+    indent: function (str, pre) {
+        str = ('' + str).replace(/\r\n/g, '\n');
+        pre = '' + pre;
+        
+        if (!str) {
+            return str;
+        }
+        
+        return pre + str.split(/\n|\r/).join('\n' + pre);
     },
     // Удаление текста по рег. выражению 
-    remove: function (str) {
+    remove: function (str, search) {
         str = '' + str;
-        return str.split(str).join('');
+        return str.split(search).join('');
     },
     // Замена текста по рег. выражению 
     replace: function (str, search, replace) {

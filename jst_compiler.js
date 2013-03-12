@@ -358,8 +358,8 @@ var Compiler = {
             'string': {
                 init: "''",
                 push: "__jst += '",
-                above: "' + filter._undef($1) + '",
-                close: "';",
+                above: "' + __jst-empty-quotes__ filter._undef($1) + '",
+                close: "' __jst-empty-quotes__;",
                 ret: "__jst"
             },
             'array': {
@@ -392,6 +392,11 @@ var Compiler = {
               .split("%>").join(tab + con.push)
               .split("\r").join("'")
             + con.close + "\n\n" + tab + "return " + con.ret + ";";
+            
+        js = js.replace(/\+ \'\' \+ __jst-empty-quotes__ /g, '+ ');    
+        js = js.replace(/= \'\' \+ __jst-empty-quotes__ /g, '= ');    
+        js = js.replace(/ \+ '' __jst-empty-quotes__;/g, ';');    
+        js = js.replace(/ __jst-empty-quotes__/g, '');    
             
         var text = ' = function (' + this.params(data.params) + ') {\n';
         text += filter;

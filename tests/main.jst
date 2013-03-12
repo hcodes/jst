@@ -29,20 +29,20 @@
 
 </template>
 
-<template name="undef_null" params="param">
-    <%= 1  %><%= param %><%= 2 %>
-</template>
-
 <template name="without-inline-js" params="a, b, c">
     Hello world!
 </template>
 
 <template name="with-inline-js" params="a, b, c">
-    Hello <%= a %>world!
+    Hello <% if (a) { %><%= a %><% } %>world!
 </template>
 
 <template name="with-4-params" params="a, b, c, d">
     <%= a%> <%= b %>
+</template>
+
+<template name="default-params" params="x, y = 2, z = 'hello'">
+    <%= x %> <%= y + 2%> <%= z %>
 </template>
 
 <template name="same-template-name" params="a">
@@ -62,5 +62,5 @@
 </template>
 
 <template name="empty-string">
-    <%= %>
+    <%= %> <% %>
 </template>
