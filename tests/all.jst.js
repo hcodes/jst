@@ -164,7 +164,7 @@ jst._tmpl['quotes-with-slash'] = function (a) {
 };
 jst._tmpl['empty-string'] = function () {
     var __jst = '';
-    __jst += '';
+
 
     return __jst;
 };

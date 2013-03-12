@@ -310,9 +310,10 @@ var Compiler = {
             .replace(/\r\n/g, "\n")
             .replace(/[\r\t\n]/g, " ") + '\';';
 
+        var code = data.namespace + '[\'' + this.quot(data.name) + '\']' + text;
         return {
-            test: 'var a' + text,
-            normal: data.namespace + '[\'' + this.quot(data.name) + '\']' + text
+            test: 'var jst = {};\n' + data.namespace + ' = {};\n' + code,
+            normal: code
         }    
     },
     // Построение из шаблона js-фунцию
@@ -364,14 +365,16 @@ var Compiler = {
         js = js.replace(/= \'\' \+ __jst-empty-quotes__ /g, '= ');    
         js = js.replace(/ \+ '' __jst-empty-quotes__;/g, ';');    
         js = js.replace(/ __jst-empty-quotes__/g, '');    
+        js = js.replace(/    __jst \+= '';/g, '');    
             
         var text = ' = function (' + this.params(data.params) + ') {\n';
         text += js;
         text += '\n};';
         
+        var code = data.namespace + '[\'' + this.quot(data.name) + '\']' + text; 
         return {
-            test: 'var a' + text,
-            normal: data.namespace + '[\'' + this.quot(data.name) + '\']' + text
+            test: 'var jst = {};\n' + data.namespace + ' = {};\n' + code,
+            normal: code
         }
     },
     // Экранирование одинарной кавычки
