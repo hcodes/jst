@@ -152,7 +152,18 @@ var Compiler = {
             res.push(this._build(text));
         }
         
-        return this.autoGen(res.join(''));
+        res = res.join('');
+        
+        // Есть шаблоны в виде функций
+        if (res.search(/function/) != -1) {
+            res = '\n(function () {' +
+                ['', 'var forEach = jst.forEach;',
+                    'var filter = jst.filter;',
+                    'var block = jst.block;',
+                    'var template = jst;'].join('\n    ') + res + '\n\n)();';
+        }
+        
+        return this.autoGen(res);
     },
     fileMark: function () {
         return '\n\n/* --- ' + this._fileName  + ' --- */\n';
@@ -182,7 +193,7 @@ var Compiler = {
     templateConsole: function (text) {
         this.error(text);
         
-        return 'console.log(\'' + this.quot(text) + '\');';
+        return 'console.error(\'' + this.quot(text) + '\');';
     },
     // Построение одного шаблона
     template: function (text, num) {
@@ -319,31 +330,8 @@ var Compiler = {
     // Построение из шаблона js-фунцию
     withInlineJS: function (data) {
         var tab = this._tab;
-
-        var js = '';
-        js += this.defaultValues(data.params);
-
-        var vars = [];
-        var content = data.content;
-        
-        if (content.search(/forEach\(/) != -1) {
-            vars.push('var forEach = jst.forEach;');
-        }
-        
-        if (content.search(/block\(/) != -1) {
-            vars.push('var block = jst.block;');
-        }
-        
-        if (content.search(/filter\./) != -1 || content.search(/<%=/) != -1) {
-            vars.push('var filter = jst.filter;');
-        }
-
-        if (content.search(/template\(/) != -1) {
-            vars.push('var template = jst;');
-        }
-        
-        content = this.fixQuotes(content);
-        
+        var js = this.defaultValues(data.params);
+        var content = this.fixQuotes(data.content);
         var concatenation = {
             'string': {
                 init: "''",
@@ -390,7 +378,6 @@ var Compiler = {
         js = js.replace(/ __jst-empty-quotes__/g, '');    
             
         var text = ' = function (' + this.params(data.params) + ') {\n';
-        text += vars.length ? tab + vars.join(tab + '\n') + '\n' : '';
         text += js;
         text += '\n};';
         

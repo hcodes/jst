@@ -96,25 +96,14 @@
             <%= forEach('another_template', data) %>
         ...
       </template>
-      
-## Вызов лего-блока
-      <template name="example" params="data">
-        ...
-            <%= block('b-form-select', data) %>
-        ...
-      </template>
-      
+            
 ## Отладка 
+При компиляции каждый шаблон выполняется с помощью eval, ошибки выводятся в коммандную строку.
+Также в скомпелированный шаблон вставляются ошибки компиляции как console.warn('...').
+
+При вызове неизвестного шаблона генерируется исключение.
+
+Отладка шаблонов:
       <template name="example" params="data">
-        ...
             <% console.log(data); %>
-        ...
-      </template>      
-            
-   ==========================================
-      
-      Расширение файла у шаблона - .jst
-      example.jst -> example.jst.js
-            
-      Вызов из js: jst(название шаблона, параметры...);
-      jst('example', 1, 2, 3);
+      </template>
