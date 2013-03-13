@@ -154,7 +154,8 @@ var Compiler = {
         
         res = res.join('');
         
-        // Есть шаблоны в виде функций
+        // Есть шаблоны в виде функций, чтобы не помещать в каждую функцию служебные переменные,
+        // вынесим их в одно место через замыкание
         if (res.search(/function/) != -1) {
             res = '\n(function () {' +
                 ['', 'var forEach = jst.forEach;',
@@ -180,7 +181,7 @@ var Compiler = {
         var templates = text.match(/\<template(([\n\r]|.)*?)\<\/template\>/gm);
         
         if (!templates) {
-            return this.templateConsole('Нет шаблонов' + inFile);
+            return this.templateConsole('Нет jst-шаблонов' + inFile);
         }
 
         templates.forEach(function (el, num) {
@@ -231,7 +232,8 @@ var Compiler = {
         }
         
         if (typeof this._sameTemplateName[name] != 'undefined') {
-            console.log('Одинаковое название шаблона (name) "' + name + '". Файлы: ' + [this._fileName, this._sameTemplateName[name]].join(', '));
+            var files = [this._fileName, this._sameTemplateName[name]];
+            console.log('Предупреждение: несколько шаблонов с одинаковым именем (name) "' + name + '". ' + (files[0] == files[1] ? 'Файл: ' + files[0] : 'Файлы:' + files.join(', ')));
         } else {
             this._sameTemplateName[name] = this._fileName;
         }        
@@ -269,7 +271,7 @@ var Compiler = {
             return {
                 error: {
                     code: 4,
-                    text: 'Ошибка компиляции шаблона "' + name + '"' + inFile
+                    text: 'Ошибка компиляции jst-шаблона "' + name + '"' + inFile
                 }
             };
         }

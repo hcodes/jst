@@ -19,7 +19,7 @@ var jst = function (name) {
         cnt[name] = (cnt[name] || 0) + 1;
         return f;
     } else if (typeof f == 'undefined') {
-        throw new Error('Вызов несуществующего шаблона "' + name + '"');
+        throw new Error('Вызов несуществующего jst-шаблона "' + name + '".');
     }
     
     return '';
