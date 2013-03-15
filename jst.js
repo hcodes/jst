@@ -124,69 +124,69 @@ jst._guid = 0;
 jst.filter = {
     // Экранирование HTML
     html: function (str) {
-        return ('' + str).replace(/&/g, '&amp;')
+        return this._undef(str).replace(/&/g, '&amp;')
             .replace(/"/g, '&quot;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');    
     },    
     // Разэкранирование HTML
     unhtml: function (str) {
-        return ('' + str).replace(/\&quot;/g, '"')
+        return this._undef(str).replace(/\&quot;/g, '"')
             .replace(/\&gt;/g, '>')
             .replace(/\&lt;/g, '<')
             .replace(/\&amp;/g, '&');
     },
     // Удаление HTML-тегов
     stripTags: function (str) {
-        return  ('' + str).replace(/<\/?[^>]+>/g, '');
+        return  this._undef(str).replace(/<\/?[^>]+>/g, '');
     },
     // Экранирование урла
     uri: function (str) {
-        return encodeURI('' + str).replace(/%5B/g, '[').replace(/%5D/g, ']');
+        return encodeURI(this._undef(str)).replace(/%5B/g, '[').replace(/%5D/g, ']');
     },
     // Обрезание строки нужной длины
     truncate: function (str, length) {
-        str = '' + str;
+        str = this._undef(str);
         if (!str || str.length <= length) { return str; }
         
        return str.substr(0, length);    
     },
     // Удаление пробелов с начала и конца строки
     trim: function (str) {
-        return ('' + str).trim();
+        return this._undef(str).trim();
     },
     // Перевод символов в верхний регистр
     upper: function (str) {
-        return ('' + str).toUpperCase();
+        return this._undef(str).toUpperCase();
     },
     // Перевод символов в нижний регистр
     lower: function (str) {
-        return ('' + str).toLowerCase();
+        return this._undef(str).toLowerCase();
     },
     // Первый символ в верхний регистр
     ucfirst: function (str) {
-        str = '' + str;
+        str = this._undef(str);
         return str.substr(0, 1).toUpperCase() + str.substr(1);
     },
     // Первый символ в нижний регистр
     lcfirst: function (str) {
-        str = '' + str;
+        str = this._undef(str);
         return str.substr(0, 1).toLowerCase() + str.substr(1);
     },
     // Удаление повторяющихся пробелов 
     collapse: function (str) {
-        return ('' + str).replace(/\s{2,}/g, ' ').trim();
+        return this._undef(str).replace(/\s{2,}/g, ' ').trim();
     },
     // Повторить строку нужное количество раз
     repeat: function (str, num) {
         num = num || 1;
         num++;
         
-        return new Array(num).join('' + str);
+        return new Array(num).join(this._undef(str));
     },
     // К переносам строки добавляем нужный отступ
     indent: function (str, pre) {
-        str = ('' + str).replace(/\r\n/g, '\n');
+        str = this._undef(str).replace(/\r\n/g, '\n');
         pre = '' + pre;
         
         if (!str) {
@@ -197,20 +197,19 @@ jst.filter = {
     },
     // Удаление текста по рег. выражению 
     remove: function (str, search) {
-        str = '' + str;
-        return str.split(search).join('');
+        return this._undef(str).split(search).join('');
     },
     // Замена текста по рег. выражению 
     replace: function (str, search, replace) {
-        return ('' + str).split(search).join(replace);
+        return this._undef(str).split(search).join(replace);
     },
     // Замена undefined или null на пустую строку (для служебного использования)
     _undef: function (str) {
-        return typeof str == 'undefined' || str === null ? '' : '' + str;
+        return typeof str === 'undefined' || str === null ? '' : '' + str;
     },
     // Замена undefined или null на пустую строку + экранирование HTML (для служебного использования)
     _undefHtml: function (str) {
-        if (typeof str == 'undefined' || str === null) {
+        if (typeof str === 'undefined' || str === null) {
             return '';
         }
         
