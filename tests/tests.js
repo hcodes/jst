@@ -132,11 +132,4 @@ test('Фильтры', function () {
     equal(jst('filter-_undef', 123456), '123456', '_undef, number');    
     equal(jst('filter-_undef', undefined), '', '_undef, undefined');    
     equal(jst('filter-_undef', null), '', '_undef, null');    
-    
-    equal(jst('filter-_undefHtml', '<div class="test">&&&</div>'), '&lt;div class=&quot;test&quot;&gt;&amp;&amp;&amp;&lt;/div&gt;', '_undefHtml, string');    
-    equal(jst('filter-_undefHtml', 'Hello world!'), 'Hello world!', '_undefHtml, string');    
-    equal(jst('filter-_undefHtml', 123456), '123456', '_undefHtml, number');    
-    equal(jst('filter-_undefHtml', undefined), '', '_undefHtml, undefined');    
-    equal(jst('filter-_undefHtml', null), '', '_undefHtml, null');        
-    equal(jst('filter-_undefHtml', ''), '', '_undefHtml, ""');    
 });

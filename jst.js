@@ -206,18 +206,7 @@ jst.filter = {
     // Замена undefined или null на пустую строку (для служебного использования)
     _undef: function (str) {
         return typeof str === 'undefined' || str === null ? '' : '' + str;
-    },
-    // Замена undefined или null на пустую строку + экранирование HTML (для служебного использования)
-    _undefHtml: function (str) {
-        if (typeof str === 'undefined' || str === null) {
-            return '';
-        }
-        
-        return ('' + str).replace(/&/g, '&amp;')
-            .replace(/"/g, '&quot;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');    
-    }    
+    }
 };
 
 /**
