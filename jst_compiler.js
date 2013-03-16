@@ -100,13 +100,6 @@
         ...
       </template>
       
-      <!-- Вызов лего-блока -->
-      <template name="example" params="data">
-        ...
-            <%= block('b-form-select', data) %>
-        ...
-      </template>
-      
       <!-- Отладка -->
       <template name="example" params="data">
         ...
@@ -114,8 +107,6 @@
         ...
       </template>      
             
-   ==========================================
-      
       Расширение файла у шаблона - .jst
       example.jst -> example.jst.js
             
