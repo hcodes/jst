@@ -38,7 +38,7 @@ jst.forEach = function (template, data, context) {
     var i;
     context = context || {};
     if (Object.prototype.toString.call(data) === "[object Array]") { // Array.isArray
-        for (i = 0, len = data.length; i < len; i++) {
+        for (i = 0; i < data.length; i++) {
             text.push(jst.call(context, template, data[i], i, data));
         }
     } else {
