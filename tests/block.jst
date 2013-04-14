@@ -1,0 +1,35 @@
+<template name="block1x">
+    <block name="block1">
+        block1x block1
+    </block>
+    <block name="block2" params="name">
+        block1x block2
+    </block>
+    <block name="block3">
+        block1x block3
+    </block>
+    Blocks: <%= block('block1')  %><br />
+    <%= block('block2')  %><br />
+    <%= block('block3')  %>
+</template>
+
+<template name="block2x" extend="block1x">
+    <block name="block2" params="name">
+        block2x block2
+    </block>
+    <block name="block3">
+        block2x block3
+    </block>
+    Blocks: <%= block('block1')  %><br />
+    <%= block('block2')  %><br />
+    <%= block('block3')  %>
+</template>
+
+<template name="block3x" extend="block2x">
+    <block name="block3">
+        block3x block3
+    </block>
+    Blocks: <%= block('block1')  %><br />
+    <%= block('block2')  %><br />
+    <%= block('block3')  %>
+</template>

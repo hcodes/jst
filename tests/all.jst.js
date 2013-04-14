@@ -5,6 +5,67 @@
     var block = jst.block;
     var template = jst;
 
+/* --- block.jst --- */
+(function () {
+    var f = function () {
+        this['__jst_constructor'] = function () {
+    var __jst = '';
+var __jst_template = 'block1x';
+var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+    __jst += 'Blocks:' + filter._undef(block('block1')) + '<br />' + filter._undef(block('block2')) + '<br />' + filter._undef(block('block3'));
+
+    return __jst;
+};
+
+        this['block1'] = 'block1x block1';
+        this['block2'] = 'block1x block2';
+        this['block3'] = 'block1x block3';
+    };
+
+    jst._tmplExtend['block1x'] = f;
+    f.extend  = '';
+})();
+
+(function () {
+    var f = function () {
+        this['__jst_constructor'] = function () {
+    var __jst = '';
+var __jst_template = 'block2x';
+var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+    __jst += 'Blocks:' + filter._undef(block('block1')) + '<br />' + filter._undef(block('block2')) + '<br />' + filter._undef(block('block3'));
+
+    return __jst;
+};
+
+        this['block2'] = 'block2x block2';
+        this['block3'] = 'block2x block3';
+    };
+
+    jst._tmplExtend['block2x'] = f;
+    f.extend  = 'block1x';
+})();
+
+(function () {
+    var f = function () {
+        this['__jst_constructor'] = function () {
+    var __jst = '';
+var __jst_template = 'block3x';
+var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+    __jst += 'Blocks:' + filter._undef(block('block1')) + '<br />' + filter._undef(block('block2')) + '<br />' + filter._undef(block('block3'));
+
+    return __jst;
+};
+
+        this['block3'] = 'block3x block3';
+    };
+
+    jst._tmplExtend['block3x'] = f;
+    f.extend  = 'block2x';
+})();
+
+    jst._extend('block2x', 'block1x');
+    jst._extend('block3x', 'block2x');
+
 /* --- filter.jst --- */
 jst._tmpl['filter-html'] = function (a) {
     var __jst = '';

@@ -100,6 +100,26 @@
         ...
       </template>
       
+      <!-- Блоки -->
+      <template name="others">
+        <block name="block1" params="a">
+            ...
+        </block>
+        <%= block('block1');
+      </template>
+      
+      <!-- Наследование -->
+      <template name="others">
+        <block name="block1" params="a">
+            ...
+        </block>
+        <%= block('block1');
+      </template>
+      
+      <template name="others2" extend="others">
+        <%= block('block1');
+      </template>
+
       <!-- Отладка -->
       <template name="example" params="data">
         ...
@@ -117,13 +137,12 @@
 /*
     TODO: 
         - экранирование html по умолчанию
-        - блочное наследование в шаблонах
         - краткая запись фильтров
         - корректная проверка параметров по умолчанию
 */
 
 var Compiler = {
-    version: '1.61',
+    version: '1.7',
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов
@@ -161,6 +180,8 @@ var Compiler = {
         return '\n\n/* --- ' + this._fileName  + ' --- */\n';
     },
     _sameTemplateName: {},
+    _sameBlockName: {},
+    _extend: [],
     _build: function (text) {
         var inFile = this._inFile();
         
@@ -179,6 +200,12 @@ var Compiler = {
             var res =  this._template(el, num + 1);
             buf.push(res.error ? this.templateConsole(res.error.text) : res);
         }, this);
+        
+        this._extend.forEach(function (el) {
+            buf.push(this._tab + 'jst._extend(\'' + el[0] + '\', \'' + el[1] + '\');');
+        }, this);
+        
+        this._extend = [];
         
         return buf.join('\n');
     },
@@ -210,8 +237,14 @@ var Compiler = {
         var trimm = this.getAttr(text, 'trim');
         var deleteSpaces = this.getAttr(text, 'delete-spaces');
         var concatenation = this.getAttr(text, 'concatenation') == 'array'  ? 'array' : 'string';
+        var extend = this.getAttr(text, 'extend');
         var content = ('' + (buf[1] || ''));
         var inFile = this._inFile();
+
+        var hasBlock = this.hasBlock(text);
+        if (hasBlock) {
+            content = content.replace(/\<block(([\n\r]|.)*?)\<\/block\>/gm, '');
+        }
         
         if (!name) {
             return {
@@ -245,13 +278,14 @@ var Compiler = {
         if (this.isOn(deleteSpaces)) {
             content = this.deleteSpaces(content);
         }        
-        
         var f = this.transform({
             name: name,
+            template: name,
             namespace: this.defaultNamespace,
             params: params,
             concatenation: concatenation,
-            content: content
+            content: content,
+            hasBlock: hasBlock
         });
         
         try {
@@ -267,11 +301,112 @@ var Compiler = {
             };
         }
         
+        if (hasBlock) {
+                var tab = this._tab;
+                var bufBlock = '(function () {\n';
+                bufBlock += tab  + 'var f = function () {\n';
+                bufBlock += tab + tab + 'this[\'__jst_constructor\'] = ' + f.withoutNamespace + ';\n';
+                bufBlock += this.blocks(text, name);
+                bufBlock += tab + '};\n\n';
+                bufBlock += tab + this.defaultNamespace + 'Extend[\'' + this.quot(name) + '\'] = f;\n';
+                bufBlock += tab + 'f.extend  = \'' + this.quot(extend) + '\';\n';
+                bufBlock += '})();\n';
+                if (extend) {
+                    this._extend.push([name, extend]);
+                }
+                
+                return bufBlock;
+        }
+        
         return f.normal;
     },
+    hasBlock: function (text) {
+        return text.search(/(?:\<block)(?:.*\>)(([\n\r]|.)*)(?:\<\/block\>)/) != -1;
+    },
+    blocks: function (text, template) {
+        var buf = [];
+        var blocks = text.match(/\<block(([\n\r]|.)*?)\<\/block\>/gm);
+        
+        this._sameBlockName = {};
+        blocks.forEach(function (el, num) {
+            var res =  this._block(el, num + 1, template);
+            buf.push(res.error ? this.templateConsole(res.error.text) : res);
+        }, this);
+    
+        return '\n' + buf.join('\n') + '\n';
+    },
+    _block: function (text, num, template) {
+        var buf = text.match(/(?:\<block)(?:.*\>)(([\n\r]|.)*)(?:\<\/block\>)/m);
+        var params = this.getAttr(text, 'params', true);
+        var name =  this.getAttr(text, 'name', true);
+        var trimm = this.getAttr(text, 'trim', true);
+        var deleteSpaces = this.getAttr(text, 'delete-spaces', true);
+        var concatenation = this.getAttr(text, 'concatenation', true) == 'array'  ? 'array' : 'string';
+        var content = ('' + (buf[1] || ''));
+        var inFile = this._inFile();
+        var tab = this._tab;
+        
+        if (!name) {
+            return {
+                error: {
+                    code: 10,
+                    text: 'Нет имени (name) у блока № ' + num + ' в шаблоне ' + template + inFile
+                }
+            };
+        }
+        
+        if (typeof this._sameBlockName[name] != 'undefined') {
+            var files = [this._fileName, this._sameBlockName[name]];
+            console.log('Предупреждение: несколько блоков с одинаковым именем (name) "' + name + '" в шаблоне "' + template + '". ' + (files[0] == files[1] ? 'Файл: ' + files[0] : 'Файлы:' + files.join(', ')));
+        } else {
+            this._sameBlockName[name] = this._fileName;
+        }        
+        
+        if (!this.checkParams(params)) {
+            return {
+                error: {
+                    code: 12,
+                    text: 'Некорректное название параметра (params) у блока ' + name + ' в шаблоне "' + template + '" - "' + params + '"' + inFile
+                }
+            };
+        }
+        
+        if (this.isOn(trimm)) {
+            content = content.trim();
+        }
+        
+        if (this.isOn(deleteSpaces)) {
+            content = this.deleteSpaces(content);
+        }        
+        
+        var f = this.transform({
+            name: name,
+            template: template,
+            namespace: this.defaultNamespace,
+            params: params,
+            concatenation: concatenation,
+            content: content,
+            hasBlock: true
+        });
+        
+        try {
+            eval(f.test);
+        } catch(e) {
+            console.log(e.toString());
+            console.log(f.test)
+            return {
+                error: {
+                    code: 14,
+                    text: 'Ошибка компиляции jst-блока "' + name + '" в шаблоне "' + template + '" ' + inFile
+                }
+            };
+        }
+        
+        return tab + tab + 'this[\'' + this.quot(name) + '\'] = ' + f.withoutNamespace + ';';
+    },
     // Получить значение атрибута
-    getAttr: function (text, attr) {
-        var attr = text.match('(?:\<template)(?:.*)(?:' + attr + '=")(.*?)(?:")');
+    getAttr: function (text, attr, isBlock) {
+        var attr = isBlock ? text.match('(?:\<block)(?:.*)(?:' + attr + '=")(.*?)(?:")') : text.match('(?:\<template)(?:.*)(?:' + attr + '=")(.*?)(?:")');
         attr = attr ? attr[1] : '';
         
         return ('' + (attr || '')).trim();
@@ -299,14 +434,15 @@ var Compiler = {
     },
     // Построение из шаблона строки (без логики и вставки переменных)
     withoutInlineJS: function (data) {
-        var text = ' = \'' + this.fixQuotes(data.content)
+        var text = '\'' + this.fixQuotes(data.content)
             .replace(/\r\n/g, "\n")
-            .replace(/[\r\t\n]/g, " ") + '\';';
-
-        var code = data.namespace + '[\'' + this.quot(data.name) + '\']' + text;
+            .replace(/[\r\t\n]/g, " ") + '\'';
+        var code = data.namespace + '[\'' + this.quot(data.name) + '\'] = ' + text + ';';
+        
         return {
             test: 'var jst = {};\n' + data.namespace + ' = {};\n' + code,
-            normal: code
+            normal: code,
+            withoutNamespace: text
         }    
     },
     // Построение из шаблона js-фунцию
@@ -332,9 +468,14 @@ var Compiler = {
         };
         
         var con = concatenation['string'];
-        js += tab + "var __jst = " + con.init + ";\n"
-            + tab +  con.push
-            + content
+        js += tab + "var __jst = " + con.init + ";\n";
+        
+        if (data.hasBlock) {
+            js += 'var __jst_template = \'' + this.quot(data.template) + '\';\n';
+            js += 'var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; \n';
+        }
+        
+        js += tab + con.push + content
               .replace(/\r\n/g, "\n")
               .replace(/[\t\n]/g, " ") // замена переносов строки и таба на пробелы
               .replace(/ +(<%[^=\+])/g, '$1') // удаление пробелов между HTML-тегами и тегами шаблонизатора
@@ -360,14 +501,15 @@ var Compiler = {
         js = js.replace(/ __jst-empty-quotes__/g, '');    
         js = js.replace(/    __jst \+= '';/g, '');    
             
-        var text = ' = function (' + this.params(data.params) + ') {\n';
+        var text = 'function (' + this.params(data.params) + ') {\n';
         text += js;
-        text += '\n};';
+        text += '\n}';
         
-        var code = data.namespace + '[\'' + this.quot(data.name) + '\']' + text; 
+        var code = data.namespace + '[\'' + this.quot(data.name) + '\'] = ' + text + ';'; 
         return {
             test: 'var jst = {};\n' + data.namespace + ' = {};\n' + code,
-            normal: code
+            normal: code,
+            withoutNamespace: text
         }
     },
     // Экранирование одинарной кавычки

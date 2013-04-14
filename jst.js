@@ -11,15 +11,50 @@
 */
 var jst = function (name) {
     var f = jst._tmpl[name];
+    var obj;
     var cnt = jst._cnt;
-    if (typeof f == 'function') {
-        cnt[name] = (cnt[name] || 0) + 1;
-        return f.apply(this, Array.prototype.slice.call(arguments, 1));
-    } else if (typeof f == 'string') {
-        cnt[name] = (cnt[name] || 0) + 1;
-        return f;
-    } else if (typeof f == 'undefined') {
-        throw new Error('Вызов несуществующего jst-шаблона "' + name + '".');
+    
+    switch(typeof f) {
+        case 'function':
+            cnt[name] = (cnt[name] || 0) + 1;
+            return f.apply(this, Array.prototype.slice.call(arguments, 1));
+        break;
+        case 'string':
+            cnt[name] = (cnt[name] || 0) + 1;
+            return f;
+        break;
+        case 'object':
+            cnt[name] = (cnt[name] || 0) + 1;
+            obj = f['__jst_constructor'];
+            return typeof obj == 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 1));
+        break;
+        case 'undefined':
+            throw new Error('Вызов несуществующего jst-шаблона "' + name + '".');
+        break;
+    }
+    
+    return '';
+};
+
+/**
+ * Вызов блока
+ *
+ * @param {string} template - название шаблона
+ * @param {string} name - название блока
+ * @return {string}
+*/
+jst.block = function (template, name) {
+    var f = jst._tmpl[template];
+    if (typeof f == 'object') {
+        var obj = f[name];
+        var typeObj = typeof obj;
+        if (typeObj == 'undefined') {
+            throw new Error('Вызов несуществующего jst-блока "' + name + '" шаблон "' + template + '".');
+        } else {
+            return typeObj == 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 2));
+        }
+    } else {
+        throw new Error('Вызов несуществующего jst-шаблона "' + template + '".');
     }
     
     return '';
@@ -35,10 +70,10 @@ var jst = function (name) {
 */
 jst.forEach = function (template, data, context) {
     var text = [];
-    var i;
+    var i, len = data.length;
     context = context || {};
     if (Object.prototype.toString.call(data) === "[object Array]") { // Array.isArray
-        for (i = 0; i < data.length; i++) {
+        for (i = 0; i < len; i++) {
             text.push(jst.call(context, template, data[i], i, data));
         }
     } else {
@@ -50,6 +85,45 @@ jst.forEach = function (template, data, context) {
     }
     
     return text.join('');
+};
+
+
+/**
+ * Наследование шаблона
+ *
+ * @param {string} childName 
+ * @param {string} parentName
+*/
+jst._extend = function (childName, parentName) {
+    var f = function (childName, parentName) {
+        var tmpl = jst._tmpl;
+        var child = jst._tmplExtend[childName];
+        var parent = jst._tmplExtend[parentName];
+        
+        if (typeof child == 'undefined') {
+                throw new Error('При наследовании не найден jst-шаблон "' + childName + '".');
+                return;
+        } else if (typeof parent == 'undefined') {
+                throw new Error('При наследовании не найден jst-шаблон "' + parentName + '".');
+                return;
+        }
+        
+        if (parent.extend) {
+            if (!parent.extended) {
+                f(parentName, parent.extend);
+                  
+            }
+        } else  {
+            tmpl[parentName] = new parent;
+            parent.extended = true;
+        }
+        
+        child.prototype = tmpl[parentName];
+        child.extended = true;
+        tmpl[childName] = new child;
+    };
+    
+    f(childName, parentName);
 };
 
 /**
@@ -214,6 +288,12 @@ jst.filter = {
  * @namespace 
 */
 jst._tmpl = {};
+
+/**
+ * Место хранения шаблонов для наследования
+ * @namespace 
+*/
+jst._tmplExtend = {};
 
 /**
  * Место хранения счётчиков вызова шаблонов
