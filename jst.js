@@ -133,7 +133,6 @@ jst._extend = function (childName, parentName) {
  * @param {string} - название шаблона
  * @return {Object}
 */
-
 jst.bind = function (container, name) {
     var elem = typeof container == 'string' ? document.getElementById(containter) : container;
     var result = undefined;
@@ -357,3 +356,15 @@ if (typeof jQuery != 'undefined') {
         return this;
     };
 }
+
+// Для работы в nodejs
+if (typeof global != 'undefined') {
+    global.jst = jst;
+}
+
+// Хелпер для BEMHTML
+jst.bem = function (block, params) {
+    params = params || {};
+    params.block = block;
+    return BEMHTML.apply(BEM.JSON.build(params));
+};
