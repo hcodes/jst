@@ -72,3 +72,11 @@
 <template name="call-template2" params="a">
     <%= a + 10 %>
 </template>
+
+<template name="param" params="a, b, c">
+    <%= c %>
+</template>
+
+<template name="defaultParam" params="a, b, c = '2'">
+    <%= c %>
+</template>

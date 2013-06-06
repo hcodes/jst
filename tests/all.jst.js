@@ -12,7 +12,7 @@
     var __jst = '';
 var __jst_template = 'block1x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
-    __jst += 'Blocks:' + filter._undef(block('block1')) + '<br />' + filter._undef(block('block2')) + '<br />' + filter._undef(block('block3'));
+    __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
 };
@@ -32,7 +32,7 @@ var block = function (name) { return jst.block.apply(this, [__jst_template].conc
     var __jst = '';
 var __jst_template = 'block2x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
-    __jst += 'Blocks:' + filter._undef(block('block1')) + '<br />' + filter._undef(block('block2')) + '<br />' + filter._undef(block('block3'));
+    __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
 };
@@ -51,7 +51,7 @@ var block = function (name) { return jst.block.apply(this, [__jst_template].conc
     var __jst = '';
 var __jst_template = 'block3x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
-    __jst += 'Blocks:' + filter._undef(block('block1')) + '<br />' + filter._undef(block('block2')) + '<br />' + filter._undef(block('block3'));
+    __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
 };
@@ -93,79 +93,73 @@ jst._tmpl['filter-uri'] = function (a) {
 };
 jst._tmpl['filter-truncate'] = function (text, length) {
     var __jst = '';
-    __jst += filter._undef(filter.truncate(text, length));
+    __jst += filter.html(filter.truncate(text, length));
 
     return __jst;
 };
 jst._tmpl['filter-trim'] = function (a) {
     var __jst = '';
-    __jst += filter._undef(filter.trim(a));
+    __jst += filter.html(filter.trim(a));
 
     return __jst;
 };
 jst._tmpl['filter-upper'] = function (a) {
     var __jst = '';
-    __jst += filter._undef(filter.upper(a));
+    __jst += filter.html(filter.upper(a));
 
     return __jst;
 };
 jst._tmpl['filter-lower'] = function (a) {
     var __jst = '';
-    __jst += filter._undef(filter.lower(a));
+    __jst += filter.html(filter.lower(a));
 
     return __jst;
 };
 jst._tmpl['filter-ucfirst'] = function (a) {
     var __jst = '';
-    __jst += filter._undef(filter.ucfirst(a));
+    __jst += filter.html(filter.ucfirst(a));
 
     return __jst;
 };
 jst._tmpl['filter-lcfirst'] = function (a) {
     var __jst = '';
-    __jst += filter._undef(filter.lcfirst(a));
+    __jst += filter.html(filter.lcfirst(a));
 
     return __jst;
 };
 jst._tmpl['filter-collapse'] = function (a) {
     var __jst = '';
-    __jst += filter._undef(filter.collapse(a));
+    __jst += filter.html(filter.collapse(a));
 
     return __jst;
 };
 jst._tmpl['filter-repeat'] = function (text, length) {
     var __jst = '';
-    __jst += filter._undef(filter.repeat(text, length));
+    __jst += filter.html(filter.repeat(text, length));
 
     return __jst;
 };
 jst._tmpl['filter-indent'] = function (text, pre) {
     var __jst = '';
-    __jst += filter._undef(filter.indent(text, pre));
+    __jst += filter.html(filter.indent(text, pre));
 
     return __jst;
 };
 jst._tmpl['filter-remove'] = function (text, search) {
     var __jst = '';
-    __jst += filter._undef(filter.remove(text, search));
+    __jst += filter.html(filter.remove(text, search));
 
     return __jst;
 };
 jst._tmpl['filter-replace'] = function (text, search, replace) {
     var __jst = '';
-    __jst += filter._undef(filter.replace(text, search, replace));
+    __jst += filter.html(filter.replace(text, search, replace));
 
     return __jst;
 };
 jst._tmpl['filter-_undef'] = function (a) {
     var __jst = '';
-    __jst += filter._undef(filter._undef(a));
-
-    return __jst;
-};
-jst._tmpl['filter-_undefHtml'] = function (a) {
-    var __jst = '';
-    __jst += filter._undef(filter._undefHtml(a));
+    __jst += filter.html(filter._undef(a));
 
     return __jst;
 };
@@ -176,7 +170,7 @@ jst._tmpl['without-trim'] = ' 123 ';
 jst._tmpl['without-trim-delete-spaces'] = '       123      ';
 jst._tmpl['trim-with-number'] = function () {
     var __jst = '';
-    __jst += filter._undef(1);
+    __jst += filter.html(1);
 
     return __jst;
 };
@@ -185,41 +179,41 @@ jst._tmpl['without-inline-js'] = 'Hello world!';
 jst._tmpl['with-inline-js'] = function (a, b, c) {
     var __jst = '';
     __jst += 'Hello';
- if (a) {    __jst += filter._undef(a) + '';
+ if (a) {    __jst += filter.html(a) + '';
  }    __jst += 'world!';
 
     return __jst;
 };
 jst._tmpl['with-4-params'] = function (a, b, c, d) {
     var __jst = '';
-    __jst += filter._undef(a) + filter._undef(b);
+    __jst += filter.html(a) + filter.html(b);
 
     return __jst;
 };
-jst._tmpl['default-params'] = function (x, y, z) {
+jst._tmpl['default-params'] = function (y, x, z) {
     y = typeof y == "undefined" ? 2 : y;
-    z = typeof z == "undefined" ? 'hello' : z;
+    z = typeof z == "undefined" ? "hello" : z;
     var __jst = '';
-    __jst += filter._undef(x) + filter._undef(y + 2) + filter._undef(z);
+    __jst += filter.html(x) + filter.html(y + 2) + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['same-template-name'] = function (a) {
     var __jst = '';
-    __jst += filter._undef(a);
+    __jst += filter.html(a);
 
     return __jst;
 };
 jst._tmpl['same-template-name'] = function (a) {
     var __jst = '';
-    __jst += filter._undef(a + 10);
+    __jst += filter.html(a + 10);
 
     return __jst;
 };
 jst._tmpl['quotes'] = '\'\'\'';
 jst._tmpl['quotes-with-slash'] = function (a) {
     var __jst = '';
-    __jst += '\\\'\\\'\\\'' + filter._undef(a + '\'') + '\'\'\' \\\'\\\'\\\'';
+    __jst += '\\\'\\\'\\\'' + filter.html(a + '\'') + '\'\'\' \\\'\\\'\\\'';
 
     return __jst;
 };
@@ -231,13 +225,26 @@ jst._tmpl['empty-string'] = function () {
 };
 jst._tmpl['call-template'] = function (a) {
     var __jst = '';
-    __jst += filter._undef(a) + '__' + filter._undef(template('call-template2', 1)) + '__' + filter._undef(a);
+    __jst += filter.html(a) + '__' + filter.html(template('call-template2', 1)) + '__' + filter.html(a);
 
     return __jst;
 };
 jst._tmpl['call-template2'] = function (a) {
     var __jst = '';
-    __jst += filter._undef(a + 10);
+    __jst += filter.html(a + 10);
+
+    return __jst;
+};
+jst._tmpl['param'] = function (a, b, c) {
+    var __jst = '';
+    __jst += filter.html(c);
+
+    return __jst;
+};
+jst._tmpl['defaultParam'] = function (c, b, a) {
+    c = typeof c == "undefined" ? "2" : c;
+    var __jst = '';
+    __jst += filter.html(c);
 
     return __jst;
 };

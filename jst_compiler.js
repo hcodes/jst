@@ -43,6 +43,11 @@
         Hello <%= word %>!
       </template>
 
+      <!-- Передача и вставка параметра без экранирования -->
+      <template name="example" params="word">
+        Hello <%! word %>!
+      </template>
+
       <!-- Параметры по умолчанию -->
       <template name="example" params="word = 'world'">
         Hello <%= world %>!
@@ -69,7 +74,7 @@
 
       <!-- Использование фильтра -->
       <template name="example" params="x">
-        <%= filter.html(x) %>
+        <%= filter.trim(x) %>
       </template>
       
       <!-- Вызов другого шаблона -->
@@ -80,7 +85,7 @@
       <!-- Не удалять пробелы между HTML-тегами и тегами шаблонизатора -->
       <!-- В примере, если x=1 и y=2 => '1 2', без + => '12' -->
       <template name="example" params="x">
-        <%= filter.html(x) +%> <%=+ y %>
+        <%= filter.trim(x) +%> <%=+ y %>
       </template>      
 
       <!-- Цикличный шаблон -->
@@ -105,7 +110,7 @@
         <block name="block1" params="a">
             ...
         </block>
-        <%= block('block1');
+        <%= block('block1') %>
       </template>
       
       <!-- Наследование -->
@@ -117,7 +122,7 @@
       </template>
       
       <template name="others2" extend="others">
-        <%= block('block1');
+        <%= block('block1'); %>
       </template>
 
       <!-- Отладка -->
@@ -136,10 +141,11 @@
 
 /*
     TODO: 
-        - экранирование html по умолчанию
-        - краткая запись фильтров
+        - краткая запись фильтров <%= a | trim %>
         - корректная проверка параметров по умолчанию
 */
+
+var vm = require('vm');
 
 var Compiler = {
     version: '1.7',
@@ -455,6 +461,7 @@ var Compiler = {
                 init: "''",
                 push: "__jst += '",
                 above: "' + __jst-empty-quotes__ filter._undef($1) + '",
+                aboveHTML: "' + __jst-empty-quotes__ filter.html($1) + '",
                 close: "' __jst-empty-quotes__;",
                 ret: "__jst"
             },
@@ -462,6 +469,7 @@ var Compiler = {
                 init: "[]",
                 push: "__jst.push('",
                 above: "', filter._undef($1), '",
+                aboveHTML: "', filter.html($1), '",
                 close: "');",
                 ret: "__jst.join('')"
             }
@@ -480,16 +488,19 @@ var Compiler = {
               .replace(/[\t\n]/g, " ") // замена переносов строки и таба на пробелы
               .replace(/ +(<%[^=\+])/g, '$1') // удаление пробелов между HTML-тегами и тегами шаблонизатора
               .replace(/ +(<%=[^\+])/g, '$1')
+              .replace(/ +(<%[\!\+])/g, '$1')
+              .replace(/ +(<%\![^\+])/g, '$1')
               .replace(/([^\+]%>) +/g, '$1')
-              .replace(/<%(=?)(\+|-)/g, '<%$1')
+              .replace(/<%(=|\!)?(\+|-)/g, '<%$1')
               .replace(/(\+|-)%>/g, '%>')
               .replace(/(<%) {1,}/g, '$1 ') // удаление пробелов в начале тегов шаблонизатора
               .replace(/ {1,}(%>)/g, '$1')// удаление пробелов в конце тегов шаблонизатора
               .replace(/<%#.*?%>/g, '') // удаление комментариев
-              .replace(/<%=? *?%>/g, '') // удаление пустых тегов <% %> или <%= %>
+              .replace(/<%(=|\!)? *?%>/g, '') // удаление пустых тегов <% %>, <%= %>, <%! %>
               .split("<%").join("\t")
               .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-              .replace(/\t= ?(.*?)%>/g, con.above)
+              .replace(/\t\! ?(.*?)%>/g, con.above)
+              .replace(/\t= ?(.*?)%>/g, con.aboveHTML)
               .split("\t").join("';\n")
               .split("%>").join(tab + con.push)
               .split("\r").join("'")
@@ -497,6 +508,7 @@ var Compiler = {
             
         js = js.replace(/\+ \'\' \+ __jst-empty-quotes__ /g, '+ ');    
         js = js.replace(/= \'\' \+ __jst-empty-quotes__ /g, '= ');    
+        js = js.replace(/\! \'\' \+ __jst-empty-quotes__ /g, '= ');    
         js = js.replace(/ \+ '' __jst-empty-quotes__;/g, ';');    
         js = js.replace(/ __jst-empty-quotes__/g, '');    
         js = js.replace(/    __jst \+= '';/g, '');    
@@ -558,12 +570,25 @@ var Compiler = {
     // Построение параметров у шаблона
     params: function (params) {
         var res = [];
+        var sandbox = {};
+        var script;
+        var buf;
         if (params) {
-            var buf = params.split(',');
-            buf.forEach(function (el) {
-                el = el.split('=')[0];
-                res.push(el.trim());
-            }, this);
+            // Если есть параметры по умолчанию, честно разбираем их
+            if (params.search('=') != -1) {
+                script = vm.createScript('var ' + params);
+                script.runInNewContext(sandbox);
+                for (var i in sandbox) {
+                    if (sandbox.hasOwnProperty(i)) {
+                        res.push(i);
+                    }
+                }
+            } else {
+                var buf = params.split(',');
+                buf.forEach(function (el) {
+                    res.push(('' + el).trim());
+                });
+            }
         }
         
         return res.join(', ');
@@ -572,22 +597,17 @@ var Compiler = {
     defaultValues: function (params) {
         var res = '';
         var tab = this._tab;
+        var sandbox = {};
+        var script;
         
         if (params.search('=') != -1) {
-            var buf = params.split(',');
-            buf.forEach(function (el) {
-                var p = el.split('=');
-                var key = ('' + p[0]).trim();
-                var value = p[1];
-                if (typeof value == 'undefined') {
-                    return;
+            script = vm.createScript('var ' + params);
+            script.runInNewContext(sandbox);
+            for (var i in sandbox) {
+                if (sandbox.hasOwnProperty(i) && sandbox[i] != undefined) {
+                    res += tab + i + ' = typeof ' + i + ' == "undefined" ? ' + JSON.stringify(sandbox[i]) + ' : ' + i + ';\n';
                 }
-                
-                value = ('' + value).trim();
-                
-                res += tab + key + ' = typeof ' + key + ' == "undefined" ? ' + value + ' : ' + key + ';\n';
-                el = el.trim();
-            }, this);
+            }
         }
             
         return res;
@@ -616,6 +636,7 @@ var Compiler = {
 };
 
 var fs = require('fs'),
+    vm = require('vm'),
     pth = require('path'),
     flag = process.argv[2],
     fileArgv = 2,

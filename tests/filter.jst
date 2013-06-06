@@ -1,17 +1,17 @@
 <template name="filter-html" params="a">
-    <%= filter.html(a) %>
+    <%! filter.html(a) %>
 </template>
 
 <template name="filter-unhtml" params="a">
-    <%= filter.unhtml(a) %>
+    <%! filter.unhtml(a) %>
 </template>
 
 <template name="filter-stripTags" params="a">
-    <%= filter.stripTags(a) %>
+    <%! filter.stripTags(a) %>
 </template>
 
 <template name="filter-uri" params="a">
-    <%= filter.uri(a) %>
+    <%! filter.uri(a) %>
 </template>
 
 <template name="filter-truncate" params="text, length">
@@ -60,8 +60,4 @@
 
 <template name="filter-_undef" params="a">
     <%= filter._undef(a) %>
-</template>
-
-<template name="filter-_undefHtml" params="a">
-    <%= filter._undefHtml(a) %>
 </template>
