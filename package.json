@@ -1,0 +1,22 @@
+{
+    "author": {
+        "name": "Denis Seleznev",
+        "email": "hcodes@yandex.ru",
+        "url": "https://github.com/hcodes"
+    },
+    "name": "jst",
+    "description": "JavaScript template engine",
+    "version": "1.7",
+    "homepage": "https://github.com/hcodes/jst",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/hcodes/jst.git"
+    },
+    "dependencies": {},
+    "devDependencies": {},
+    "optionalDependencies": {},
+    "engines": {
+        "node": "*"
+    },
+    "bin": "jst_compiler.js"
+}
