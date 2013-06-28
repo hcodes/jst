@@ -15,12 +15,18 @@
     npm install ./ -g
   
 ## Использование в коммандной строке
-`jst_compiler -v`  - версия компилятора  
+`jst_compiler -v`  - версия компилятора
+  
 `jst_compiler ./example.jst` - компиляция одного шаблона в файл -> ./example.jst.js 
+
 `jst_compiler ./example.jst ./other_example.jst.js` - компиляция одного шаблона в файл -> ./example.jst.js  
+
 `jst_compiler ./examples` - компиляция папки с шаблонами
+
 `jst_compiler -a ./examples ./all.jst.js` - компиляция папки с шаблонами в один файл
+
 `jst_compiler -a -p ./examples ./all.jst.js` - компиляция папки с шаблонами в один файл со вставкой jst.js
+
     
 ## Пример шаблона (example.jst):
       <!-- Простейший шаблон -->
