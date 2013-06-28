@@ -1,6 +1,6 @@
-/////////////////////////////////////////
-//// Простой шаблонизатор на JavaScript
-////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+//// Простой шаблонизатор на JavaScript для клиента и сервера
+///////////////////////////////////////////////////////////////
 
 /**
  * Вызов шаблонизатора
@@ -12,19 +12,15 @@
 var jst = function (name) {
     var f = jst._tmpl[name];
     var obj;
-    var cnt = jst._cnt;
     
     switch(typeof f) {
         case 'function':
-            cnt[name] = (cnt[name] || 0) + 1;
             return f.apply(this, Array.prototype.slice.call(arguments, 1));
         break;
         case 'string':
-            cnt[name] = (cnt[name] || 0) + 1;
             return f;
         break;
         case 'object':
-            cnt[name] = (cnt[name] || 0) + 1;
             obj = f['__jst_constructor'];
             return typeof obj == 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 1));
         break;
@@ -295,21 +291,6 @@ jst._tmpl = {};
 jst._tmplExtend = {};
 
 /**
- * Место хранения счётчиков вызова шаблонов
- * @namespace 
-*/
-jst._cnt = {};
-
-/**
- * Сколько раз выполнялся шаблон
- * @param {string} name - имя шаблона
- * @return {number} - число раз
-*/
-jst.count = function (name) {
-    return jst._cnt[name];
-};
-
-/**
  * Добавление шаблона (функции или строки) в пространство jst
  * @param {string} name - имя шаблона
  * @param {string|function} template - шаблона
@@ -324,7 +305,6 @@ jst.add = function (name, template) {
 */
 jst.remove = function (name) {
     delete jst._tmpl[name];
-    delete jst._cnt[name];
 };
 
 /**

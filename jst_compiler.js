@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 
 /*
   jst - простой клиентский шаблонизатор с компиляцией шаблонов в js-функции
@@ -646,6 +646,7 @@ var fs = require('fs'),
     isAll = false,
     isFind = false,
     isDebug = false,
+    isPasteJst = false,
     isDir = function (path) {
         return fs.statSync(path).isDirectory();
     },
@@ -674,7 +675,8 @@ var fs = require('fs'),
         fileOut = fileOut || './all.jst.js';
         
         var fd = fs.openSync(fileOut, 'w+');
-        fs.writeSync(fd, buildTemplates(filesIn));
+        var jst = isPasteJst ? fs.readFileSync(__dirname + '/jst.js') + '\n\n' : '';
+        fs.writeSync(fd, jst + buildTemplates(filesIn));
         fs.closeSync(fd);
     },
     findTemplates = function (path) {
@@ -712,14 +714,22 @@ switch (flag) {
     break;
     case '-f': // Поиск jst-шаблонов
     case '--find':
-        fileIn  = process.argv[fileArgv + 1];
-        fileOut  = process.argv[fileArgv + 2];
+        fileIn = process.argv[fileArgv + 1];
+        fileOut = process.argv[fileArgv + 2];
         isFind = true;
     break;
     case '-a': // Сохранение скомпилированных шаблонов в один файл
     case '--all':
-        fileIn  = process.argv[fileArgv + 1];
-        fileOut  = process.argv[fileArgv + 2];
+        var buf = process.argv[fileArgv + 1];
+        fileArgv++;
+        if (buf == '--paste' || buf == '-p') {
+            isPasteJst = true;
+            fileArgv++;
+        }
+        
+        fileIn = process.argv[fileArgv];
+        fileOut = process.argv[fileArgv + 1];
+        
         isAll = true;
     break;
     case '-h': // Вывод справки
@@ -728,6 +738,7 @@ switch (flag) {
 \tnode jst_compiler.js [options] <directory-or-file> [directory-or-file, ...]\n\
 Опции:\n\
 \t--help\t\tПоказать эту помощь.\n\n\
+\t--version\tВерсия компилятора.\n\n\
 \t--version\tВерсия компилятора.\n\n\
 \t--find\t\tНайти и вывести jst-шаблоны, node jst_compiler.js --find ./my_dir\n\n\
 \t--all\t\tВсе шаблоны скомпилировать в один файл, node jst_compiler.js --all ./my_dir ./all.js.st\n\n\
