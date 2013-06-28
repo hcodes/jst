@@ -486,20 +486,19 @@ var Compiler = {
         js += tab + con.push + content
               .replace(/\r\n/g, "\n")
               .replace(/[\t\n]/g, " ") // замена переносов строки и таба на пробелы
-              .replace(/ +(<%[^=\+])/g, '$1') // удаление пробелов между HTML-тегами и тегами шаблонизатора
+              .replace(/ +(<%[^=!\+])/g, '$1') // удаление пробелов между HTML-тегами и тегами шаблонизатора
               .replace(/ +(<%=[^\+])/g, '$1')
-              .replace(/ +(<%[\!\+])/g, '$1')
-              .replace(/ +(<%\![^\+])/g, '$1')
+              .replace(/ +(<%![^\+])/g, '$1')
               .replace(/([^\+]%>) +/g, '$1')
-              .replace(/<%(=|\!)?(\+|-)/g, '<%$1')
+              .replace(/<%(=|!)?(\+|-)/g, '<%$1')
               .replace(/(\+|-)%>/g, '%>')
               .replace(/(<%) {1,}/g, '$1 ') // удаление пробелов в начале тегов шаблонизатора
               .replace(/ {1,}(%>)/g, '$1')// удаление пробелов в конце тегов шаблонизатора
               .replace(/<%#.*?%>/g, '') // удаление комментариев
-              .replace(/<%(=|\!)? *?%>/g, '') // удаление пустых тегов <% %>, <%= %>, <%! %>
+              .replace(/<%(=|!)? *?%>/g, '') // удаление пустых тегов <% %>, <%= %>, <%! %>
               .split("<%").join("\t")
               .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-              .replace(/\t\! ?(.*?)%>/g, con.above)
+              .replace(/\t! ?(.*?)%>/g, con.above)
               .replace(/\t= ?(.*?)%>/g, con.aboveHTML)
               .split("\t").join("';\n")
               .split("%>").join(tab + con.push)
@@ -742,6 +741,7 @@ switch (flag) {
 \t--version\tВерсия компилятора.\n\n\
 \t--find\t\tНайти и вывести jst-шаблоны, node jst_compiler.js --find ./my_dir\n\n\
 \t--all\t\tВсе шаблоны скомпилировать в один файл, node jst_compiler.js --all ./my_dir ./all.js.st\n\n\
+\t--paste\t\tВставка обвязки для jst к скомпилированным шаблонам, работает только с использованием флага --all, node jst_compiler.js --all --paste ./my_dir ./all.js.st\n\n\
 \t--debug\t\tРежим отладки\
 ';
     console.log(help);

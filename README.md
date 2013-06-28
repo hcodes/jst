@@ -10,21 +10,29 @@
 + Параметры для шаблонов
 + Параметры по умолчанию
 + Экранирование тегов по умолчанию
+
+## Установка
+  git clone
+  npm install ./ -g
   
 ## Использование в коммандной строке
-  node ./jst_compiler.js -v  - версия компилятора  
+  jst_compiler.js -v  - версия компилятора  
 
   компиляция одного шаблона в файл -> ./example.jst.js  
-  node ./jst_compiler.js ./example.jst  
+  jst_compiler.js ./example.jst  
   
   компиляция одного шаблона в файл -> ./example.jst.js  
-  node ./jst_compiler.js ./example.jst ./other_example.jst.js
+  jst_compiler.js ./example.jst ./other_example.jst.js
   
   компиляция папки с шаблонами
-  node ./jst_compiler.js ./examples
+  jst_compiler.js ./examples
   
   компиляция папки с шаблонами в один файл
-  node ./jst_compiler.js -a ./examples ./all.jst.js
+  jst_compiler.js -a ./examples ./all.jst.js
+  
+  компиляция папки с шаблонами в один файл со вставкой jst.js
+  jst_compiler.js -a -p ./examples ./all.jst.js
+  
     
   
 ## Пример шаблона (example.jst):
