@@ -1,38 +1,63 @@
 #!/usr/bin/env node
 
 /*
-  jst - простой клиентский шаблонизатор с компиляцией шаблонов в js-функции
-  -------------------------------------------------------------------------
-  
-  Плюсы:
-    - Передача любого количества параметров в шаблон
-    - Шаблоны не хранятся в HTML, а хранятся в js-функциях, не нужно eval'ить и кешировать
+  jst - клиентский и серверный шаблонизатор на JavaScript
+  -------------------------------------------------------
+    - Наследование
+    - Блоки
+    - Компиляция шаблонов в js
+    - Передача параметров в шаблон
     - Расширяемые фильтры
-    - Простота использования
+    - Экранирование HTML по умолчанию
     - Быстрое изучение
+
     
-  Минусы:
-    - Пересборка
+  Установка
+  ---------
+  git clone https://github.com/hcodes/jst.git
+  cd ./jst
+  npm install -g
+  
+  Быстрый старт
+  -------------
+  1. Установка в ОС jst.
+  2. Создаём файл с расширением .jst - example.jst
+  3. Содержание файла:
+      <template name="example">
+        Hello world!
+      </template>
+  4. jst_compiler example.jst example.jst.js
+  5. Подключаем в странице
+      ...
+      <!-- Обвязка jst -->
+      <script type="text/javascript" src="/js/jst.js"></script>
+      
+      <!-- Скомпилированные шаблоны -->
+      <script type="text/javascript" src="/js/example.jst.js"></script>
+      ...
+  6. Вызов в js-коде:
+    $('#test').jst('example'));
   
   Использование в коммандной строке
   ---------------------------------
   node ./jst_compiler.js -v  - версия компилятора  
+  jst_compiler -v  - версия компилятора  
 
   компиляция одного шаблона в файл -> ./example.jst.js  
-  node ./jst_compiler.js ./example.jst  
+  jst_compiler ./example.jst  
   
   компиляция одного шаблона в файл -> ./example.jst.js  
-  node ./jst_compiler.js ./example.jst ./other_example.jst.js
+  jst_compiler ./example.jst ./other_example.jst.js
   
   компиляция папки с шаблонами
-  node ./jst_compiler.js ./examples
+  jst_compiler ./examples
   
   компиляция папки с шаблонами в один файл
-  node ./jst_compiler.js -a ./examples ./all.jst.js
+  jst_compiler -a ./examples ./all.jst.js
     
   
   Пример шаблона (example.jst):
-  =============================
+  -----------------------------
       <!-- Простейший шаблон -->
       <template name="example">
         Hello world!
@@ -137,9 +162,11 @@
             
       Вызов из js: jst(название шаблона, параметры...);
       jst('example', 1, 2, 3);
-*/      
-
-/*
+      
+      
+      
+      
+      
     TODO: 
         - краткая запись фильтров <%= a | trim %>
         - корректная проверка параметров по умолчанию
@@ -148,7 +175,7 @@
 var vm = require('vm');
 
 var Compiler = {
-    version: '1.7',
+    version: '1.7.3',
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов

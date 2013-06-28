@@ -4,9 +4,9 @@
         "email": "hcodes@yandex.ru",
         "url": "https://github.com/hcodes"
     },
-    "name": "jst",
+    "name": "jst_compiler",
     "description": "JavaScript template engine",
-    "version": "1.7.0",
+    "version": "1.7.3",
     "homepage": "https://github.com/hcodes/jst",
     "repository": {
         "type": "git",
