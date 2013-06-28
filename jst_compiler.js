@@ -761,14 +761,14 @@ switch (flag) {
     case '-h': // Вывод справки
     case '--help':
         var help = 'Использование:\n\
-\tnode jst_compiler.js [options] <directory-or-file> [directory-or-file, ...]\n\
+\tjst_compiler [options] <directory-or-file> [directory-or-file, ...]\n\
 Опции:\n\
 \t--help\t\tПоказать эту помощь.\n\n\
 \t--version\tВерсия компилятора.\n\n\
 \t--version\tВерсия компилятора.\n\n\
-\t--find\t\tНайти и вывести jst-шаблоны, node jst_compiler.js --find ./my_dir\n\n\
-\t--all\t\tВсе шаблоны скомпилировать в один файл, node jst_compiler.js --all ./my_dir ./all.js.st\n\n\
-\t--paste\t\tВставка обвязки для jst к скомпилированным шаблонам, работает только с использованием флага --all, node jst_compiler.js --all --paste ./my_dir ./all.js.st\n\n\
+\t--find\t\tНайти и вывести jst-шаблоны, jst_compiler --find ./my_dir\n\n\
+\t--all\t\tВсе шаблоны скомпилировать в один файл, jst_compiler --all ./my_dir ./all.js.st\n\n\
+\t--paste\t\tВставка обвязки для jst к скомпилированным шаблонам, работает только с использованием флага --all, jst_compiler --all --paste ./my_dir ./all.js.st\n\n\
 \t--debug\t\tРежим отладки\
 ';
     console.log(help);
@@ -776,7 +776,7 @@ switch (flag) {
 }
 
 if (!fileIn) {
-    console.log('Не указан файл шаблона.\nПример: node jst_compiler.js ./example.jst');
+    console.log('Не указан файл шаблона.\nПример: jst_compiler ./example.jst');
     process.exit(1);
 }
 
