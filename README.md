@@ -1,7 +1,5 @@
 # jst
-===
-
-  jst - шаблонизатор на JavaScript
+Клиентский и серверный шаблонизатор на JavaScript
   
 Возможности:
 + Блоки (подшаблоны)
@@ -12,29 +10,28 @@
 + Экранирование тегов по умолчанию
 
 ## Установка
-  git clone
+  git clone https://github.com/hcodes/jst.git
+  cd ./jst
   npm install ./ -g
   
 ## Использование в коммандной строке
-  jst_compiler.js -v  - версия компилятора  
+  jst_compiler -v  - версия компилятора  
 
   компиляция одного шаблона в файл -> ./example.jst.js  
-  jst_compiler.js ./example.jst  
+  jst_compiler ./example.jst  
   
   компиляция одного шаблона в файл -> ./example.jst.js  
-  jst_compiler.js ./example.jst ./other_example.jst.js
+  jst_compiler ./example.jst ./other_example.jst.js
   
   компиляция папки с шаблонами
-  jst_compiler.js ./examples
+  jst_compiler ./examples
   
   компиляция папки с шаблонами в один файл
-  jst_compiler.js -a ./examples ./all.jst.js
+  jst_compiler -a ./examples ./all.jst.js
   
   компиляция папки с шаблонами в один файл со вставкой jst.js
-  jst_compiler.js -a -p ./examples ./all.jst.js
-  
+  jst_compiler -a -p ./examples ./all.jst.js
     
-  
 ## Пример шаблона (example.jst):
       <!-- Простейший шаблон -->
       <template name="example">
@@ -45,6 +42,11 @@
       <template name="example" params="word">
         Hello <%= word %>!
       </template>
+
+## Передача и вставка параметра без экранирования HTML
+    <template name="example" params="word">
+    Hello <%! word %>!
+    </template>
 
 ## Параметры по умолчанию
       <template name="example" params="word = 'world'">
@@ -72,7 +74,7 @@
 
 ## Использование фильтра
       <template name="example" params="x">
-        <%= filter.html(x) %>
+        <%= filter.trim(x) %>
       </template>
       
 ## Вызов другого шаблона
@@ -83,14 +85,14 @@
 ## Не удалять пробелы между HTML-тегами и тегами шаблонизатора
 В примере, если x=1 и y=2 => '1 2', без + => '12'
       <template name="example" params="x">
-        <%= filter.html(x) +%> <%=+ y %>
+        <%= x +%> <%=+ y %>
       </template>      
 
 ## Цикличный шаблон
       <template name="another_template" params="element, index, obj">
         <ul>
             <li>
-                <%= index + 1 %>. <%= filter.html(element) %>
+                <%= index + 1 %>. <%= element %>
             </li>
         </ul>
       </template>
@@ -104,7 +106,7 @@
       </template>
             
 ## Отладка 
-После компиляции каждый шаблон выполняется с помощью eval, ошибки выводятся в коммандную строку.
+При компиляции каждый шаблон выполняется с помощью eval, ошибки выводятся в коммандную строку.
 Также в скомпилированный шаблон вставляются ошибки компиляции как console.warn('...').
 
 При вызове неизвестного шаблона генерируется исключение.
