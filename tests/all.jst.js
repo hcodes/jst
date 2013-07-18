@@ -525,13 +525,23 @@ jst._tmpl['trim-with-number'] = function () {
 
     return __jst;
 };
+jst._tmpl['qqq'] = function () {
+    var __jst = '';
+
+ q
+
+
+    return __jst;
+};
 jst._tmpl['new-line'] = '      ';
 jst._tmpl['without-inline-js'] = 'Hello world!';
 jst._tmpl['with-inline-js'] = function (a, b, c) {
     var __jst = '';
     __jst += 'Hello';
- if (a) {    __jst += filter.html(a) + '';
- }    __jst += 'world!';
+ if (a) {
+    __jst += filter.html(a) + '';
+ }
+    __jst += 'world!';
 
     return __jst;
 };
@@ -541,9 +551,9 @@ jst._tmpl['with-4-params'] = function (a, b, c, d) {
 
     return __jst;
 };
-jst._tmpl['default-params'] = function (z, x, y) {
-    z = typeof z == "undefined" ? "hello" : z;
+jst._tmpl['default-params'] = function (y, x, z) {
     y = typeof y == "undefined" ? 2 : y;
+    z = typeof z == "undefined" ? "hello" : z;
     var __jst = '';
     __jst += filter.html(x) + filter.html(y + 2) + filter.html(z);
 
@@ -592,7 +602,7 @@ jst._tmpl['param'] = function (a, b, c) {
 
     return __jst;
 };
-jst._tmpl['defaultParam'] = function (a, b, c) {
+jst._tmpl['defaultParam'] = function (c, b, a) {
     c = typeof c == "undefined" ? "2" : c;
     var __jst = '';
     __jst += filter.html(c);

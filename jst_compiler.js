@@ -175,7 +175,7 @@
 var vm = require('vm');
 
 var Compiler = {
-    version: '1.7.3',
+    version: '1.7.4',
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов
@@ -511,6 +511,7 @@ var Compiler = {
         }
         
         js += tab + con.push + content
+              .replace(/$\r|[^n]\r/mg, '\n') // Конвертация текстов MACOS
               .replace(/\r\n/g, "\n")
               .replace(/[\t\n]/g, " ") // замена переносов строки и таба на пробелы
               .replace(/ +(<%[^=!\+])/g, '$1') // удаление пробелов между HTML-тегами и тегами шаблонизатора
@@ -528,7 +529,7 @@ var Compiler = {
               .replace(/\t! ?(.*?)%>/g, con.above)
               .replace(/\t= ?(.*?)%>/g, con.aboveHTML)
               .split("\t").join("';\n")
-              .split("%>").join(tab + con.push)
+              .split("%>").join('\n' + tab + con.push)
               .split("\r").join("'")
             + con.close + "\n\n" + tab + "return " + con.ret + ";";
             
