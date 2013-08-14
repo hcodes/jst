@@ -83,6 +83,49 @@ jst.forEach = function (template, data, context) {
     return text.join('');
 };
 
+/**
+ * Цикличный вызов блока у шаблона
+ *
+ * @param {string} template - название шаблона
+ * @param {string} blockName - название блока
+ * @param {(Array|Object)} data - данные
+ * @param {*} context - контекст
+ * @return {string}
+*/
+jst.forEachBlock = function (template, blockName, data, context) {
+    var text = [];
+    var i, len = data.length;
+    context = context || {};
+    if (Object.prototype.toString.call(data) === "[object Array]") { // Array.isArray
+        for (i = 0; i < len; i++) {
+            text.push(jst.block.call(context, template, blockName, data[i], i, data));
+        }
+    } else {
+        for (i in data) {
+            if (data.hasOwnProperty(i)) {
+                text.push(jst.block.call(context, template, blockName, data[i], i, data));
+            }
+        }
+    }
+    
+    return text.join('');
+};
+
+
+/**
+ * Инициализация шаблона с блоками
+ *
+ * @param {string} name имя шаблона 
+*/
+jst._init = function (name) {
+    var tmpl = jst._tmpl;
+    var buf = jst._tmplExtend[name];
+    
+    if (!buf.extended) {
+        tmpl[name] = new buf;
+        buf.extended = true;
+    }
+};
 
 /**
  * Наследование шаблона
@@ -107,7 +150,6 @@ jst._extend = function (childName, parentName) {
         if (parent.extend) {
             if (!parent.extended) {
                 f(parentName, parent.extend);
-                  
             }
         } else  {
             tmpl[parentName] = new parent;
@@ -352,6 +394,7 @@ jst.bem = function (block, params) {
 /* Шаблон автоматически сгенерирован с помощью jst, не редактируйте его. */
 (function () {
     var forEach = jst.forEach;
+    var forEachBlock = jst.forEachBlock;
     var filter = jst.filter;
     var block = jst.block;
     var template = jst;
@@ -363,6 +406,7 @@ jst.bem = function (block, params) {
     var __jst = '';
 var __jst_template = 'block1x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
@@ -383,6 +427,7 @@ var block = function (name) { return jst.block.apply(this, [__jst_template].conc
     var __jst = '';
 var __jst_template = 'block2x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
@@ -402,6 +447,7 @@ var block = function (name) { return jst.block.apply(this, [__jst_template].conc
     var __jst = '';
 var __jst_template = 'block3x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
@@ -414,8 +460,38 @@ var block = function (name) { return jst.block.apply(this, [__jst_template].conc
     f.extend  = 'block2x';
 })();
 
+(function () {
+    var f = function () {
+        this['__jst_constructor'] = function () {
+    var __jst = '';
+var __jst_template = 'foreach-block';
+var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+    __jst += filter.html(forEachBlock('block1', [1,2,3])) + filter.html(forEachBlock('block2', [1,2,3]));
+
+    return __jst;
+};
+
+        this['block1'] = '1';
+        this['block2'] = function (name) {
+    var __jst = '';
+var __jst_template = 'foreach-block';
+var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+    __jst += filter.html(name);
+
+    return __jst;
+};
+    };
+
+    jst._tmplExtend['foreach-block'] = f;
+    f.extend  = '';
+})();
+
     jst._extend('block2x', 'block1x');
     jst._extend('block3x', 'block2x');
+    jst._init('block1x');
+    jst._init('foreach-block');
 
 /* --- filter.jst --- */
 jst._tmpl['filter-html'] = function (a) {
@@ -602,7 +678,7 @@ jst._tmpl['param'] = function (a, b, c) {
 
     return __jst;
 };
-jst._tmpl['defaultParam'] = function (c, b, a) {
+jst._tmpl['defaultParam'] = function (b, a, c) {
     c = typeof c == "undefined" ? "2" : c;
     var __jst = '';
     __jst += filter.html(c);

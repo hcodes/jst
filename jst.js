@@ -83,6 +83,49 @@ jst.forEach = function (template, data, context) {
     return text.join('');
 };
 
+/**
+ * Цикличный вызов блока у шаблона
+ *
+ * @param {string} template - название шаблона
+ * @param {string} blockName - название блока
+ * @param {(Array|Object)} data - данные
+ * @param {*} context - контекст
+ * @return {string}
+*/
+jst.forEachBlock = function (template, blockName, data, context) {
+    var text = [];
+    var i, len = data.length;
+    context = context || {};
+    if (Object.prototype.toString.call(data) === "[object Array]") { // Array.isArray
+        for (i = 0; i < len; i++) {
+            text.push(jst.block.call(context, template, blockName, data[i], i, data));
+        }
+    } else {
+        for (i in data) {
+            if (data.hasOwnProperty(i)) {
+                text.push(jst.block.call(context, template, blockName, data[i], i, data));
+            }
+        }
+    }
+    
+    return text.join('');
+};
+
+
+/**
+ * Инициализация шаблона с блоками
+ *
+ * @param {string} name имя шаблона 
+*/
+jst._init = function (name) {
+    var tmpl = jst._tmpl;
+    var buf = jst._tmplExtend[name];
+    
+    if (!buf.extended) {
+        tmpl[name] = new buf;
+        buf.extended = true;
+    }
+};
 
 /**
  * Наследование шаблона
@@ -107,7 +150,6 @@ jst._extend = function (childName, parentName) {
         if (parent.extend) {
             if (!parent.extended) {
                 f(parentName, parent.extend);
-                  
             }
         } else  {
             tmpl[parentName] = new parent;

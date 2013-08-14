@@ -202,6 +202,7 @@ var Compiler = {
         if (res.search(/function/) != -1) {
             res = '\n(function () {' +
                 ['', 'var forEach = jst.forEach;',
+                    'var forEachBlock = jst.forEachBlock;',
                     'var filter = jst.filter;',
                     'var block = jst.block;',
                     'var template = jst;'].join('\n    ') + res + '\n\n})();';
@@ -215,6 +216,7 @@ var Compiler = {
     _sameTemplateName: {},
     _sameBlockName: {},
     _extend: [],
+    _init: [],
     _build: function (text) {
         var inFile = this._inFile();
         
@@ -238,7 +240,12 @@ var Compiler = {
             buf.push(this._tab + 'jst._extend(\'' + el[0] + '\', \'' + el[1] + '\');');
         }, this);
         
+        this._init.forEach(function (el) {
+            buf.push(this._tab + 'jst._init(\'' + el + '\');');
+        }, this);
+        
         this._extend = [];
+        this._init = [];
         
         return buf.join('\n');
     },
@@ -346,6 +353,8 @@ var Compiler = {
                 bufBlock += '})();\n';
                 if (extend) {
                     this._extend.push([name, extend]);
+                } else {
+                    this._init.push(name);
                 }
                 
                 return bufBlock;
@@ -508,6 +517,7 @@ var Compiler = {
         if (data.hasBlock) {
             js += 'var __jst_template = \'' + this.quot(data.template) + '\';\n';
             js += 'var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; \n';
+            js += 'var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; \n';
         }
         
         js += tab + con.push + content

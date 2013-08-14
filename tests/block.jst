@@ -33,3 +33,14 @@
     <%= block('block2')  %><br />
     <%= block('block3')  %>
 </template>
+
+<template name="foreach-block">
+    <block name="block1">
+        1
+    </block>
+    <block name="block2" params="name">
+        <%= name %>
+    </block>
+    <%= forEachBlock('block1', [1,2,3]) %>
+    <%= forEachBlock('block2', [1,2,3]) %>
+</template>
