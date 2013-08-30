@@ -5,7 +5,10 @@
  * License: MIT
  */
 
+var fs = require('fs');
+var pth = require('path');
 var vm = require('vm');
+var program = require('commander');
 
 var Compiler = {
     version: '1.7.5',
@@ -525,19 +528,7 @@ var Compiler = {
     }
 };
 
-var fs = require('fs'),
-    vm = require('vm'),
-    pth = require('path'),
-    flag = process.argv[2],
-    fileArgv = 2,
-    fileIn = process.argv[fileArgv],
-    fileOut = process.argv[fileArgv + 1],
-    files = [],
-    isAll = false,
-    isFind = false,
-    isDebug = false,
-    isPasteJst = false,
-    isDir = function (path) {
+var isDir = function (path) {
         return fs.statSync(path).isDirectory();
     },
     buildTemplate = function (fileIn) {
@@ -565,7 +556,7 @@ var fs = require('fs'),
         fileOut = fileOut || './all.jst.js';
         
         var fd = fs.openSync(fileOut, 'w+');
-        var jst = isPasteJst ? fs.readFileSync(__dirname + '/jst.js') + '\n\n' : '';
+        var jst = program.paste ? fs.readFileSync(__dirname + '/jst.js') + '\n\n' : '';
         fs.writeSync(fd, jst + buildTemplates(filesIn));
         fs.closeSync(fd);
     },
@@ -586,58 +577,36 @@ var fs = require('fs'),
         find(path);
         
         return res;
-    };
-    
-if (flag == '-d' || flag == '--debug') {
-    isDebug = true;
-    flag = process.argv[3];
-    fileArgv++;
-    fileIn = process.argv[fileArgv];
-    fileOut = process.argv[fileArgv + 1];
-}
+    },
+    getFirstFileArg = function () {
+        var max = 2;
 
-switch (flag) {
-    case '-v': // Версия компилятора
-    case '--version':
-        console.log('jst v' + Compiler.version);
-        process.exit(0);
-    break;
-    case '-f': // Поиск jst-шаблонов
-    case '--find':
-        fileIn = process.argv[fileArgv + 1];
-        fileOut = process.argv[fileArgv + 2];
-        isFind = true;
-    break;
-    case '-a': // Сохранение скомпилированных шаблонов в один файл
-    case '--all':
-        var buf = process.argv[fileArgv + 1];
-        fileArgv++;
-        if (buf == '--paste' || buf == '-p') {
-            isPasteJst = true;
-            fileArgv++;
-        }
+        process.argv.forEach(function (el, i) {
+            if (i < 2) {
+                return;
+            }
+            
+            if (el.search(/^--?[\w]/) != -1) {
+                max = i + 1;
+            }            
+        });
         
-        fileIn = process.argv[fileArgv];
-        fileOut = process.argv[fileArgv + 1];
-        
-        isAll = true;
-    break;
-    case '-h': // Вывод справки
-    case '--help':
-        var help = 'Использование:\n\
-\tjst_compiler [options] <directory-or-file> [directory-or-file, ...]\n\
-Опции:\n\
-\t--help\t\tПоказать эту помощь.\n\n\
-\t--version\tВерсия компилятора.\n\n\
-\t--version\tВерсия компилятора.\n\n\
-\t--find\t\tНайти и вывести jst-шаблоны, jst_compiler --find ./my_dir\n\n\
-\t--all\t\tВсе шаблоны скомпилировать в один файл, jst_compiler --all ./my_dir ./all.js.st\n\n\
-\t--paste\t\tВставка обвязки для jst к скомпилированным шаблонам, работает только с использованием флага --all, jst_compiler --all --paste ./my_dir ./all.js.st\n\n\
-\t--debug\t\tРежим отладки\
-';
-    console.log(help);
-    break;
-}
+        return max;
+    };
+
+program
+    .version(Compiler.version)
+    .usage('[options] <directory-or-file> [directory-or-file, ...]')
+    .option('-d, --debug', 'debugging mode')
+    .option('-f, --find', 'Find templates')
+    .option('-p, --paste', 'Paste the kernel for templates, require a flag "--all", jst_compiler --all --paste ./my_dir ./all.js.jst')    
+    .option('-a, --all', 'All templates compile in one file, jst_compiler --all ./my_dir ./all.js.jst')
+    .parse(process.argv);
+
+var fileArgv =  getFirstFileArg();
+var fileIn = process.argv[fileArgv];
+var fileOut = process.argv[fileArgv + 1];
+var files = [];
 
 if (!fileIn) {
     console.log('Не указан файл шаблона.\nПример: jst_compiler ./example.jst');
@@ -651,8 +620,8 @@ if (!fs.existsSync(fileIn)) {
 
 if (isDir(fileIn)) {
     files = findTemplates(fileIn);
-    if (!isFind) {
-        if (isAll) {
+    if (!program.find) {
+        if (program.all) {
             buildTemplatesInFile(files, fileOut);
         } else {
             files.forEach(function (el) {
@@ -666,7 +635,7 @@ if (isDir(fileIn)) {
 }
 
 if (files.length) {
-    if (isDebug || isFind) {
+    if (program.debug || program.find) {
         console.log('Всего шаблонов: ' + files.length + '\n------------------\n' + files.join('\n'));
     }
 } else {

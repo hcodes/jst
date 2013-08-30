@@ -5,14 +5,19 @@
         "url": "https://github.com/hcodes"
     },
     "name": "jst_compiler",
-    "description": "JavaScript template engine",
+    "description": "Client and server template engine at JavaScript",
     "version": "1.7.5",
     "homepage": "https://github.com/hcodes/jst",
     "repository": {
         "type": "git",
         "url": "git://github.com/hcodes/jst.git"
     },
-    "dependencies": {},
+    "keywords": [
+        "templates"
+    ],    
+    "dependencies": {
+        "commander": "~1.3"
+    },
     "devDependencies": {},
     "optionalDependencies": {},
     "engines": {
