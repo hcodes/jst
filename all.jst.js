@@ -278,24 +278,24 @@ jst._tmpl['with-4-params'] = function (a, b, c, d) {
     return __jst;
 };
 jst._tmpl['default-params'] = function (x, y, z) {
-    y = typeof y == "undefined" ? 2 : y;
     z = typeof z == "undefined" ? "world" : z;
+    y = typeof y == "undefined" ? 2 : y;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y + 2) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-array'] = function (x, y, z) {
-    y = typeof y == "undefined" ? [1,3,4] : y;
     z = typeof z == "undefined" ? "world" : z;
+    y = typeof y == "undefined" ? [1,3,4] : y;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y[1]) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-object'] = function (x, y, z) {
-    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
     z = typeof z == "undefined" ? "world" : z;
+    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z);
 
@@ -303,8 +303,8 @@ jst._tmpl['default-params-object'] = function (x, y, z) {
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
     w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
-    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
     z = typeof z == "undefined" ? {"x":2,"y":4,"z":5} : z;
+    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 

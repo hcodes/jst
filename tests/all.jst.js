@@ -394,7 +394,6 @@ jst.bem = function (block, params) {
 /* Шаблон автоматически сгенерирован с помощью jst, не редактируйте его. */
 (function () {
     var forEach = jst.forEach;
-    var forEachBlock = jst.forEachBlock;
     var filter = jst.filter;
     var block = jst.block;
     var template = jst;
@@ -406,7 +405,6 @@ jst.bem = function (block, params) {
     var __jst = '';
 var __jst_template = 'block1x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
-var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
@@ -427,7 +425,6 @@ var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_
     var __jst = '';
 var __jst_template = 'block2x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
-var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
@@ -447,7 +444,6 @@ var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_
     var __jst = '';
 var __jst_template = 'block3x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
-var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
@@ -466,7 +462,6 @@ var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_
     var __jst = '';
 var __jst_template = 'foreach-block';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
-var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
     __jst += filter.html(forEachBlock('block1', [1,2,3])) + filter.html(forEachBlock('block2', [1,2,3]));
 
     return __jst;
@@ -477,7 +472,6 @@ var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_
     var __jst = '';
 var __jst_template = 'foreach-block';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
-var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
     __jst += filter.html(name);
 
     return __jst;
@@ -490,8 +484,6 @@ var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_
 
     jst._extend('block2x', 'block1x');
     jst._extend('block3x', 'block2x');
-    jst._init('block1x');
-    jst._init('foreach-block');
 
 /* --- filter.jst --- */
 jst._tmpl['filter-html'] = function (a) {
@@ -679,33 +671,33 @@ jst._tmpl['with-4-params'] = function (a, b, c, d) {
     return __jst;
 };
 jst._tmpl['default-params'] = function (x, y, z) {
-    z = typeof z == "undefined" ? "world" : z;
     y = typeof y == "undefined" ? 2 : y;
+    z = typeof z == "undefined" ? "world" : z;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y + 2) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-array'] = function (x, y, z) {
-    z = typeof z == "undefined" ? "world" : z;
     y = typeof y == "undefined" ? [1,3,4] : y;
+    z = typeof z == "undefined" ? "world" : z;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y[1]) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-object'] = function (x, y, z) {
-    z = typeof z == "undefined" ? "world" : z;
     y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
+    z = typeof z == "undefined" ? "world" : z;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
-    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
-    z = typeof z == "undefined" ? {"x":2,"y":4,"z":5} : z;
     y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
+    z = typeof z == "undefined" ? {"x":2,"y":4,"z":5} : z;
+    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 

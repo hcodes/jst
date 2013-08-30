@@ -1,5 +1,4 @@
 test('Основное', function () {
-    
     equal(jst.get('trim'), '', 'Шаблон с пробелами, табуляцией и переносами строк должен компилироваться в пустую строку.');    
     equal(jst.get('without-trim'), ' 123 ', 'trim="false".');    
     equal(jst.get('without-trim-delete-spaces'), '       123      ', 'trim="false" + delete-spaces="false".');
@@ -150,5 +149,4 @@ test('Блоки', function () {
     equal(jst('block1x'), 'Blocks:block1x block1<br />block1x block2<br />block1x block3', 'Блоки');
     equal(jst('block2x'), 'Blocks:block1x block1<br />block2x block2<br />block2x block3', 'Наследование 1 уровень вложенности');
     equal(jst('block3x'), 'Blocks:block1x block1<br />block2x block2<br />block3x block3', 'Наследование 2 уровня вложенности');
-    equal(jst('foreach-block'), '111123', 'Блочный forEach');
 });
