@@ -1,176 +1,9 @@
 #!/usr/bin/env node
 
-/*
-  jst - клиентский и серверный шаблонизатор на JavaScript
-  -------------------------------------------------------
-    - Наследование
-    - Блоки
-    - Компиляция шаблонов в js
-    - Передача параметров в шаблон
-    - Расширяемые фильтры
-    - Экранирование HTML по умолчанию
-    - Быстрое изучение
-
-    
-  Установка
-  ---------
-  git clone https://github.com/hcodes/jst.git
-  cd ./jst
-  npm install -g
-  
-  Быстрый старт
-  -------------
-  1. Установка в ОС jst.
-  2. Создаём файл с расширением .jst - example.jst
-  3. Содержание файла:
-      <template name="example">
-        Hello world!
-      </template>
-  4. jst_compiler example.jst example.jst.js
-  5. Подключаем в странице
-      ...
-      <!-- Обвязка jst -->
-      <script type="text/javascript" src="/js/jst.js"></script>
-      
-      <!-- Скомпилированные шаблоны -->
-      <script type="text/javascript" src="/js/example.jst.js"></script>
-      ...
-  6. Вызов в js-коде:
-    $('#test').jst('example'));
-  
-  Использование в коммандной строке
-  ---------------------------------
-  node ./jst_compiler.js -v  - версия компилятора  
-  jst_compiler -v  - версия компилятора  
-
-  компиляция одного шаблона в файл -> ./example.jst.js  
-  jst_compiler ./example.jst  
-  
-  компиляция одного шаблона в файл -> ./example.jst.js  
-  jst_compiler ./example.jst ./other_example.jst.js
-  
-  компиляция папки с шаблонами
-  jst_compiler ./examples
-  
-  компиляция папки с шаблонами в один файл
-  jst_compiler -a ./examples ./all.jst.js
-    
-  
-  Пример шаблона (example.jst):
-  -----------------------------
-      <!-- Простейший шаблон -->
-      <template name="example">
-        Hello world!
-      </template>
-
-      <!-- Передача и вставка параметра -->
-      <template name="example" params="word">
-        Hello <%= word %>!
-      </template>
-
-      <!-- Передача и вставка параметра без экранирования -->
-      <template name="example" params="word">
-        Hello <%! word %>!
-      </template>
-
-      <!-- Параметры по умолчанию -->
-      <template name="example" params="word = 'world'">
-        Hello <%= world %>!
-      </template>
-
-      <!--  Инлайн-js -->
-      <template name="example" params="word">
-        Hello<% var b = word || 'world'; %> <%= b %>!
-      </template>
-      
-      <!-- Комментарии --> 
-      <template name="example" params="word">
-        Hello <%# мой комментарий %>!
-      </template>
-      
-      <!-- Более подробно -->
-      <template name="example" params="x, y, z" trim="false">
-        x: <%= x %><br />
-        <% if (y > 5) { %>
-        y: <%= y %><br />
-        <% } %>
-        z: <%= z - 10 %>
-      </template>
-
-      <!-- Использование фильтра -->
-      <template name="example" params="x">
-        <%= filter.trim(x) %>
-      </template>
-      
-      <!-- Вызов другого шаблона -->
-      <template name="example" params="x">
-        <%= template('another_template', x) %>
-      </template>
-
-      <!-- Не удалять пробелы между HTML-тегами и тегами шаблонизатора -->
-      <!-- В примере, если x=1 и y=2 => '1 2', без + => '12' -->
-      <template name="example" params="x">
-        <%= filter.trim(x) +%> <%=+ y %>
-      </template>      
-
-      <!-- Цикличный шаблон -->
-      <template name="another_template" params="element, index, obj">
-        <ul>
-            <li>
-                <%= index + 1 %>. <%= filter.html(element) %>
-            </li>
-        </ul>
-      </template>
-      <!-- В js: jst.forEach('example', data); -->
-      
-      <!-- Вызов цикла внутри шаблона -->
-      <template name="example" params="data">
-        ...
-            <%= forEach('another_template', data) %>
-        ...
-      </template>
-      
-      <!-- Блоки -->
-      <template name="others">
-        <block name="block1" params="a">
-            ...
-        </block>
-        <%= block('block1') %>
-      </template>
-      
-      <!-- Наследование -->
-      <template name="others">
-        <block name="block1" params="a">
-            ...
-        </block>
-        <%= block('block1');
-      </template>
-      
-      <template name="others2" extend="others">
-        <%= block('block1'); %>
-      </template>
-
-      <!-- Отладка -->
-      <template name="example" params="data">
-        ...
-            <% console.log(data); %>
-        ...
-      </template>      
-            
-      Расширение файла у шаблона - .jst
-      example.jst -> example.jst.js
-            
-      Вызов из js: jst(название шаблона, параметры...);
-      jst('example', 1, 2, 3);
-      
-      
-      
-      
-      
-    TODO: 
-        - краткая запись фильтров <%= a | trim %>
-        - корректная проверка параметров по умолчанию
-*/
+/**
+ * jst - клиентский и серверный шаблонизатор на JavaScript 
+ * License: MIT
+ */
 
 var vm = require('vm');
 
@@ -202,7 +35,6 @@ var Compiler = {
         if (res.search(/function/) != -1) {
             res = '\n(function () {' +
                 ['', 'var forEach = jst.forEach;',
-                    'var forEachBlock = jst.forEachBlock;',
                     'var filter = jst.filter;',
                     'var block = jst.block;',
                     'var template = jst;'].join('\n    ') + res + '\n\n})();';
@@ -216,7 +48,6 @@ var Compiler = {
     _sameTemplateName: {},
     _sameBlockName: {},
     _extend: [],
-    _init: [],
     _build: function (text) {
         var inFile = this._inFile();
         
@@ -240,12 +71,7 @@ var Compiler = {
             buf.push(this._tab + 'jst._extend(\'' + el[0] + '\', \'' + el[1] + '\');');
         }, this);
         
-        this._init.forEach(function (el) {
-            buf.push(this._tab + 'jst._init(\'' + el + '\');');
-        }, this);
-        
         this._extend = [];
-        this._init = [];
         
         return buf.join('\n');
     },
@@ -353,8 +179,6 @@ var Compiler = {
                 bufBlock += '})();\n';
                 if (extend) {
                     this._extend.push([name, extend]);
-                } else {
-                    this._init.push(name);
                 }
                 
                 return bufBlock;
@@ -517,7 +341,6 @@ var Compiler = {
         if (data.hasBlock) {
             js += 'var __jst_template = \'' + this.quot(data.template) + '\';\n';
             js += 'var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; \n';
-            js += 'var forEachBlock = function (name) { return jst.forEachBlock.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; \n';
         }
         
         js += tab + con.push + content
