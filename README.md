@@ -9,10 +9,9 @@
 + Параметры по умолчанию
 + Экранирование тегов по умолчанию
 
+
 ## Установка
-    git clone https://github.com/hcodes/jst.git
-    cd ./jst
-    npm install ./ -g
+    npm install jst_compiler -g
   
 ## Использование в коммандной строке
 `jst_compiler -v`  - версия компилятора
@@ -27,7 +26,34 @@
 
 `jst_compiler -a -p ./examples ./all.jst.js` - компиляция папки с шаблонами в один файл со вставкой jst.js
 
-    
+
+## Быстрый старт
+1. Установка в ОС jst.
+1. Создаём файл с расширением .jst - `example.jst`
+1. Содержание файла:
+  ```HTML
+  <template name="example">
+    Hello world!
+  </template>
+  ```
+
+1. `jst_compiler example.jst example.jst.js`
+1. Подключаем в странице
+  ```HTML
+  ...
+  <!-- Обвязка jst -->
+  <script type="text/javascript" src="/js/jst.js"></script>
+  
+  <!-- Скомпилированные шаблоны -->
+  <script type="text/javascript" src="/js/example.jst.js"></script>
+  ...
+  ```
+
+1. Вызов в js-коде:
+  ```JavaScript
+    $('#container').jst('example');
+  ```
+
 ## Пример шаблона (example.jst):
       <!-- Простейший шаблон -->
       <template name="example">
@@ -111,3 +137,7 @@
       <template name="example" params="data">
             <% console.log(data); %>
       </template>
+
+## TODO
++ краткая запись фильтров <%= a | trim %>
++ отключения сжатия внутри тегов script, pre, code и пр.
