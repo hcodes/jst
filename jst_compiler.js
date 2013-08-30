@@ -175,7 +175,7 @@
 var vm = require('vm');
 
 var Compiler = {
-    version: '1.7.4',
+    version: '1.7.5',
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов
@@ -607,9 +607,28 @@ var Compiler = {
     // Построение параметров у шаблона
     params: function (params) {
         var res = [];
+        var resWithIndex = [];
         var sandbox = {};
         var script;
         var buf;
+        var len = 0;
+        var that = this;
+        
+        // Позиция параметра в параметрах - params="a, b, c"
+        var getPosition = function (params, name) {
+            var buf = params.split(',');
+            
+            buf = buf.map(function (el) {
+                return ('' + el.split('=')[0]).trim();
+            });
+            
+            buf = buf.filter(function (el) {
+                    return that.isCorrectNameVariable(el);
+            }, this);
+            
+            return buf.indexOf(name);
+        };
+        
         if (params) {
             // Если есть параметры по умолчанию, честно разбираем их
             if (params.search('=') != -1) {
@@ -617,9 +636,20 @@ var Compiler = {
                 script.runInNewContext(sandbox);
                 for (var i in sandbox) {
                     if (sandbox.hasOwnProperty(i)) {
-                        res.push(i);
+                        len++;
+                        resWithIndex.push({name: i, index: getPosition(params, i)});
                     }
                 }
+                
+                if (len > 1) {
+                    resWithIndex.sort(function (a, b) {
+                        return a.index > b.index;
+                    });
+                }
+                
+                resWithIndex.forEach(function (el) {
+                    res.push(el.name);
+                });
             } else {
                 var buf = params.split(',');
                 buf.forEach(function (el) {

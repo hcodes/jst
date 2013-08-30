@@ -6,7 +6,7 @@
     },
     "name": "jst_compiler",
     "description": "JavaScript template engine",
-    "version": "1.7.3",
+    "version": "1.7.5",
     "homepage": "https://github.com/hcodes/jst",
     "repository": {
         "type": "git",

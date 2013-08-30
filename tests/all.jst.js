@@ -621,20 +621,6 @@ jst._tmpl['with-inline-js'] = function (a, b, c) {
 
     return __jst;
 };
-jst._tmpl['with-4-params'] = function (a, b, c, d) {
-    var __jst = '';
-    __jst += filter.html(a) + filter.html(b);
-
-    return __jst;
-};
-jst._tmpl['default-params'] = function (y, x, z) {
-    y = typeof y == "undefined" ? 2 : y;
-    z = typeof z == "undefined" ? "hello" : z;
-    var __jst = '';
-    __jst += filter.html(x) + filter.html(y + 2) + filter.html(z);
-
-    return __jst;
-};
 jst._tmpl['same-template-name'] = function (a) {
     var __jst = '';
     __jst += filter.html(a);
@@ -672,16 +658,56 @@ jst._tmpl['call-template2'] = function (a) {
 
     return __jst;
 };
-jst._tmpl['param'] = function (a, b, c) {
+
+/* --- params.jst --- */
+jst._tmpl['without-params'] = function () {
     var __jst = '';
-    __jst += filter.html(c);
+    __jst += filter.html(2 + 2);
 
     return __jst;
 };
-jst._tmpl['defaultParam'] = function (b, a, c) {
-    c = typeof c == "undefined" ? "2" : c;
+jst._tmpl['params-x-xx-xxx'] = function (x, xx, xxx) {
     var __jst = '';
-    __jst += filter.html(c);
+    __jst += filter.html(x) + '_' + filter.html(xx) + '_' + filter.html(xxx);
+
+    return __jst;
+};
+jst._tmpl['with-4-params'] = function (a, b, c, d) {
+    var __jst = '';
+    __jst += filter.html(a) + filter.html(b) + filter.html(c) + filter.html(d);
+
+    return __jst;
+};
+jst._tmpl['default-params'] = function (x, y, z) {
+    z = typeof z == "undefined" ? "world" : z;
+    y = typeof y == "undefined" ? 2 : y;
+    var __jst = '';
+    __jst += filter.html(x) + '_' + filter.html(y + 2) + '_' + filter.html(z);
+
+    return __jst;
+};
+jst._tmpl['default-params-array'] = function (x, y, z) {
+    z = typeof z == "undefined" ? "world" : z;
+    y = typeof y == "undefined" ? [1,3,4] : y;
+    var __jst = '';
+    __jst += filter.html(x) + '_' + filter.html(y[1]) + '_' + filter.html(z);
+
+    return __jst;
+};
+jst._tmpl['default-params-object'] = function (x, y, z) {
+    z = typeof z == "undefined" ? "world" : z;
+    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
+    var __jst = '';
+    __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z);
+
+    return __jst;
+};
+jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
+    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
+    z = typeof z == "undefined" ? {"x":2,"y":4,"z":5} : z;
+    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
+    var __jst = '';
+    __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 
     return __jst;
 };

@@ -1,0 +1,27 @@
+<template name="without-params">
+    <%= 2 + 2 %>
+</template>
+
+<template name="params-x-xx-xxx" params="x, xx, xxx">
+    <%= x%>_<%= xx %>_<%= xxx %>
+</template>
+
+<template name="with-4-params" params="a, b, c, d">
+    <%= a%> <%= b %> <%= c %> <%= d %>
+</template>
+
+<template name="default-params" params="x, y = 2, z = 'world'">
+    <%= x  %>_<%= y + 2 %>_<%= z %>
+</template>
+
+<template name="default-params-array" params="x, y = [1, 3, 4], z = 'world'">
+    <%= x  %>_<%= y[1] %>_<%= z %>
+</template>
+
+<template name="default-params-object" params="x, y = {x: 1, y: 3, z: 4}, z = 'world'">
+    <%= x  %>_<%= y.z %>_<%= z %>
+</template>
+
+<template name="default-params-some-objects" params="x, y = {x: 1, y: 3, z: 4}, z = {x: 2, y: 4, z: 5}, w = {x: 'a', y: {a: 1}}">
+    <%= x  %>_<%= y.z %>_<%= z.x %>_<%= w.x %>
+</template>

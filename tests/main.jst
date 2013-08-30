@@ -41,13 +41,6 @@
     Hello <% if (a) { %><%= a %><% } %>world!
 </template>
 
-<template name="with-4-params" params="a, b, c, d">
-    <%= a%> <%= b %>
-</template>
-
-<template name="default-params" params="x, y = 2, z = 'hello'">
-    <%= x  %> <%= y + 2%> <%= z %>
-</template>
 
 <template name="same-template-name" params="a">
     <%= a %>
@@ -75,12 +68,4 @@
 
 <template name="call-template2" params="a">
     <%= a + 10 %>
-</template>
-
-<template name="param" params="a, b, c">
-    <%= c %>
-</template>
-
-<template name="defaultParam" params="a, b, c = '2'">
-    <%= c %>
 </template>

@@ -1,5 +1,4 @@
 test('Основное', function () {
-    equal(jst.has('invalid_params'), false, 'Шаблон с некорректным названием переменных не должен компилироваться');
     
     equal(jst.get('trim'), '', 'Шаблон с пробелами, табуляцией и переносами строк должен компилироваться в пустую строку.');    
     equal(jst.get('without-trim'), ' 123 ', 'trim="false".');    
@@ -16,11 +15,24 @@ test('Основное', function () {
     equal(typeof jst.get('without-inline-js'), 'string', 'Шаблон без вставки значение и инлайн-js компилируется в строку.');
     equal(typeof jst.get('with-inline-js'), 'function', 'Шаблон со вставкой значений или инлайн-js компилируется в функцию.');
     
-    equal(jst.get('with-4-params').length, 4, 'Проверка на количество параметров.');
-    
     equal(jst('same-template-name', 1), '11', 'Два шаблона с одним и тем же названием, срабатывать должен последний объявленный шаблон.');    
     
     equal(jst('call-template', 1), '1__11__1', 'Вызов другого шаблона из шаблона.');
+});
+
+test('Параметры', function () {
+    equal(jst.get('without-params').length, 0, 'Без параметров, 0 параметров');
+    equal(jst('without-params'), '4', 'Без параметров');
+    equal(jst.get('with-4-params').length, 4, 'Проверка на количество параметров, 4 параметра.');
+    equal(jst('with-4-params', 1, 2, 3, 4), '1234', 'Проверка на количество параметров.');
+    equal(jst.get('default-params').length, 3, 'Параметры по умолчанию, строка и число, проверка количества параметров');
+    equal(jst('default-params', 1), '1_4_world', 'Параметры по умолчанию, строка и число');
+    equal(jst('default-params', 0, 10, 'hey'), '0_12_hey', 'Параметры по умолчанию, строка и число, другие параметры');
+    equal(jst('params-x-xx-xxx', 1, 2, 3), '1_2_3', 'Параметры, одинаковые названия');
+    equal(jst('default-params-array', 0), '0_3_world', 'Параметры по умолчанию, массив');
+    equal(jst('default-params-object', 0), '0_4_world', 'Параметры по умолчанию, объект');
+    equal(jst('default-params-some-objects', 0), '0_4_2_a', 'Параметры по умолчанию, массив');
+    //equal(jst.has('invalid_params'), false, 'Шаблон с некорректным названием переменных не должен компилироваться');    
 });
 
 test('Фильтры', function () {
