@@ -13,7 +13,7 @@
         "url": "git://github.com/hcodes/jst.git"
     },
     "keywords": [
-        "templates"
+        "templates", "engine", "jst"
     ],    
     "dependencies": {
         "commander": "~1.3"
