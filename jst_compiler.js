@@ -5,6 +5,7 @@
  * License: MIT
  */
 
+require('./jst.js');
 var fs = require('fs');
 var pth = require('path');
 var vm = require('vm');
@@ -317,6 +318,7 @@ var Compiler = {
     // Построение из шаблона js-фунцию
     withInlineJS: function (data) {
         var tab = this._tab;
+        var that = this;
         var js = this.defaultValues(data.params);
         var content = this.fixQuotes(data.content);
         var concatenation = {
@@ -362,8 +364,12 @@ var Compiler = {
               .replace(/<%(=|!)? *?%>/g, '') // удаление пустых тегов <% %>, <%= %>, <%! %>
               .split("<%").join("\t")
               .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-              .replace(/\t! ?(.*?)%>/g, con.above)
-              .replace(/\t= ?(.*?)%>/g, con.aboveHTML)
+              .replace(/\t! ?(.*?)%>/g, function () {
+                return con.above.replace(/\$1/, that.addFilters(arguments[1]))
+              })
+              .replace(/\t= ?(.*?)%>/g, function () {
+                return con.aboveHTML.replace(/\$1/, that.addFilters(arguments[1]));
+              })
               .split("\t").join("';\n")
               .split("%>").join('\n' + tab + con.push)
               .split("\r").join("'")
@@ -409,6 +415,50 @@ var Compiler = {
         }, this);
         
         return newBuf.join('<%');
+    },
+    // Добавить фильтры
+    addFilters: function (str) {
+        var res = '';
+        var buf = str.split(/(?:[^|])\|(?!\|)/);
+        // Если нет фильтров, то возвращаем строку как есть
+        if (buf.length < 2) {
+            return str;
+        }
+        
+        buf.forEach(function (el, i) {
+            var textParams = '';
+            
+            // Первый элемент не может быть фильтром
+            if (!i) {
+                res = el;
+            } else {
+                var f = el.split('(');
+                var params = [];
+                
+                // Копируем параметры
+                f.forEach(function (el, i) {
+                    if (i) {
+                        params.push(el);
+                    }
+                });
+                
+                // Удаляем из строки последнюю скобку
+                if (params.length) {
+                    params[params.length - 1] = params[params.length - 1].trim().replace(/\)$/, '');
+                    textParams = params.join('(');
+                }
+                
+                var filter = f[0].trim();
+                // Если в фильтре не должно быть параметров, а в коде шаблона указаны, значит удаляем параметры
+                if (jst.filter[filter] && jst.filter[filter].length < 2) {
+                    textParams = '';
+                }
+                
+                res = 'filter.' + filter + '(' + res + (textParams ? ',' + textParams : '') + ')';
+            }
+        });
+        
+        return res;
     },
     // Удаление пробелов между тегами
     deleteSpaces: function (text) {

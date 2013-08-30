@@ -143,6 +143,11 @@ test('Фильтры', function () {
     equal(jst('filter-_undef', 123456), '123456', '_undef, number');    
     equal(jst('filter-_undef', undefined), '', '_undef, undefined');    
     equal(jst('filter-_undef', null), '', '_undef, null');    
+
+    equal(jst('short-filter-trim', '   123   '), '123', 'Краткая запись фильтра trim');    
+    equal(jst('short-filter-replace', '  123  '), '  023  ', 'Краткая запись фильтра replace');    
+    equal(jst('short-filter-trim-replace', '  123  '), '023', 'Краткая запись вложенных фильтров: trim | replace(..., ...)');    
+    equal(jst('short-filter-trim-replace-trim', '  123  '), '23', 'Краткая запись вложенных фильтров: trim | replace(..., ...) | trim');    
 });
 
 test('Блоки', function () {

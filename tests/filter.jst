@@ -61,3 +61,19 @@
 <template name="filter-_undef" params="a">
     <%= filter._undef(a) %>
 </template>
+
+<template name="short-filter-trim" params="a">
+    <%= a | trim(111) %>
+</template>
+
+<template name="short-filter-replace" params="a">
+    <%= a | replace('1', '0') %>
+</template>
+
+<template name="short-filter-trim-replace" params="a">
+    <%= a | trim | replace('1', '0') %>
+</template>
+
+<template name="short-filter-trim-replace-trim" params="a">
+    <%= a | trim | replace('1', ' ') | trim %>
+</template>

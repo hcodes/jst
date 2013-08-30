@@ -582,6 +582,30 @@ jst._tmpl['filter-_undef'] = function (a) {
 
     return __jst;
 };
+jst._tmpl['short-filter-trim'] = function (a) {
+    var __jst = '';
+    __jst += filter.html(filter.trim(a));
+
+    return __jst;
+};
+jst._tmpl['short-filter-replace'] = function (a) {
+    var __jst = '';
+    __jst += filter.html(filter.replace(a,'1', '0'));
+
+    return __jst;
+};
+jst._tmpl['short-filter-trim-replace'] = function (a) {
+    var __jst = '';
+    __jst += filter.html(filter.replace(filter.trim(a),'1', '0'));
+
+    return __jst;
+};
+jst._tmpl['short-filter-trim-replace-trim'] = function (a) {
+    var __jst = '';
+    __jst += filter.html(filter.trim(filter.replace(filter.trim(a),'1', ' ')));
+
+    return __jst;
+};
 
 /* --- main.jst --- */
 jst._tmpl['trim'] = '';
@@ -695,9 +719,9 @@ jst._tmpl['default-params-object'] = function (x, y, z) {
     return __jst;
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
+    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
     y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
     z = typeof z == "undefined" ? {"x":2,"y":4,"z":5} : z;
-    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 
