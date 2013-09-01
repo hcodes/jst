@@ -482,12 +482,7 @@ var block = function (name) { return jst.block.apply(this, [__jst_template].conc
     f.extend  = '';
 })();
 
-jst._tmpl['nnn'] = function (a) {
-    var __jst = '';
-    __jst += filter.html(a) + '1' + filter.html(a) + '1 1' + filter.html(a);
-
-    return __jst;
-};
+jst._tmpl['nnn'] = '1 2 3 4 999';
     jst._extend('block2x', 'block1x');
     jst._extend('block3x', 'block2x');
 
