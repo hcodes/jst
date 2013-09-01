@@ -144,10 +144,15 @@ test('Фильтры', function () {
     equal(jst('filter-_undef', undefined), '', '_undef, undefined');    
     equal(jst('filter-_undef', null), '', '_undef, null');    
 
-    equal(jst('short-filter-trim', '   123   '), '123', 'Краткая запись фильтра trim');    
-    equal(jst('short-filter-replace', '  123  '), '  023  ', 'Краткая запись фильтра replace');    
-    equal(jst('short-filter-trim-replace', '  123  '), '023', 'Краткая запись вложенных фильтров: trim | replace(..., ...)');    
-    equal(jst('short-filter-trim-replace-trim', '  123  '), '23', 'Краткая запись вложенных фильтров: trim | replace(..., ...) | trim');    
+    equal(jst('short-filter-trim', '   <p>123</p>   '), '<p>123</p>', 'Краткая запись фильтра trim');    
+    equal(jst('short-filter-replace', '  <p>123</p>  '), '  <p>023</p>  ', 'Краткая запись фильтра replace');    
+    equal(jst('short-filter-trim-replace', '  <p>123</p>  '), '<p>023</p>', 'Краткая запись вложенных фильтров: trim | replace(..., ...)');    
+    equal(jst('short-filter-trim-replace-trim', '  <p>123</p>  '), '<p> 23</p>', 'Краткая запись вложенных фильтров: trim | replace(..., ...) | trim');    
+
+    equal(jst('escape-html-short-filter-trim', '   <p>123</p>   '), '&lt;p&gt;123&lt;/p&gt;', 'Экранирование html, краткая запись фильтра trim');    
+    equal(jst('escape-html-short-filter-replace', '  <p>123</p>  '), '  &lt;p&gt;023&lt;/p&gt;  ', 'Экранирование html, краткая запись фильтра replace');    
+    equal(jst('escape-html-short-filter-trim-replace', '  <p>123</p>  '), '&lt;p&gt;023&lt;/p&gt;', 'Экранирование html, краткая запись вложенных фильтров: trim | replace(..., ...)');    
+    equal(jst('escape-html-short-filter-trim-replace-trim', '  <p>123</p>  '), '&lt;p&gt; 23&lt;/p&gt;', 'Экранирование html, краткая запись вложенных фильтров: trim | replace(..., ...) | trim');    
 });
 
 test('Блоки', function () {

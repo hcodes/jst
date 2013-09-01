@@ -482,6 +482,12 @@ var block = function (name) { return jst.block.apply(this, [__jst_template].conc
     f.extend  = '';
 })();
 
+jst._tmpl['nnn'] = function (a) {
+    var __jst = '';
+    __jst += filter.html(a) + '1' + filter.html(a) + '1 1' + filter.html(a);
+
+    return __jst;
+};
     jst._extend('block2x', 'block1x');
     jst._extend('block3x', 'block2x');
 
@@ -584,23 +590,47 @@ jst._tmpl['filter-_undef'] = function (a) {
 };
 jst._tmpl['short-filter-trim'] = function (a) {
     var __jst = '';
-    __jst += filter.html(filter.trim(a));
+    __jst += filter._undef(filter.trim(a));
 
     return __jst;
 };
 jst._tmpl['short-filter-replace'] = function (a) {
     var __jst = '';
-    __jst += filter.html(filter.replace(a,'1', '0'));
+    __jst += filter._undef(filter.replace(a,'1', '0'));
 
     return __jst;
 };
 jst._tmpl['short-filter-trim-replace'] = function (a) {
     var __jst = '';
-    __jst += filter.html(filter.replace(filter.trim(a),'1', '0'));
+    __jst += filter._undef(filter.replace(filter.trim(a),'1', '0'));
 
     return __jst;
 };
 jst._tmpl['short-filter-trim-replace-trim'] = function (a) {
+    var __jst = '';
+    __jst += filter._undef(filter.trim(filter.replace(filter.trim(a),'1', ' ')));
+
+    return __jst;
+};
+jst._tmpl['escape-html-short-filter-trim'] = function (a) {
+    var __jst = '';
+    __jst += filter.html(filter.trim(a));
+
+    return __jst;
+};
+jst._tmpl['escape-html-short-filter-replace'] = function (a) {
+    var __jst = '';
+    __jst += filter.html(filter.replace(a,'1', '0'));
+
+    return __jst;
+};
+jst._tmpl['escape-html-short-filter-trim-replace'] = function (a) {
+    var __jst = '';
+    __jst += filter.html(filter.replace(filter.trim(a),'1', '0'));
+
+    return __jst;
+};
+jst._tmpl['escape-html-short-filter-trim-replace-trim'] = function (a) {
     var __jst = '';
     __jst += filter.html(filter.trim(filter.replace(filter.trim(a),'1', ' ')));
 
@@ -695,33 +725,33 @@ jst._tmpl['with-4-params'] = function (a, b, c, d) {
     return __jst;
 };
 jst._tmpl['default-params'] = function (x, y, z) {
-    y = typeof y == "undefined" ? 2 : y;
     z = typeof z == "undefined" ? "world" : z;
+    y = typeof y == "undefined" ? 2 : y;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y + 2) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-array'] = function (x, y, z) {
-    y = typeof y == "undefined" ? [1,3,4] : y;
     z = typeof z == "undefined" ? "world" : z;
+    y = typeof y == "undefined" ? [1,3,4] : y;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y[1]) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-object'] = function (x, y, z) {
-    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
     z = typeof z == "undefined" ? "world" : z;
+    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
-    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
-    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
     z = typeof z == "undefined" ? {"x":2,"y":4,"z":5} : z;
+    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
+    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 

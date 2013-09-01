@@ -12,7 +12,7 @@ var vm = require('vm');
 var program = require('commander');
 
 var Compiler = {
-    version: '1.7.5',
+    version: '2.0.1',
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов
@@ -321,26 +321,15 @@ var Compiler = {
         var that = this;
         var js = this.defaultValues(data.params);
         var content = this.fixQuotes(data.content);
-        var concatenation = {
-            'string': {
-                init: "''",
-                push: "__jst += '",
-                above: "' + __jst-empty-quotes__ filter._undef($1) + '",
-                aboveHTML: "' + __jst-empty-quotes__ filter.html($1) + '",
-                close: "' __jst-empty-quotes__;",
-                ret: "__jst"
-            },
-            'array': {
-                init: "[]",
-                push: "__jst.push('",
-                above: "', filter._undef($1), '",
-                aboveHTML: "', filter.html($1), '",
-                close: "');",
-                ret: "__jst.join('')"
-            }
+        var con = {
+            init: "''",
+            push: "__jst += '",
+            above: "' + __jst-empty-quotes__ filter._undef($1) + '",
+            aboveHTML: "' + __jst-empty-quotes__ filter.html($1) + '",
+            close: "' __jst-empty-quotes__;",
+            ret: "__jst"
         };
         
-        var con = concatenation['string'];
         js += tab + "var __jst = " + con.init + ";\n";
         
         if (data.hasBlock) {
@@ -350,25 +339,26 @@ var Compiler = {
         
         js += tab + con.push + content
               .replace(/$\r|[^n]\r/mg, '\n') // Конвертация текстов MACOS
-              .replace(/\r\n/g, "\n")
-              .replace(/[\t\n]/g, " ") // замена переносов строки и таба на пробелы
-              .replace(/ +(<%[^=!\+])/g, '$1') // удаление пробелов между HTML-тегами и тегами шаблонизатора
-              .replace(/ +(<%=[^\+])/g, '$1')
-              .replace(/ +(<%![^\+])/g, '$1')
-              .replace(/([^\+]%>) +/g, '$1')
-              .replace(/<%(=|!)?(\+|-)/g, '<%$1')
-              .replace(/(\+|-)%>/g, '%>')
-              .replace(/(<%) {1,}/g, '$1 ') // удаление пробелов в начале тегов шаблонизатора
-              .replace(/ {1,}(%>)/g, '$1')// удаление пробелов в конце тегов шаблонизатора
+              .replace(/[\n\t]/g, ' ')
+              .replace(/\r\n/g, "\n") // Приводим к одному виду окончания строк
+              .replace(/\s+(<%[^=!\+])/g, '$1') // удаление пробелов между HTML-тегами и тегами шаблонизатора
+              .replace(/\s+(<%=[^\+])/g, '$1') // удаление пробелов перед jst-тегами - <%=-
+              .replace(/\s+(<%![^\+])/g, '$1') // удаление пробелов перед jst-тегами - <%!-
+              .replace(/([^\+]%>) +/g, '$1') // удаление пробелов после jst-тегов - -%>
+              .replace(/<%(=|!)?(\+|-)/g, '<%$1') // удаление режима пробелов в начале jst-тега
+              .replace(/(\+|-)%>/g, '%>') // удаление режима пробелов в конце jst-тега
+              .replace(/(<%)\s+/g, '$1 ') // удаление пробелов в начале тегов шаблонизатора
+              .replace(/\s+(%>)/g, '$1')// удаление пробелов в конце тегов шаблонизатора
               .replace(/<%#.*?%>/g, '') // удаление комментариев
               .replace(/<%(=|!)? *?%>/g, '') // удаление пустых тегов <% %>, <%= %>, <%! %>
               .split("<%").join("\t")
               .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-              .replace(/\t! ?(.*?)%>/g, function () {
-                return con.above.replace(/\$1/, that.addFilters(arguments[1]))
+              // короткая форма фильтров
+              .replace(/\t! ?(.*?)%>/g, function () { 
+                return con.above.replace(/\$1/, that.addShortFilters(arguments[1]))
               })
               .replace(/\t= ?(.*?)%>/g, function () {
-                return con.aboveHTML.replace(/\$1/, that.addFilters(arguments[1]));
+                return con.aboveHTML.replace(/\$1/, that.addShortFilters(arguments[1]));
               })
               .split("\t").join("';\n")
               .split("%>").join('\n' + tab + con.push)
@@ -417,7 +407,7 @@ var Compiler = {
         return newBuf.join('<%');
     },
     // Добавить фильтры
-    addFilters: function (str) {
+    addShortFilters: function (str) {
         var res = '';
         var buf = str.split(/(?:[^|])\|(?!\|)/);
         // Если нет фильтров, то возвращаем строку как есть
