@@ -304,9 +304,7 @@ var Compiler = {
     },
     // Построение из шаблона строки (без логики и вставки переменных)
     withoutInlineJS: function (data) {
-        var text = '\'' + this.fixQuotes(data.content)
-            .replace(/\r\n/g, "\n")
-            .replace(/[\r\t\n]/g, " ") + '\'';
+        var text = '\'' + this._fixLineEnd(this.fixQuotes(data.content)).replace(/[\r\t\n]/g, " ") + '\'';
         var code = data.namespace + '[\'' + this.quot(data.name) + '\'] = ' + text + ';';
         
         return {
@@ -317,10 +315,8 @@ var Compiler = {
     },
     // Построение из шаблона js-фунцию
     withInlineJS: function (data) {
-        var tab = this._tab;
         var that = this;
-        var js = this.defaultValues(data.params);
-        var content = this.fixQuotes(data.content);
+        var tab = this._tab;
         var con = {
             init: "''",
             push: "__jst += '",
@@ -329,41 +325,40 @@ var Compiler = {
             close: "' __jst-empty-quotes__;",
             ret: "__jst"
         };
-        
-        js += tab + "var __jst = " + con.init + ";\n";
+        var js = this.defaultValues(data.params) + tab + "var __jst = " + con.init + ";\n";
         
         if (data.hasBlock) {
             js += 'var __jst_template = \'' + this.quot(data.template) + '\';\n';
             js += 'var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; \n';
         }
         
-        js += tab + con.push + content
-              .replace(/$\r|[^n]\r/mg, '\n') // Конвертация текстов MACOS
-              .replace(/[\n\t]/g, ' ')
-              .replace(/\r\n/g, "\n") // Приводим к одному виду окончания строк
-              .replace(/\s+(<%[^=!\+])/g, '$1') // удаление пробелов между HTML-тегами и тегами шаблонизатора
-              .replace(/\s+(<%=[^\+])/g, '$1') // удаление пробелов перед jst-тегами - <%=-
-              .replace(/\s+(<%![^\+])/g, '$1') // удаление пробелов перед jst-тегами - <%!-
-              .replace(/([^\+]%>) +/g, '$1') // удаление пробелов после jst-тегов - -%>
-              .replace(/<%(=|!)?(\+|-)/g, '<%$1') // удаление режима пробелов в начале jst-тега
-              .replace(/(\+|-)%>/g, '%>') // удаление режима пробелов в конце jst-тега
-              .replace(/(<%)\s+/g, '$1 ') // удаление пробелов в начале тегов шаблонизатора
-              .replace(/\s+(%>)/g, '$1')// удаление пробелов в конце тегов шаблонизатора
-              .replace(/<%#.*?%>/g, '') // удаление комментариев
-              .replace(/<%(=|!)? *?%>/g, '') // удаление пустых тегов <% %>, <%= %>, <%! %>
-              .split("<%").join("\t")
-              .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-              // короткая форма фильтров
-              .replace(/\t! ?(.*?)%>/g, function () { 
+        var content = this._fixLineEnd(this.fixQuotes(data.content));
+        content = content
+            .replace(/[\n\t]/g, ' ')
+            .replace(/\s+(<%[^=!\+])/g, '$1') // удаление пробелов между HTML-тегами и тегами шаблонизатора
+            .replace(/\s+(<%=[^\+])/g, '$1') // удаление пробелов перед jst-тегами - <%=-
+            .replace(/\s+(<%![^\+])/g, '$1') // удаление пробелов перед jst-тегами - <%!-
+            .replace(/([^\+]%>) +/g, '$1') // удаление пробелов после jst-тегов - -%>
+            .replace(/<%(=|!)?(\+|-)/g, '<%$1') // удаление режима пробелов в начале jst-тега
+            .replace(/(\+|-)%>/g, '%>') // удаление режима пробелов в конце jst-тега
+            .replace(/(<%)\s+/g, '$1 ') // удаление пробелов в начале внутри jst-тегов шаблонизатора
+            .replace(/\s+(%>)/g, '$1')// удаление пробелов в конце внутри jst-тегов шаблонизатора
+            .replace(/<%#.*?%>/g, '') // удаление комментариев
+            .replace(/<%(=|!)? *?%>/g, '') // удаление пустых тегов <% %>, <%= %>, <%! %>
+            .split("<%").join("\t")
+            .replace(/((^|%>)[^\t]*)'/g, "$1\r")
+             // короткая форма фильтров
+            .replace(/\t! ?(.*?)%>/g, function () { 
                 return con.above.replace(/\$1/, that.addShortFilters(arguments[1]))
-              })
-              .replace(/\t= ?(.*?)%>/g, function () {
+            })
+            .replace(/\t= ?(.*?)%>/g, function () {
                 return con.aboveHTML.replace(/\$1/, that.addShortFilters(arguments[1]));
-              })
-              .split("\t").join("';\n")
-              .split("%>").join('\n' + tab + con.push)
-              .split("\r").join("'")
-            + con.close + "\n\n" + tab + "return " + con.ret + ";";
+            })
+            .split("\t").join("';\n")
+            .split("%>").join('\n' + tab + con.push)
+            .split("\r").join("'");
+        
+        js += tab + con.push + content + con.close + "\n\n" + tab + "return " + con.ret + ";";
             
         js = js.replace(/\+ \'\' \+ __jst-empty-quotes__ /g, '+ ');    
         js = js.replace(/= \'\' \+ __jst-empty-quotes__ /g, '= ');    
@@ -382,6 +377,13 @@ var Compiler = {
             normal: code,
             withoutNamespace: text
         }
+    },
+    // Приводим к одному виду окончания строк
+    _fixLineEnd: function (text) {
+        text = text.replace(/\r\n/g, '\n'); // фикс для Windows
+        text = text.replace(/$\r|\r[^n]/mg, '\n'); // фикс для MacOS
+        
+        return text;
     },
     // Экранирование одинарной кавычки
     quot: function (text) {
