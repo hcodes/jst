@@ -304,7 +304,7 @@ var Compiler = {
     },
     // Построение из шаблона строки (без логики и вставки переменных)
     withoutInlineJS: function (data) {
-        var text = '\'' + this._fixLineEnd(this.fixQuotes(data.content)).replace(/[\r\t\n]/g, " ") + '\'';
+        var text = '\'' + this._fixLineEnd(this.fixQuotes(data.content)).replace(/[\t\n]/g, " ") + '\'';
         var code = data.namespace + '[\'' + this.quot(data.name) + '\'] = ' + text + ';';
         
         return {
