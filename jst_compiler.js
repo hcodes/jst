@@ -12,7 +12,7 @@ var vm = require('vm');
 var program = require('commander');
 
 var Compiler = {
-    version: '2.0.2',
+    version: '2.0.3',
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов
