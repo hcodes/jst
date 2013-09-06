@@ -683,3 +683,5 @@ if (files.length) {
 } else {
     console.log('Файлы с шаблонами (*.jst) не найдены.');
 }
+
+process.exit(0);
