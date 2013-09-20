@@ -262,10 +262,6 @@ jst.filter = {
         
        return str.substr(0, length);    
     },
-    // Удаление пробелов с начала и конца строки
-    trim: function (str) {
-        return this._undef(str).trim();
-    },
     // Перевод символов в верхний регистр
     upper: function (str) {
         return this._undef(str).toUpperCase();
@@ -314,10 +310,28 @@ jst.filter = {
     replace: function (str, search, replace) {
         return this._undef(str).split(search).join(replace);
     },
+    // Удаление пробелов с начала и конца строки
+    trim: function (str) {
+        return this._trim(this._undef(str));
+    },
+    // Удаление пробелов с начала
+    ltrim: function (str) {
+        return this._undef(str).replace(/^\s+/g, '');
+    },
+    // Удаление пробелов c конца строки
+    rtrim: function (str) {
+        return this._undef(str).replace(/\s+$/g, '');
+    },
     // Замена undefined или null на пустую строку (для служебного использования)
     _undef: function (str) {
         return typeof str === 'undefined' || str === null ? '' : '' + str;
     }
+};
+
+jst.filter._trim = String.prototype.trim ? function (str) {
+    return str.trim();
+} : function (str) {
+    return str.replace(/^\s+|\s+$/g, '');
 };
 
 /**
@@ -520,6 +534,18 @@ jst._tmpl['filter-truncate'] = function (text, length) {
 jst._tmpl['filter-trim'] = function (a) {
     var __jst = '';
     __jst += filter.html(filter.trim(a));
+
+    return __jst;
+};
+jst._tmpl['filter-ltrim'] = function (a) {
+    var __jst = '';
+    __jst += filter.html(filter.ltrim(a));
+
+    return __jst;
+};
+jst._tmpl['filter-rtrim'] = function (a) {
+    var __jst = '';
+    __jst += filter.html(filter.rtrim(a));
 
     return __jst;
 };
@@ -744,9 +770,9 @@ jst._tmpl['default-params-object'] = function (x, y, z) {
     return __jst;
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
+    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
     z = typeof z == "undefined" ? {"x":2,"y":4,"z":5} : z;
     y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
-    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 

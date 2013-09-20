@@ -77,6 +77,20 @@ test('Фильтры', function () {
     equal(jst('filter-trim', null), '', 'trim, null');    
     equal(jst('filter-trim', undefined), '', 'trim, undefined');    
     
+    equal(jst('filter-ltrim', '      Hello world!'), 'Hello world!', 'ltrim, string');    
+    equal(jst('filter-ltrim', 123456), '123456', 'ltrim, number');    
+    equal(jst('filter-ltrim', {}), '[object Object]', 'ltrim, object');    
+    equal(jst('filter-ltrim', ''), '', 'ltrim, ""');    
+    equal(jst('filter-ltrim', null), '', 'ltrim, null');    
+    equal(jst('filter-ltrim', undefined), '', 'ltrim, undefined');    
+
+    equal(jst('filter-rtrim', 'Hello world!             '), 'Hello world!', 'rtrim, string');    
+    equal(jst('filter-rtrim', 123456), '123456', 'rtrim, number');    
+    equal(jst('filter-rtrim', {}), '[object Object]', 'rtrim, object');    
+    equal(jst('filter-rtrim', ''), '', 'rtrim, ""');    
+    equal(jst('filter-rtrim', null), '', 'rtrim, null');    
+    equal(jst('filter-rtrim', undefined), '', 'rtrim, undefined');    
+    
     equal(jst('filter-upper', 'hello world!'), 'HELLO WORLD!', 'upper, string');    
     equal(jst('filter-upper', 123456), '123456', 'upper, number');    
     equal(jst('filter-upper', {}), '[OBJECT OBJECT]', 'upper, object');    

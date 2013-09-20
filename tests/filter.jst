@@ -19,7 +19,15 @@
 </template>
 
 <template name="filter-trim" params="a">
-    <%= filter.trim(a) %>
+    <%= a | trim %>
+</template>
+
+<template name="filter-ltrim" params="a">
+    <%= a | ltrim %>
+</template>
+
+<template name="filter-rtrim" params="a">
+    <%= a | rtrim %>
 </template>
 
 <template name="filter-upper" params="a">
