@@ -262,10 +262,6 @@ jst.filter = {
         
        return str.substr(0, length);    
     },
-    // Удаление пробелов с начала и конца строки
-    trim: function (str) {
-        return this._undef(str).trim();
-    },
     // Перевод символов в верхний регистр
     upper: function (str) {
         return this._undef(str).toUpperCase();
@@ -314,10 +310,28 @@ jst.filter = {
     replace: function (str, search, replace) {
         return this._undef(str).split(search).join(replace);
     },
+    // Удаление пробелов с начала и конца строки
+    trim: function (str) {
+        return this._trim(this._undef(str));
+    },
+    // Удаление пробелов с начала
+    ltrim: function (str) {
+        return this._undef(str).replace(/^\s+/g, '');
+    },
+    // Удаление пробелов c конца строки
+    rtrim: function (str) {
+        return this._undef(str).replace(/\s+$/g, '');
+    },
     // Замена undefined или null на пустую строку (для служебного использования)
     _undef: function (str) {
         return typeof str === 'undefined' || str === null ? '' : '' + str;
     }
+};
+
+jst.filter._trim = String.prototype.trim ? function (str) {
+    return str.trim();
+} : function (str) {
+    return str.replace(/^\s+|\s+$/g, '');
 };
 
 /**
