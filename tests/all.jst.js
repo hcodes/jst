@@ -405,7 +405,7 @@ jst.bem = function (block, params) {
     return BEMHTML.apply(BEM.JSON.build(params));
 };
 
-/* Шаблон автоматически сгенерирован с помощью jst, не редактируйте его. */
+undefined/* Шаблон автоматически сгенерирован с помощью jst, не редактируйте его. */
 (function () {
     var forEach = jst.forEach;
     var filter = jst.filter;
@@ -770,8 +770,8 @@ jst._tmpl['default-params-object'] = function (x, y, z) {
     return __jst;
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
-    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
     z = typeof z == "undefined" ? {"x":2,"y":4,"z":5} : z;
+    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
     y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
