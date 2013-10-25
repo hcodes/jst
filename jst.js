@@ -322,6 +322,38 @@ jst.filter = {
     rtrim: function (str) {
         return this._undef(str).replace(/\s+$/g, '');
     },
+    // Добавить текст перед вставкой текста
+    prepend: function (str, text) {
+        return this._undef(text) + this._undef(str);
+    },
+    // Добавить текст после вставкой текста
+    append: function (str, text) {
+        return this._undef(str) + this._undef(text);
+    },
+    // Сгруппировать массив по разделителю
+    join: function (obj, separator) {
+        if (Array.isArray(obj)) {
+            return obj.join(separator);
+        }
+        
+        return this._undef(obj);
+    },
+    // Вывод JSON
+    json: function (obj) {
+        if (typeof JSON) {
+            return JSON.stringify(obj);
+        }
+        
+        return obj;
+    },
+    // Логирование
+    log: function (obj) {
+        if (typeof console) {
+            console.log(arguments);
+        }
+        
+        return obj;
+    },
     // Замена undefined или null на пустую строку (для служебного использования)
     _undef: function (str) {
         return typeof str === 'undefined' || str === null ? '' : '' + str;
@@ -391,6 +423,8 @@ if (typeof jQuery != 'undefined') {
         this.html(jst.apply(this, arguments));
         return this;
     };
+    
+    jQuery.fn.jstForEach = jst.forEach;
 }
 
 // Для работы в nodejs
