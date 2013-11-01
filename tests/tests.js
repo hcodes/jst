@@ -9,7 +9,8 @@ test('Основное', function () {
     equal(jst('empty-string'), '', 'Вставка ничего даёт пустую строку.');
     
     equal(jst('quotes'), '\'\'\'', 'Одинарные кавычки.');
-    equal(jst('quotes-with-slash', '123'), '\\\'\\\'\\\'123\'\'\'\' \\\'\\\'\\\'', 'Одинарные кавычки с обратным слешом.');
+
+    equal(jst('quotes-with-slash', '123'), "\\\'\\\'\\\'123&#39;\'\'\' \\\'\\\'\\\'", 'Одинарные кавычки с обратным слешом.');
     
     equal(typeof jst.get('without-inline-js'), 'string', 'Шаблон без вставки значение и инлайн-js компилируется в строку.');
     equal(typeof jst.get('with-inline-js'), 'function', 'Шаблон со вставкой значений или инлайн-js компилируется в функцию.');
@@ -35,7 +36,7 @@ test('Параметры', function () {
 });
 
 test('Фильтры', function () {
-    equal(jst('filter-html', '<div class="test">&&&</div>'), '&lt;div class=&quot;test&quot;&gt;&amp;&amp;&amp;&lt;/div&gt;', 'html, string');    
+    equal(jst('filter-html', '<div class="test">&&&</div>'), '&lt;div class=&quot;test&quot;&gt;&amp;&amp;&amp;&lt;&#x2F;div&gt;', 'html, string');    
     equal(jst('filter-html', 123), '123', 'html, number');    
     equal(jst('filter-html', {}), '[object Object]', 'html, object');    
     equal(jst('filter-html', ''), '', 'html, ""');    
@@ -77,6 +78,20 @@ test('Фильтры', function () {
     equal(jst('filter-trim', null), '', 'trim, null');    
     equal(jst('filter-trim', undefined), '', 'trim, undefined');    
     
+    equal(jst('filter-first', 'Hello world!'), 'H', 'first, string');    
+    equal(jst('filter-first', ['first', 'second']), 'first', 'first, array');    
+    equal(jst('filter-first', true), 'true', 'first, boolean');    
+    equal(jst('filter-first', 123), '123', 'first, number');    
+    equal(jst('filter-first', null), '', 'first, null');    
+    equal(jst('filter-first', undefined), '', 'first, undefined');    
+    
+    equal(jst('filter-last', 'Hello world!'), '!', 'last, string');    
+    equal(jst('filter-last', ['first', 'second']), 'second', 'last, array');    
+    equal(jst('filter-last', true), 'true', 'last, boolean');    
+    equal(jst('filter-last', 123), '123', 'last, number');    
+    equal(jst('filter-last', null), '', 'last, null');    
+    equal(jst('filter-last', undefined), '', 'last, undefined');    
+
     equal(jst('filter-ltrim', '      Hello world!'), 'Hello world!', 'ltrim, string');    
     equal(jst('filter-ltrim', 123456), '123456', 'ltrim, number');    
     equal(jst('filter-ltrim', {}), '[object Object]', 'ltrim, object');    
@@ -163,10 +178,10 @@ test('Фильтры', function () {
     equal(jst('short-filter-trim-replace', '  <p>123</p>  '), '<p>023</p>', 'Краткая запись вложенных фильтров: trim | replace(..., ...)');    
     equal(jst('short-filter-trim-replace-trim', '  <p>123</p>  '), '<p> 23</p>', 'Краткая запись вложенных фильтров: trim | replace(..., ...) | trim');    
 
-    equal(jst('escape-html-short-filter-trim', '   <p>123</p>   '), '&lt;p&gt;123&lt;/p&gt;', 'Экранирование html, краткая запись фильтра trim');    
-    equal(jst('escape-html-short-filter-replace', '  <p>123</p>  '), '  &lt;p&gt;023&lt;/p&gt;  ', 'Экранирование html, краткая запись фильтра replace');    
-    equal(jst('escape-html-short-filter-trim-replace', '  <p>123</p>  '), '&lt;p&gt;023&lt;/p&gt;', 'Экранирование html, краткая запись вложенных фильтров: trim | replace(..., ...)');    
-    equal(jst('escape-html-short-filter-trim-replace-trim', '  <p>123</p>  '), '&lt;p&gt; 23&lt;/p&gt;', 'Экранирование html, краткая запись вложенных фильтров: trim | replace(..., ...) | trim');    
+    equal(jst('escape-html-short-filter-trim', '   <p>123</p>   '), '&lt;p&gt;123&lt;&#x2F;p&gt;', 'Экранирование html, краткая запись фильтра trim');    
+    equal(jst('escape-html-short-filter-replace', '  <p>123</p>  '), '  &lt;p&gt;023&lt;&#x2F;p&gt;  ', 'Экранирование html, краткая запись фильтра replace');    
+    equal(jst('escape-html-short-filter-trim-replace', '  <p>123</p>  '), '&lt;p&gt;023&lt;&#x2F;p&gt;', 'Экранирование html, краткая запись вложенных фильтров: trim | replace(..., ...)');    
+    equal(jst('escape-html-short-filter-trim-replace-trim', '  <p>123</p>  '), '&lt;p&gt; 23&lt;&#x2F;p&gt;', 'Экранирование html, краткая запись вложенных фильтров: trim | replace(..., ...) | trim');    
 });
 
 test('Блоки', function () {

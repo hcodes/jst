@@ -66,6 +66,14 @@
     <%= filter.replace(text, search, replace) %>
 </template>
 
+<template name="filter-first" params="text">
+    <%= text | first %>
+</template>
+
+<template name="filter-last" params="text">
+    <%= text | last %>
+</template>
+
 <template name="filter-_undef" params="a">
     <%= filter._undef(a) %>
 </template>

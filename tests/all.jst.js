@@ -68,7 +68,7 @@ jst.forEach = function (template, data, context) {
     var text = [];
     var i, len = data.length;
     context = context || {};
-    if (Object.prototype.toString.call(data) === "[object Array]") { // Array.isArray
+    if (jst.isArray(data)) {
         for (i = 0; i < len; i++) {
             text.push(jst.call(context, template, data[i], i, data));
         }
@@ -96,7 +96,7 @@ jst.forEachBlock = function (template, blockName, data, context) {
     var text = [];
     var i, len = data.length;
     context = context || {};
-    if (Object.prototype.toString.call(data) === "[object Array]") { // Array.isArray
+    if (jst.isArray(data)) {
         for (i = 0; i < len; i++) {
             text.push(jst.block.call(context, template, blockName, data[i], i, data));
         }
@@ -110,7 +110,6 @@ jst.forEachBlock = function (template, blockName, data, context) {
     
     return text.join('');
 };
-
 
 /**
  * Инициализация шаблона с блоками
@@ -233,20 +232,6 @@ jst._guid = 0;
  * @namespace 
 */
 jst.filter = {
-    // Экранирование HTML
-    html: function (str) {
-        return this._undef(str).replace(/&/g, '&amp;')
-            .replace(/"/g, '&quot;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');    
-    },    
-    // Разэкранирование HTML
-    unhtml: function (str) {
-        return this._undef(str).replace(/\&quot;/g, '"')
-            .replace(/\&gt;/g, '>')
-            .replace(/\&lt;/g, '<')
-            .replace(/\&amp;/g, '&');
-    },
     // Удаление HTML-тегов
     stripTags: function (str) {
         return  this._undef(str).replace(/<\/?[^>]+>/g, '');
@@ -261,6 +246,22 @@ jst.filter = {
         if (!str || str.length <= length) { return str; }
         
        return str.substr(0, length);    
+    },
+    // Первый элемент для массива, для строки первый символ
+    first: function (obj) {
+        if (jst.isArray(obj) || typeof obj == 'string') {
+            return obj[0];
+        }
+        
+        return this._undef(obj);
+    },
+    // Последний элемент для массива, для строки последний символ
+    last: function (obj) {
+        if (jst.isArray(obj) || typeof obj == 'string') {
+            return obj[obj.length - 1];
+        }
+        
+        return this._undef(obj);
     },
     // Перевод символов в верхний регистр
     upper: function (str) {
@@ -322,16 +323,96 @@ jst.filter = {
     rtrim: function (str) {
         return this._undef(str).replace(/\s+$/g, '');
     },
+    // Добавить текст перед вставкой текста
+    prepend: function (str, text) {
+        return this._undef(text) + this._undef(str);
+    },
+    // Добавить текст после вставкой текста
+    append: function (str, text) {
+        return this._undef(str) + this._undef(text);
+    },
+    // Сгруппировать массив по разделителю
+    join: function (obj, separator) {
+        if (jst.isArray(obj)) {
+            return obj.join(separator);
+        }
+        
+        return this._undef(obj);
+    },
+    // Вывод JSON
+    json: function (obj) {
+        if (typeof JSON !== 'undefined') {
+            return JSON.stringify(obj);
+        }
+        
+        return obj;
+    },
+    // Логирование
+    log: function (obj) {
+        if (typeof console !== 'undefined') {
+            console.log(arguments);
+        }
+        
+        return obj;
+    },
     // Замена undefined или null на пустую строку (для служебного использования)
     _undef: function (str) {
         return typeof str === 'undefined' || str === null ? '' : '' + str;
     }
 };
 
+(function () {
+    var entityMap = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        '\'': '&#39;',
+        '/': '&#x2F;'
+    };
+    
+    var unEntityMap = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#39;': '\'',
+        '&#x2F;': '/'
+    };
+    
+    // Экранирование HTML
+    jst.filter.html = function (str) {
+        return this._undef(str).replace(/[&<>"'\/]/g, function (s) {
+            return entityMap[s];
+        });
+    };
+    
+    // Разэкранирование HTML
+    jst.filter.unhtml = function (str) {
+        return this._undef(str).replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&#x2F;/g, function (s) {
+            return unEntityMap[s];
+        });
+    };
+})();
+
+/**
+ * Удаление пробелов с начала и конца строки
+ * @param {string} str 
+ * @param {boolean}
+*/
 jst.filter._trim = String.prototype.trim ? function (str) {
     return str.trim();
 } : function (str) {
     return str.replace(/^\s+|\s+$/g, '');
+};
+
+/**
+ * Проверка на массив
+ * @param {*} obj
+ * @param {boolean}
+*/
+jst.isArray = Array.isArray || function (obj) {
+    return Object.prototype.toString.call(obj) === "[object Array]";
 };
 
 /**
@@ -391,6 +472,8 @@ if (typeof jQuery != 'undefined') {
         this.html(jst.apply(this, arguments));
         return this;
     };
+    
+    jQuery.fn.jstForEach = jst.forEach;
 }
 
 // Для работы в nodejs
@@ -405,7 +488,8 @@ jst.bem = function (block, params) {
     return BEMHTML.apply(BEM.JSON.build(params));
 };
 
-undefined/* Шаблон автоматически сгенерирован с помощью jst, не редактируйте его. */
+
+/* Шаблон автоматически сгенерирован с помощью jst, не редактируйте его. */
 (function () {
     var forEach = jst.forEach;
     var filter = jst.filter;
@@ -603,6 +687,18 @@ jst._tmpl['filter-replace'] = function (text, search, replace) {
 
     return __jst;
 };
+jst._tmpl['filter-first'] = function (text) {
+    var __jst = '';
+    __jst += filter.html(filter.first(text));
+
+    return __jst;
+};
+jst._tmpl['filter-last'] = function (text) {
+    var __jst = '';
+    __jst += filter.html(filter.last(text));
+
+    return __jst;
+};
 jst._tmpl['filter-_undef'] = function (a) {
     var __jst = '';
     __jst += filter.html(filter._undef(a));
@@ -746,33 +842,33 @@ jst._tmpl['with-4-params'] = function (a, b, c, d) {
     return __jst;
 };
 jst._tmpl['default-params'] = function (x, y, z) {
-    z = typeof z == "undefined" ? "world" : z;
-    y = typeof y == "undefined" ? 2 : y;
+    z = typeof z === "undefined" ? "world" : z;
+    y = typeof y === "undefined" ? 2 : y;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y + 2) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-array'] = function (x, y, z) {
-    z = typeof z == "undefined" ? "world" : z;
-    y = typeof y == "undefined" ? [1,3,4] : y;
+    z = typeof z === "undefined" ? "world" : z;
+    y = typeof y === "undefined" ? [1,3,4] : y;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y[1]) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-object'] = function (x, y, z) {
-    z = typeof z == "undefined" ? "world" : z;
-    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
+    z = typeof z === "undefined" ? "world" : z;
+    y = typeof y === "undefined" ? {"x":1,"y":3,"z":4} : y;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
-    z = typeof z == "undefined" ? {"x":2,"y":4,"z":5} : z;
-    w = typeof w == "undefined" ? {"x":"a","y":{"a":1}} : w;
-    y = typeof y == "undefined" ? {"x":1,"y":3,"z":4} : y;
+    z = typeof z === "undefined" ? {"x":2,"y":4,"z":5} : z;
+    y = typeof y === "undefined" ? {"x":1,"y":3,"z":4} : y;
+    w = typeof w === "undefined" ? {"x":"a","y":{"a":1}} : w;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 
