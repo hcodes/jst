@@ -20,6 +20,7 @@ var Compiler = {
         
         var res = [];
         
+        
         // Для размещения шаблонов из нескольких файлов в один общий файл
         if (Array.isArray(text)) {
             text.forEach(function (el) {
@@ -546,7 +547,7 @@ var Compiler = {
             script.runInNewContext(sandbox);
             for (var i in sandbox) {
                 if (sandbox.hasOwnProperty(i) && sandbox[i] != undefined) {
-                    res += tab + i + ' = typeof ' + i + ' == "undefined" ? ' + JSON.stringify(sandbox[i]) + ' : ' + i + ';\n';
+                    res += tab + i + ' = typeof ' + i + ' === "undefined" ? ' + JSON.stringify(sandbox[i]) + ' : ' + i + ';\n';
                 }
             }
         }
@@ -575,7 +576,7 @@ var Compiler = {
         return auto + text + '\n\n' + auto;
     },
     includeKernel: function (text) {
-        return fs.readFileSync(__dirname + '/jst.js') + '\n\n' + text;
+        return fs.readFileSync(__dirname + '/jst.js') + '\n\n' + (text || '');
     }
 };
 

@@ -6,7 +6,7 @@
     },
     "name": "jst_compiler",
     "description": "Client and server template engine at JavaScript",
-    "version": "2.0.5",
+    "version": "2.0.7",
     "homepage": "https://github.com/hcodes/jst",
     "repository": {
         "type": "git",
