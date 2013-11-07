@@ -40,10 +40,13 @@ var Compiler = {
         // вынесим их в одно место через замыкание
         if (res.search(/function/) != -1) {
             res = '\n(function () {' +
-                ['', 'var forEach = jst.forEach;',
+                ['',
+                    'var forEach = jst.forEach;',
                     'var filter = jst.filter;',
                     'var block = jst.block;',
-                    'var template = jst;'].join('\n    ') + res + '\n\n})();';
+                    'var template = jst;',
+                    'var bem = jst.bem;'
+                ].join('\n    ') + res + '\n\n})();';
         }
         
         var outText = this.autoGen(res);
