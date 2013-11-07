@@ -462,6 +462,11 @@ jst.has = function (name) {
     return !!jst.get(name);
 };
 
+// Хелпер для BEMHTML
+jst.bem = function (bemjson) {
+    return BEMHTML.apply(BEM.JSON.build(bemjson));
+};
+
 /**
  * jst-хелпер для jQuery
  * @param {string} template - название шаблона
@@ -480,10 +485,3 @@ if (typeof jQuery != 'undefined') {
 if (typeof global != 'undefined') {
     global.jst = jst;
 }
-
-// Хелпер для BEMHTML
-jst.bem = function (block, params) {
-    params = params || {};
-    params.block = block;
-    return BEMHTML.apply(BEM.JSON.build(params));
-};
