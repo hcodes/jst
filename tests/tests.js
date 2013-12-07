@@ -192,6 +192,19 @@ test('Блоки', function () {
     equal(jst('block3x'), 'Blocks:block1x block1<br />block2x block2<br />block3x block3', 'Наследование 2 уровня вложенности');
 });
 
+test('jquery', function () {
+    $('body').append('<div id="test-jst"></div>');
+    
+    var el = $('#test-jst');
+    el.jst('jquery', 123);
+    equal(jst('jquery', '123'), el.html(), '$(\'...\').jst()');
+    
+    el.jstEach('each', [1, 2, 3]);
+    equal(jst.each('each', [1, 2, 3]), el.html(), '$(\'...\').jstEach()');
+    
+    $('#test-jst').remove();
+});
+
 test('Методы', function () {
     equal(jst.attr('name', 'test'), ' name="test" ', 'jst.attr -> name="test"');
     equal(jst.attr('name', '"\'<html>\'"'), ' name=\"&quot;&#39;&lt;html&gt;&#39;&quot;\" ', 'jst.attr -> name="\'<html>\'"');
@@ -203,5 +216,5 @@ test('Методы', function () {
     equal(jst('each-inside', [1, 2, 3]), '1,0;2,1;3,2;', '<%= each() %>');
     
     equal(jst.eachBlock('each-block', 'first', [1, 2, 3]), '1,0;2,1;3,2;', 'jst.block()');
-    equal(jst('each-block', 'first', [1, 2, 3]), '1,0;2,1;3,2;', '<%= eachBlock() %>');
+    equal(jst('each-block', [1, 2, 3]), '1,0;2,1;3,2;', '<%= eachBlock() %>');
 });

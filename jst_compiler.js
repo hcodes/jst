@@ -45,7 +45,6 @@ var Compiler = {
                     'var bem = jst.bem;',
                     'var block = jst.block;',
                     'var each = jst.each;',
-                    'var eachBlock = jst.eachBlock;',
                     'var filter = jst.filter;',
                     'var template = jst;'
                 ].join('\n    ') + res + '\n\n})();';
@@ -64,6 +63,7 @@ var Compiler = {
     _sameTemplateName: {},
     _sameBlockName: {},
     _extend: [],
+    _init: [],
     _build: function (text) {
         var inFile = this._inFile();
         
@@ -82,6 +82,12 @@ var Compiler = {
             var res =  this._template(el, num + 1);
             buf.push(res.error ? this.templateConsole(res.error.text) : res);
         }, this);
+        
+        this._init.forEach(function (el) {
+            buf.push(this._tab + 'jst._init(\'' + el + '\');');
+        }, this);
+        
+        this._init = [];
         
         this._extend.forEach(function (el) {
             buf.push(this._tab + 'jst._extend(\'' + el[0] + '\', \'' + el[1] + '\');');
@@ -195,6 +201,10 @@ var Compiler = {
                 bufBlock += '})();\n';
                 if (extend) {
                     this._extend.push([name, extend]);
+                }
+                
+                if (hasBlock && !extend) {
+                    this._init.push(name);
                 }
                 
                 return bufBlock;

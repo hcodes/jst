@@ -515,7 +515,6 @@ if (typeof global != 'undefined') {
     var bem = jst.bem;
     var block = jst.block;
     var each = jst.each;
-    var eachBlock = jst.eachBlock;
     var filter = jst.filter;
     var template = jst;
 
@@ -609,6 +608,8 @@ var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst
 })();
 
 jst._tmpl['nnn'] = '1 2 3 4 999';
+    jst._init('block1x');
+    jst._init('foreach-block');
     jst._extend('block2x', 'block1x');
     jst._extend('block3x', 'block2x');
 
@@ -788,6 +789,14 @@ jst._tmpl['filter-className'] = function (cl) {
     return __jst;
 };
 
+/* --- jquery.jst --- */
+jst._tmpl['jquery'] = function (content) {
+    var __jst = '';
+    __jst += filter.html(content);
+
+    return __jst;
+};
+
 /* --- main.jst --- */
 jst._tmpl['trim'] = '';
 jst._tmpl['without-trim'] = ' 123 ';
@@ -902,6 +911,7 @@ var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst
     f.extend  = '';
 })();
 
+    jst._init('each-block');
 
 /* --- params.jst --- */
 jst._tmpl['without-params'] = function () {
@@ -947,9 +957,9 @@ jst._tmpl['default-params-object'] = function (x, y, z) {
     return __jst;
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
-    w = typeof w === "undefined" ? {"x":"a","y":{"a":1}} : w;
     z = typeof z === "undefined" ? {"x":2,"y":4,"z":5} : z;
     y = typeof y === "undefined" ? {"x":1,"y":3,"z":4} : y;
+    w = typeof w === "undefined" ? {"x":"a","y":{"a":1}} : w;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 
