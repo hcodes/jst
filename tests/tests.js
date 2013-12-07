@@ -184,6 +184,8 @@ test('Фильтры', function () {
     equal(jst('escape-html-short-filter-trim-replace-trim', '  <p>123</p>  '), '&lt;p&gt; 23&lt;&#x2F;p&gt;', 'Экранирование html, краткая запись вложенных фильтров: trim | replace(..., ...) | trim');    
     
     equal(jst('filter-className', ['one', 'two', 'three']), 'one two three', 'className, cборка CSS-класса');    
+    
+    equal(jst('filter-void', [1, 2, 3]), '', 'void');
 });
 
 test('Блоки', function () {

@@ -371,6 +371,10 @@ jst.filter = {
         
         return obj;
     },
+    // Вывод пустоты (для отладки)
+    'void': function () {
+        return;
+    },
     // Построение CSS-класса для HTML-атрибута class
     className: function (arr) {
         return jst.isArray(arr) ? arr.join(' ') : arr;
@@ -788,6 +792,12 @@ jst._tmpl['filter-className'] = function (cl) {
 
     return __jst;
 };
+jst._tmpl['filter-void'] = function (data) {
+    var __jst = '';
+    __jst += filter.html(filter.void(data));
+
+    return __jst;
+};
 
 /* --- jquery.jst --- */
 jst._tmpl['jquery'] = function (content) {
@@ -957,9 +967,9 @@ jst._tmpl['default-params-object'] = function (x, y, z) {
     return __jst;
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
+    w = typeof w === "undefined" ? {"x":"a","y":{"a":1}} : w;
     z = typeof z === "undefined" ? {"x":2,"y":4,"z":5} : z;
     y = typeof y === "undefined" ? {"x":1,"y":3,"z":4} : y;
-    w = typeof w === "undefined" ? {"x":"a","y":{"a":1}} : w;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 
