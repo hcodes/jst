@@ -64,7 +64,7 @@ jst.block = function (template, name) {
  * @param {*} context - контекст
  * @return {string}
 */
-jst.forEach = function (template, data, context) {
+jst.each = function (template, data, context) {
     var text = [];
     var i, len = data.length;
     context = context || {};
@@ -92,7 +92,7 @@ jst.forEach = function (template, data, context) {
  * @param {*} context - контекст
  * @return {string}
 */
-jst.forEachBlock = function (template, blockName, data, context) {
+jst.eachBlock = function (template, blockName, data, context) {
     var text = [];
     var i, len = data.length;
     context = context || {};
@@ -110,6 +110,22 @@ jst.forEachBlock = function (template, blockName, data, context) {
     
     return text.join('');
 };
+
+/**
+ * Для удобной вставки атрибута в HTML
+ *
+ * @param {string} name - название атрибута
+ * @param {string} name - значение атрибута
+ * @return {string}
+*/
+jst.attr = function (name, value) {
+    if (name && value) {
+        return ' ' + jst.filter.html(name) + '="' + jst.filter.html(value) + '" ';
+    } else {
+        return ' ';
+    }
+};
+
 
 /**
  * Инициализация шаблона с блоками
@@ -355,6 +371,10 @@ jst.filter = {
         
         return obj;
     },
+    // Построение CSS-класса для HTML-атрибута class
+    className: function (arr) {
+        return jst.isArray(arr) ? arr.join(' ') : arr;
+    },
     // Замена undefined или null на пустую строку (для служебного использования)
     _undef: function (str) {
         return typeof str === 'undefined' || str === null ? '' : '' + str;
@@ -478,7 +498,10 @@ if (typeof jQuery != 'undefined') {
         return this;
     };
     
-    jQuery.fn.jstForEach = jst.forEach;
+    jQuery.fn.jstEach = function () {
+        this.html(jst.each.apply(this, arguments));
+        
+    };
 }
 
 // Для работы в nodejs

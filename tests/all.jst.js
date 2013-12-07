@@ -64,7 +64,7 @@ jst.block = function (template, name) {
  * @param {*} context - контекст
  * @return {string}
 */
-jst.forEach = function (template, data, context) {
+jst.each = function (template, data, context) {
     var text = [];
     var i, len = data.length;
     context = context || {};
@@ -92,7 +92,7 @@ jst.forEach = function (template, data, context) {
  * @param {*} context - контекст
  * @return {string}
 */
-jst.forEachBlock = function (template, blockName, data, context) {
+jst.eachBlock = function (template, blockName, data, context) {
     var text = [];
     var i, len = data.length;
     context = context || {};
@@ -110,6 +110,22 @@ jst.forEachBlock = function (template, blockName, data, context) {
     
     return text.join('');
 };
+
+/**
+ * Для удобной вставки атрибута в HTML
+ *
+ * @param {string} name - название атрибута
+ * @param {string} name - значение атрибута
+ * @return {string}
+*/
+jst.attr = function (name, value) {
+    if (name && value) {
+        return ' ' + jst.filter.html(name) + '="' + jst.filter.html(value) + '" ';
+    } else {
+        return ' ';
+    }
+};
+
 
 /**
  * Инициализация шаблона с блоками
@@ -355,6 +371,10 @@ jst.filter = {
         
         return obj;
     },
+    // Построение CSS-класса для HTML-атрибута class
+    className: function (arr) {
+        return jst.isArray(arr) ? arr.join(' ') : arr;
+    },
     // Замена undefined или null на пустую строку (для служебного использования)
     _undef: function (str) {
         return typeof str === 'undefined' || str === null ? '' : '' + str;
@@ -462,6 +482,11 @@ jst.has = function (name) {
     return !!jst.get(name);
 };
 
+// Хелпер для BEMHTML
+jst.bem = function (bemjson) {
+    return BEMHTML.apply(BEM.JSON.build(bemjson));
+};
+
 /**
  * jst-хелпер для jQuery
  * @param {string} template - название шаблона
@@ -473,7 +498,10 @@ if (typeof jQuery != 'undefined') {
         return this;
     };
     
-    jQuery.fn.jstForEach = jst.forEach;
+    jQuery.fn.jstEach = function () {
+        this.html(jst.each.apply(this, arguments));
+        
+    };
 }
 
 // Для работы в nodejs
@@ -481,19 +509,14 @@ if (typeof global != 'undefined') {
     global.jst = jst;
 }
 
-// Хелпер для BEMHTML
-jst.bem = function (block, params) {
-    params = params || {};
-    params.block = block;
-    return BEMHTML.apply(BEM.JSON.build(params));
-};
-
-
 /* Шаблон автоматически сгенерирован с помощью jst, не редактируйте его. */
 (function () {
-    var forEach = jst.forEach;
-    var filter = jst.filter;
+    var attr = jst.attr;
+    var bem = jst.bem;
     var block = jst.block;
+    var each = jst.each;
+    var eachBlock = jst.eachBlock;
+    var filter = jst.filter;
     var template = jst;
 
 /* --- block.jst --- */
@@ -503,6 +526,7 @@ jst.bem = function (block, params) {
     var __jst = '';
 var __jst_template = 'block1x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
@@ -523,6 +547,7 @@ var block = function (name) { return jst.block.apply(this, [__jst_template].conc
     var __jst = '';
 var __jst_template = 'block2x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
@@ -542,6 +567,7 @@ var block = function (name) { return jst.block.apply(this, [__jst_template].conc
     var __jst = '';
 var __jst_template = 'block3x';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
     return __jst;
@@ -560,6 +586,7 @@ var block = function (name) { return jst.block.apply(this, [__jst_template].conc
     var __jst = '';
 var __jst_template = 'foreach-block';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += filter.html(forEachBlock('block1', [1,2,3])) + filter.html(forEachBlock('block2', [1,2,3]));
 
     return __jst;
@@ -570,6 +597,7 @@ var block = function (name) { return jst.block.apply(this, [__jst_template].conc
     var __jst = '';
 var __jst_template = 'foreach-block';
 var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += filter.html(name);
 
     return __jst;
@@ -753,6 +781,12 @@ jst._tmpl['escape-html-short-filter-trim-replace-trim'] = function (a) {
 
     return __jst;
 };
+jst._tmpl['filter-className'] = function (cl) {
+    var __jst = '';
+    __jst += filter.html(filter.className(cl));
+
+    return __jst;
+};
 
 /* --- main.jst --- */
 jst._tmpl['trim'] = '';
@@ -822,6 +856,53 @@ jst._tmpl['call-template2'] = function (a) {
     return __jst;
 };
 
+/* --- method.jst --- */
+jst._tmpl['attr'] = function () {
+    var __jst = '';
+    __jst += '<p' + filter._undef(attr('id', 'content')) + '></p>';
+
+    return __jst;
+};
+jst._tmpl['each'] = function (element, index) {
+    var __jst = '';
+    __jst += filter.html(element) + ',' + filter.html(index) + ';';
+
+    return __jst;
+};
+jst._tmpl['each-inside'] = function (data) {
+    var __jst = '';
+    __jst += filter.html(each('each', data));
+
+    return __jst;
+};
+(function () {
+    var f = function () {
+        this['__jst_constructor'] = function (data) {
+    var __jst = '';
+var __jst_template = 'each-block';
+var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
+    __jst += filter.html(eachBlock('first', data));
+
+    return __jst;
+};
+
+        this['first'] = function (element, index) {
+    var __jst = '';
+var __jst_template = 'each-block';
+var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
+    __jst += filter.html(element) + ',' + filter.html(index) + ';';
+
+    return __jst;
+};
+    };
+
+    jst._tmplExtend['each-block'] = f;
+    f.extend  = '';
+})();
+
+
 /* --- params.jst --- */
 jst._tmpl['without-params'] = function () {
     var __jst = '';
@@ -866,9 +947,9 @@ jst._tmpl['default-params-object'] = function (x, y, z) {
     return __jst;
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
+    w = typeof w === "undefined" ? {"x":"a","y":{"a":1}} : w;
     z = typeof z === "undefined" ? {"x":2,"y":4,"z":5} : z;
     y = typeof y === "undefined" ? {"x":1,"y":3,"z":4} : y;
-    w = typeof w === "undefined" ? {"x":"a","y":{"a":1}} : w;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 

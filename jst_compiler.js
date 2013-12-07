@@ -11,7 +11,7 @@ var pth = require('path');
 var vm = require('vm');
 
 var Compiler = {
-    version: '2.0.5',
+    version: '2.1.0',
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов
@@ -41,11 +41,13 @@ var Compiler = {
         if (res.search(/function/) != -1) {
             res = '\n(function () {' +
                 ['',
-                    'var forEach = jst.forEach;',
-                    'var filter = jst.filter;',
+                    'var attr = jst.attr;',
+                    'var bem = jst.bem;',
                     'var block = jst.block;',
-                    'var template = jst;',
-                    'var bem = jst.bem;'
+                    'var each = jst.each;',
+                    'var eachBlock = jst.eachBlock;',
+                    'var filter = jst.filter;',
+                    'var template = jst;'
                 ].join('\n    ') + res + '\n\n})();';
         }
         
@@ -340,6 +342,7 @@ var Compiler = {
         if (data.hasBlock) {
             js += 'var __jst_template = \'' + this.quot(data.template) + '\';\n';
             js += 'var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; \n';
+            js += 'var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; \n';
         }
         
         var content = this._fixLineEnd(this.fixQuotes(data.content));
@@ -700,7 +703,7 @@ if (require.main == module) {
         console.log('Файлы с шаблонами (*.jst) не найдены.');
     }
 
-    process.exit(0);
+    //process.exit(0);
 } else {
     exports.compile = function(files) {
         var res = [];
