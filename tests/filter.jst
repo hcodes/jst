@@ -109,3 +109,7 @@
 <template name="escape-html-short-filter-trim-replace-trim" params="a">
     <%= a | trim | replace('1', ' ') | trim %>
 </template>
+
+<template name="filter-className" params="cl">
+    <%= cl | className %>
+</template>
