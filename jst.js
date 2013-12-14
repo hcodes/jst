@@ -371,6 +371,10 @@ jst.filter = {
         
         return obj;
     },
+    // Вывод пустоты (для отладки)
+    'void': function () {
+        return;
+    },
     // Построение CSS-класса для HTML-атрибута class
     className: function (arr) {
         return jst.isArray(arr) ? arr.join(' ') : arr;
