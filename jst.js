@@ -65,14 +65,20 @@ jst.block = function (template, name) {
  * @return {string}
 */
 jst.each = function (template, data, context) {
-    var text = [];
-    var i, len = data.length;
+    if (!data) {
+        return '';
+    }
+    
+    var text = [],
+        len = data.length,
+        i;
+        
     context = context || {};
     if (jst.isArray(data)) {
         for (i = 0; i < len; i++) {
             text.push(jst.call(context, template, data[i], i, data));
         }
-    } else {
+    } else if (typeof data == 'object') {
         for (i in data) {
             if (data.hasOwnProperty(i)) {
                 text.push(jst.call(context, template, data[i], i, data));
