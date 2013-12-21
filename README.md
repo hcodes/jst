@@ -47,7 +47,6 @@
     $('#footer').jst('footer');
 </script>
   ```
-
  
 ## Пример шаблона (example.jst):
   ```HTML
@@ -55,14 +54,14 @@
 <template name="example">
     Hello world!
 </template>
-  ````
+  ```
   
 ## Передача и вставка параметров
-Для вывода данных в шаблоне используется запись`<%= myVar %>`.
+Для вывода данных в шаблоне используется запись`<%= data %>`.
 Значения null или undefined заменяются на пустую строку.
 HTML при вставки экранируется.
 
-Для вставки без экранирования HTML используется запись `<%! myVar %>`.
+Для вставки без экранирования HTML используется запись `<%! data %>`.
   ```HTML
 <template name="example" params="word">
     Hello <%= word %>! <!-- С экранированием HTML -->
@@ -71,21 +70,21 @@ HTML при вставки экранируется.
 <template name="example" params="word">
     Hello <%! word %>! <!-- Без экранирования HTML -->
 </template>
-  ````
+  ```
   
 ## Параметры по умолчанию
   ```HTML
 <template name="example" params="word = 'world'">
     Hello <%= world %>!
 </template>
-  ````
+  ```
   
 ## Условия
   ```HTML
 <template name="example" params="x">
     <% if (x) { %>
         Yes
-    <% } else {%>
+    <% } else { %>
         No
     <% } %>
 </template>
