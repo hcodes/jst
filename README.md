@@ -3,26 +3,23 @@
   
 Возможности:
 + Быстрота
-+ Блочное наследование
-+ Блоки (подшаблоны)
 + Параметры для шаблонов и блоков
 + Параметры по умолчанию
-+ Расширяемые фильтры
-+ Экранирование тегов по умолчанию
++ Фильтры и возможность их расширения
++ Блоки (подшаблоны)
++ Блочное наследование
++ Экранирование HTML по умолчанию
 
 ## Установка
 `npm install jst_compiler -g`
   
 ## Использование в коммандной строке
-`jst_compiler -v`  - версия компилятора
-  
-`jst_compiler ./example.jst` - компиляция одного шаблона в файл -> ./example.jst.js 
-
-`jst_compiler ./example.jst ./file.jst.js` - компиляция одного шаблона в файл -> ./file.jst.js  
-
-`jst_compiler ./examples` - компиляция папки с шаблонами в файл -> ./all.jst.js
-
-`jst_compiler ./examples ./templates.jst.js` - компиляция папки с шаблонами в файл -> ./examples.jst.js
+`jst_compiler ./example.jst` - компиляция одного шаблона в файл ./example.jst.js 
+`jst_compiler ./example.jst ./file.jst.js` - компиляция одного шаблона в файл ./file.jst.js  
+`jst_compiler ./examples` - компиляция папки с шаблонами в файл ./all.jst.js
+`jst_compiler ./examples ./examples.jst.js` - компиляция папки с шаблонами в файл ./examples.jst.js
+`jst_compiler -h` - вызов справки
+`jst_compiler -v` - версия компилятора
 
 ## Быстрый старт
 1. `npm install jst_compiler -g`
@@ -35,7 +32,7 @@
   ```
 
 1. `jst_compiler ./example.jst`
-1. Подключаем на странице
+1. Подключаем на странице:
   ```HTML
   ...  
   <!-- Скомпилированные шаблоны и jst-ядро -->
@@ -47,38 +44,38 @@
     $('#footer').jst('footer');
   </script>
   ```
-## Пример шаблона (example.jst):
-    <!-- Простейший шаблон -->
-    <template name="example">
-        Hello world!
-    </template>
 
+## Пример шаблона (example.jst):
+  ```HTML
+  <!-- Простейший шаблон -->
+  <template name="example">
+    Hello world!
+  </template>
+  ````
+  
 ## Передача и вставка параметров
 Для вывода данных в шаблоне используется запись`<%= myVar %>`.
-
 Значения null или undefined заменяются на пустую строку.
-`<%= null %>` -> ''
-`<%= undefined %>` -> ''
+HTML при вставки экранируется.
 
-По умолчанию всё экранируется.
-`<%= '<p></p>' %>` -> '&lt;p&gt;&lt;/p&gt;'
+Для вставки без экранирования HTML используется запись `<%! myVar %>`.
+  ```HTML
+  <template name="example" params="word">
+    Hello <%= word %>! <!-- С экранированием HTML -->
+  </template>
 
-Для вставки без экранирования используется запись `<%! myVar %>`.
-`<%! '<p></p>' %>` -> '<p></p>'
-
-    <template name="example" params="word">
-        Hello <%= word %>! <!-- С экранированием HTML -->
-    </template>
-
-    <template name="example" params="word">
-        Hello <%! word %>! <!-- Без экранирования HTML -->
-    </template>
-
+  <template name="example" params="word">
+    Hello <%! word %>! <!-- Без экранирования HTML -->
+  </template>
+  ````
+  
 ## Параметры по умолчанию
-    <template name="example" params="word = 'world'">
-        Hello <%= world %>!
-    </template>
-
+  ```HTML
+  <template name="example" params="word = 'world'">
+    Hello <%= world %>!
+  </template>
+  ````
+  
 ## Условия
     <template name="example" params="x">
         <% if (x) { %>
