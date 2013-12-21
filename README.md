@@ -5,11 +5,10 @@
 + Быстрота
 + Блочное наследование
 + Блоки (подшаблоны)
-+ Параметры для шаблонов
-+ Расширяемые фильтры
++ Параметры для шаблонов и блоков
 + Параметры по умолчанию
++ Расширяемые фильтры
 + Экранирование тегов по умолчанию
-
 
 ## Установка
 `npm install jst_compiler -g`
@@ -19,14 +18,11 @@
   
 `jst_compiler ./example.jst` - компиляция одного шаблона в файл -> ./example.jst.js 
 
-`jst_compiler ./example.jst ./other_example.jst.js` - компиляция одного шаблона в файл -> ./example.jst.js  
+`jst_compiler ./example.jst ./file.jst.js` - компиляция одного шаблона в файл -> ./file.jst.js  
 
-`jst_compiler ./examples` - компиляция папки с шаблонами
+`jst_compiler ./examples` - компиляция папки с шаблонами в файл -> ./all.jst.js
 
-`jst_compiler -a ./examples ./all.jst.js` - компиляция папки с шаблонами в один файл
-
-`jst_compiler -a -p ./examples ./all.jst.js` - компиляция папки с шаблонами в один файл со вставкой jst.js
-
+`jst_compiler ./examples ./templates.jst.js` - компиляция папки с шаблонами в файл -> ./examples.jst.js
 
 ## Быстрый старт
 1. `npm install jst_compiler -g`
@@ -38,94 +34,26 @@
   </template>
   ```
 
-1. `jst_compiler example.jst example.jst.js`
-1. Подключаем в странице
+1. `jst_compiler ./example.jst`
+1. Подключаем на странице
   ```HTML
   ...  
-  <!-- Скомпилированные шаблоны -->
-  <script type="text/javascript" src="/js/example.jst.js"></script>
+  <!-- Скомпилированные шаблоны и jst-ядро -->
+  <script src="./all.jst.js"></script>
   ...
+  <script>
+    document.getElementById('footer').innerHTML = jst('footer');
+    // или
+    $('#footer').jst('footer');
+  </script>
   ```
-
-1. Вызов в js-коде:
-  ```JavaScript
-    $('#container').jst('example');
-  ```
-
 ## Пример шаблона (example.jst):
-      <!-- Простейший шаблон -->
-      <template name="example">
+    <!-- Простейший шаблон -->
+    <template name="example">
         Hello world!
-      </template>
-
-## Передача и вставка параметра
-      <template name="example" params="word">
-        Hello <%= word %>!
-      </template>
-
-## Передача и вставка параметра без экранирования HTML
-    <template name="example" params="word">
-    Hello <%! word %>!
     </template>
 
-## Параметры по умолчанию
-      <template name="example" params="word = 'world'">
-        Hello <%= world %>!
-      </template>
-
-## Инлайн-js
-      <template name="example" params="word">
-        Hello<% var b = word || 'world'; %> <%= b %>!
-      </template>
-      
-## Комментарии 
-      <template name="example" params="word">
-        Hello <%# мой комментарий %>!
-      </template>
-      
-## Более подробно
-      <template name="example" namespace="Tpl._cache" params="x, y, z" trim="false">
-        x: <%= x %><br />
-        <% if (y > 5) { %>
-        y: <%= y %><br />
-        <% } %>
-        z: <%= z - 10 %>
-      </template>
-
-## Использование фильтра
-      <template name="example" params="x">
-        <%= filter.trim(x) %>
-      </template>
-      
-## Вызов другого шаблона
-      <template name="example" params="x">
-        <%= template('another_template', x) %>
-      </template>
-
-## Не удалять пробелы между HTML-тегами и тегами шаблонизатора
-В примере, если x=1 и y=2 => '1 2', без + => '12'
-      <template name="example" params="x">
-        <%= x +%> <%=+ y %>
-      </template>      
-
-## Цикличный шаблон
-      <template name="another_template" params="element, index, obj">
-        <ul>
-            <li>
-                <%= index + 1 %>. <%= element %>
-            </li>
-        </ul>
-      </template>
-      В js: jst.forEach('example', data);
-      
-## Вызов цикла внутри шаблона
-      <template name="example" params="data">
-        ...
-            <%= forEach('another_template', data) %>
-        ...
-      </template>
-            
-## Вывод данных
+## Передача и вставка параметров
 Для вывода данных в шаблоне используется запись`<%= myVar %>`.
 
 Значения null или undefined заменяются на пустую строку.
@@ -138,13 +66,120 @@
 Для вставки без экранирования используется запись `<%! myVar %>`.
 `<%! '<p></p>' %>` -> '<p></p>'
 
+    <template name="example" params="word">
+        Hello <%= word %>! <!-- С экранированием HTML -->
+    </template>
+
+    <template name="example" params="word">
+        Hello <%! word %>! <!-- Без экранирования HTML -->
+    </template>
+
+## Параметры по умолчанию
+    <template name="example" params="word = 'world'">
+        Hello <%= world %>!
+    </template>
+
+## Условия
+    <template name="example" params="x">
+        <% if (x) { %>
+            Yes
+        <% } else {%>
+            No
+        <% } %>
+    </template>
+
+## Использование JavaScript в шаблонах
+    <template name="example" params="word">
+        Hello<% var b = word || 'world'; %> <%= b %>!
+    </template>
+      
+## Комментарии 
+    <template name="example" params="word">
+        Hello <%# мой комментарий %>!
+    </template>
+            
+## Вызов шаблона из шаблона
+    <template name="example" params="x">
+        <%= template('another_template', x) %>
+    </template>
+
+    <template name="another_template" params="x">
+        ...
+    </template>
+
+## Вызов блока
+      <template name="example" params="x">
+        <block name="block1" params="y">
+            ...
+            <%= y %>
+            ...
+        </block>
+        <block name="block2">
+            ...
+        </block>
+        
+        <%= block('block1', x) %>
+        <%= block('block2') %>
+        
+      </template>
+
+## Циклы в шаблонах
+    <template name="for" params="items">
+        ...
+        <%= each('item', items) %>
+        ...
+    </template>
+            
+    <template name="item" params="element, index">
+        ...
+        <%= element %>
+        ...
+    </template>
+
+### Вызов цикличного шаблона
+    <script>
+        ...
+        // Обычный способ
+        var content = jst.each('item', [1, 2, 3]);
+        
+        // Для jQuery
+        $('#content').jstEach('item', [1, 2, 3]);
+        ...
+    </script>
+
+## Циклы в блоках
+    <template name="for" params="items">
+        <block name="block" params="element, index">
+            <%= element %>
+        </block>
+
+        <%= eachBlock('block', items) %>
+
+    </template>
+
+### Вызов цикличного шаблона
+    <script>
+        // Обычный способ
+        var content = jst.eachBlock('for', 'item', [1, 2, 3]);
+        
+        // Для jQuery
+        $('#content').jstEachBlock('for', 'item', [1, 2, 3]);
+    </script>
+
+## Сохранение пробелов между jst-тегами
+    <template name="example" params="x, y">
+        <%= x %> hello world! <%= y %> <!-- xhello world!y -->
+        <%= x +%> hello world!  <%= y %> <!-- x hello world!y -->
+        <%= x +%> hello world!  <%=+ y %> <!-- x hello world! y -->
+    </template>      
+
 ## Фильтры
 Фильтр позволяет преобразовать данные перед их вставкой в шаблон.
 
 По умолчанию на весь вывод данных накладывается фильтр _undef (замена null и undefined на пустую строку).
 При использовании записи вида '<%= a %>' накладывается фильтр html.
 
-Короткая запись фильтры - `<%= myVar | trim %>`
+Короткая запись фильтра - `<%= myVar | trim %>`
 Длинная - `<%= filter.trim(myVar) %>`
 
 Можно указывать несколько фильтров, порядок выполнения слева направо.
@@ -155,7 +190,7 @@
 ###trim
 Удалить пробелы с начала и конца строки  
 `<%= myVar | trim %>`  
-`<%= '  hello  world!  ' %>` -> 'hello world!'  
+`<%= '  hello  world!  ' | trim %>` -> 'hello world!'  
         
 ###truncate
 Обрезать строку до нужной длины  
@@ -182,6 +217,28 @@
 `<%= myVar | lcfirst %>`  
 `<%= 'Dog' | lcfirst %>` -> 'dog'
         
+###first
+Вывести первый элемент массива или первый символ строки
+`<%= myVar | first %>`  
+`<%= [2, 3, 4] | first %>` -> '2'
+`<%= 'Cat' | first %>` -> 'C'
+
+###last
+Вывести последний элемент массива или последний символ строки
+`<%= myVar | last %>`  
+`<%= [2, 3, 4] | last %>` -> '4'
+`<%= 'Cat' | last %>` -> 't'
+
+###prepend
+Добавить строку перед значением
+`<%= myVar | prepend(string) %>`  
+`<%= 'world!' | prepend('Hello ') %>` -> 'Hello world!'
+
+###append
+Добавить строку после значения
+`<%= myVar | append(string) %>`  
+`<%= 'Hello ' | prepend('world!') %>` -> 'Hello world!'
+
 ###repeat
 Повторить строку нужное количество раз  
 `<%= myVar | repeat(count) %>`  
@@ -190,7 +247,7 @@
 ###remove
 Удалить текст по регулярному выражению   
 `<%= myVar | remove(regexp) %>`  
-`<%= 'hello world!' | remove('l') %>` -> 'hello word!'
+`<%= 'hello world!' | remove('l') %>` -> 'heo word!'
     
 ###replace
 Заменить текст по регулярному выражению  
@@ -200,7 +257,7 @@
 ###indent
 К переносам строки добавить нужный отступ  
 `<%= myVar | repeat(padding) %>`  
-`<%= '1.\n2.\n3.' | repeat('   ') %>` -> '   1.\n   2.\n   3.'
+`<%= '1.\n2.\n3.' | repeat(' ') %>` -> '   1.\n 2.\n 3.'
 
 ###collapse
 Удалить повторяющиеся пробелы  
@@ -209,7 +266,13 @@
     
 ###stripTags
 Удалить HTML-теги  
+`<%= myVar | stripTags %>`  
 `<%= '<p>123</p>' | stripTags %>` -> '123'
+
+###join
+Склевание массива в строку
+`<%= myVar | join(string) %>`  
+`<%= [1, 2, 3] | join(' ') %>` -> '1 2 3'
 
 ###html
 Экранирование HTML  
@@ -225,7 +288,20 @@
 ###uri    
 Экранировать урл  
 `<%= myUrl | uri %>`
+
+###void
+Запрет вывода значения
+`<%= myVar | void %>`
+
+###json
+Вывести json - JSON.stringify(object)
+`<%= myVar | json %>`  
+`<%= [1, 2, 3] |  json %>` -> '[1, 2, 3]'
         
+###log
+Вывести значение в шаблон и в консоль (console.log)
+`<%= myVar | log %>`  
+
 ###_undef (для служебного использования)
 Заменить undefined или null на пустую строку, данный фильтр используется по умолчанию при любой вставки данных  
 `<%= null %>` -> ''  
@@ -253,5 +329,3 @@
          <% console.log(data) %>
     </template>
     ```
-## TODO
-+ отключения сжатия внутри тегов script, pre, code и пр.
