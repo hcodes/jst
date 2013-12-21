@@ -314,17 +314,6 @@ jst.filter = {
         
         return new Array(num).join(this._undef(str));
     },
-    // К переносам строки добавляем нужный отступ
-    indent: function (str, pre) {
-        str = this._undef(str).replace(/\r\n/g, '\n');
-        pre = '' + pre;
-        
-        if (!str) {
-            return str;
-        }
-        
-        return pre + str.split(/\n|\r/).join('\n' + pre);
-    },
     // Удаление текста по рег. выражению 
     remove: function (str, search) {
         return this._undef(str).split(search).join('');
@@ -360,22 +349,6 @@ jst.filter = {
         }
         
         return this._undef(obj);
-    },
-    // Вывод JSON
-    json: function (obj) {
-        if (typeof JSON !== 'undefined') {
-            return JSON.stringify(obj);
-        }
-        
-        return obj;
-    },
-    // Логирование
-    log: function (obj) {
-        if (typeof console !== 'undefined') {
-            console.log(arguments);
-        }
-        
-        return obj;
     },
     // Вывод пустоты (для отладки)
     'void': function () {
@@ -490,11 +463,6 @@ jst.get = function (name) {
 */
 jst.has = function (name) {
     return !!jst.get(name);
-};
-
-// Хелпер для BEMHTML
-jst.bem = function (bemjson) {
-    return BEMHTML.apply(BEM.JSON.build(bemjson));
 };
 
 /**

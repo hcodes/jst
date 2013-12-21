@@ -11,7 +11,7 @@ var pth = require('path');
 var vm = require('vm');
 
 var Compiler = {
-    version: '2.1.0',
+    version: '2.1.11',
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов

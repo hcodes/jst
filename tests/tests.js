@@ -146,14 +146,7 @@ test('Фильтры', function () {
     equal(jst('filter-repeat', '', 3), '', 'repeat, ""');
     equal(jst('filter-repeat', null, 3), '', 'repeat, null');
     equal(jst('filter-repeat', undefined, 3), '', 'repeat, undefined');
-    
-    equal(jst('filter-indent', 'Hello world!\nHello world!\nHello world!', '- '), '- Hello world!\n- Hello world!\n- Hello world!', 'indent, string');    
-    equal(jst('filter-indent', 123456, '- '), '- 123456', 'indent, number');    
-    equal(jst('filter-indent', {}, '- '), '- [object Object]', 'indent, object');    
-    equal(jst('filter-indent', '', '- '), '', 'indent, ""');
-    equal(jst('filter-indent', null, '- '), '', 'indent, null');
-    equal(jst('filter-indent', undefined, '- '), '', 'indent, undefined');
-    
+        
     equal(jst('filter-remove', 'Hello world!', 'Hello'), ' world!', 'remove, string');    
     equal(jst('filter-remove', 123456, '123'), '456', 'remove, number');    
     equal(jst('filter-remove', {}, /\[object/), ' Object]', 'remove, object');    
@@ -186,6 +179,9 @@ test('Фильтры', function () {
     equal(jst('filter-className', ['one', 'two', 'three']), 'one two three', 'className, cборка CSS-класса');    
     
     equal(jst('filter-void', [1, 2, 3]), '', 'void');
+    
+    equal(jst('filter-append', '123'), '123456', 'append');
+    equal(jst('filter-prepend', '456'), '123456', 'prepend');
 });
 
 test('Блоки', function () {

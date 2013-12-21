@@ -95,20 +95,7 @@ var content = jst('example');
     <% } %>
 </template>
   ```
-  
-## Использование JavaScript в шаблонах
-  ```HTML
-<template name="example" params="word">
-    Hello<% var b = word || 'world'; %> <%= b %>!
-</template>
-  ```
-  
-## Комментарии 
-  ```HTML
-<template name="example" params="word">
-    Hello <%# мой комментарий %>!
-</template>
-  ```
+
 ## Вызов шаблона из шаблона
   ```HTML
 <template name="example" params="x">
@@ -153,7 +140,7 @@ var content = jst('example');
 </template>
   ```
   
-### Вызов цикличного шаблона
+### Вызов шаблона в цикле
   ```JavaScript
 // Обычный способ
 var content = jst.each('item', [1, 2, 3]);
@@ -174,7 +161,7 @@ $('#content').jstEach('item', [1, 2, 3]);
 </template>
   ```
 
-### Вызов цикличного шаблона
+### Вызов блока в цикле
   ```HTML
 <script>
     // Обычный способ
@@ -185,7 +172,8 @@ $('#content').jstEach('item', [1, 2, 3]);
 </script>
   ```
 ## Наследование
-Между шаблонами наследуются блоки.
+Между шаблонами наследуются блоки. 
+Механизм наследование в шаблонах основан на прототипах в JavaScript. 
   ```HTML
 <template name="one" params="x">
     <block name="block1" params="y">
@@ -205,15 +193,6 @@ $('#content').jstEach('item', [1, 2, 3]);
 <template name="two" params="x" extend="one">
     <%= block('block1', x) %>
 </template>
-  ```
-
-## Сохранение пробелов между jst-тегами
-  ```HTML
-<template name="example" params="x, y">
-    <%= x %> hello world! <%= y %> <!-- xhello world!y -->
-    <%= x +%> hello world!  <%= y %> <!-- x hello world!y -->
-    <%= x +%> hello world!  <%=+ y %> <!-- x hello world! y -->
-</template>      
   ```
   
 ## Фильтры
@@ -237,17 +216,17 @@ $('#content').jstEach('item', [1, 2, 3]);
         
 ###ltrim
 Удалить пробелы с начала строки 
-`<%= data | ltrim %>`  
+`<%= data | ltrim %>` 
 `<%= '  hello  world!  ' | trim %>` → `hello world!  `
 
 ###rtrim
 Удалить пробелы с конца строки 
-`<%= data | ltrim %>`  
-`<%= '  hello  world!  ' | trim %>` → `  hello world!`  
+`<%= data | ltrim %>` 
+`<%= '  hello  world!  ' | trim %>` → `  hello world!`
 
 ###truncate
-Обрезать строку до нужной длины  
-`<%= data | truncate(length) %>`  
+Обрезать строку до нужной длины 
+`<%= data | truncate(length) %>` 
 `<%= '1234567' | truncate(3) %>` → `123`
 
 ###upper
@@ -272,69 +251,69 @@ $('#content').jstEach('item', [1, 2, 3]);
         
 ###first
 Вывести первый элемент массива или первый символ строки 
-`<%= data | first %>`  
+`<%= data | first %>` 
 `<%= [2, 3, 4] | first %>` → `2` 
 `<%= 'Cat' | first %>` → `C`
 
 ###last
 Вывести последний элемент массива или последний символ строки 
-`<%= data | last %>`  
+`<%= data | last %>` 
 `<%= [2, 3, 4] | last %>` → `4` 
 `<%= 'Cat' | last %>` → `t`
 
 ###prepend
 Добавить строку перед значением 
-`<%= data | prepend(string) %>`  
+`<%= data | prepend(string) %>` 
 `<%= 'world!' | prepend('Hello ') %>` → `Hello world!`
 
 ###append
 Добавить строку после значения 
-`<%= data | append(string) %>`  
+`<%= data | append(string) %>` 
 `<%= 'Hello ' | prepend('world!') %>` → `Hello world!`
 
 ###repeat
-Повторить строку нужное количество раз  
-`<%= data | repeat(count) %>`  
-`<%= 'many ' | repeat(3) %>` → `many many many ` 
+Повторить строку нужное количество раз 
+`<%= data | repeat(count) %>` 
+`<%= 'many ' | repeat(3) %>` → `many many many `
     
 ###remove
-Удалить текст по регулярному выражению  
-`<%= data | remove(regexp) %>`  
+Удалить текст по регулярному выражению 
+`<%= data | remove(regexp) %>` 
 `<%= 'hello world!' | remove('l') %>` → `heo word!`
     
 ###replace
-Заменить текст по регулярному выражению  
-`<%= data | replace(search, replace) %>`  
+Заменить текст по регулярному выражению 
+`<%= data | replace(search, replace) %>` 
 `<%= 'Hello boss!' | replace('boss', 'Duck') %>` → `Hello Duck!`
         
 ###collapse
-Удалить повторяющиеся пробелы  
-`<%= data | collapse %>`  
+Удалить повторяющиеся пробелы 
+`<%= data | collapse %>` 
 `<%= 'Dog' | collapse %>` → `dog`
     
 ###stripTags
 Удалить HTML-теги  
-`<%= data | stripTags %>`  
+`<%= data | stripTags %>` 
 `<%= '<p>123</p>' | stripTags %>` → `123`
 
 ###join
 Склевание массива в строку 
-`<%= data | join(string) %>`  
+`<%= data | join(string) %>` 
 `<%= [1, 2, 3] | join(' ') %>` → `1 2 3`
 
 ###html
-Экранирование HTML  
-`<%= '<p>123</p>' %>` → `&lt;p&gt;123&lt;/p&gt;`  
-`<%= data | html %>` → `&amp;lt;p&amp;gt;123&amp;lt;/p&amp;gt;` - двойное экранирование  
+Экранирование HTML 
+`<%= '<p>123</p>' %>` → `&lt;p&gt;123&lt;/p&gt;` 
+`<%= data | html %>` → `&amp;lt;p&amp;gt;123&amp;lt;/p&amp;gt;` - двойное экранирование 
 `<%!  '<p>123</p>' %>` → `<p>123</p>` 
 `<%!  data | html %>` → `&lt;p&gt;123&lt;/p&gt;`
 
 ###unhtml
-Разэкранировать HTML  
+Разэкранировать HTML 
 `<%= data | unhtml %>`
         
 ###uri    
-Экранировать урл  
+Экранировать урл 
 `<%= myUrl | uri %>`
 
 ###void
@@ -343,12 +322,12 @@ $('#content').jstEach('item', [1, 2, 3]);
 
 ###json 
 Вывести json - JSON.stringify(object) 
-`<%= data | json %>`  
+`<%= data | json %>` 
 `<%= [1, 2, 3] |  json %>` → `[1, 2, 3]`
         
 ###log 
 Дополнительно выводим  данные и в консоль (console.log) 
-`<%= data | log %>` 
+`<%= data | log %>`
 
 ###_undef (для служебного использования) 
 Заменить `undefined` или `null` на пустую строку, данный фильтр используется по умолчанию при любой вставки данных.
@@ -359,6 +338,29 @@ jst.filter.myFilter = function (str, param) {
     //...
     return str;
 };
+  ```
+
+## Сохранение пробелов между jst-тегами
+  ```HTML
+<template name="example" params="x, y">
+    <%= x %> hello world! <%= y %> <!-- xhello world!y -->
+    <%= x +%> hello world!  <%= y %> <!-- x hello world!y -->
+    <%= x +%> hello world!  <%=+ y %> <!-- x hello world! y -->
+</template>      
+  ```
+
+## Использование JavaScript в шаблонах
+  ```HTML
+<template name="example" params="word">
+    Hello<% var b = word || 'world'; %> <%= b %>!
+</template>
+  ```
+  
+## Комментарии 
+  ```HTML
+<template name="example" params="word">
+    Hello <%# мой комментарий %>!
+</template>
   ```
 
 ## Отладка 
