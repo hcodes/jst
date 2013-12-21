@@ -28,8 +28,7 @@
 
 ## Быстрый старт
 1. `npm install jst_compiler -g`
-1. Создаём файл с расширением .jst - `example.jst`
-1. Содержание файла:
+1. Создаём файл с расширением .jst - `example.jst`:
   ```HTML
 <template name="example">
     Hello world!
@@ -40,6 +39,7 @@
 
 
 ##Подключение в браузере
+
   ```HTML
 <!-- Скомпилированные шаблоны и jst-ядро -->
 <script src="./all.jst.js"></script>
@@ -47,25 +47,26 @@
 <div id="example"></div>
 ...
 <script>
-    document.getElementById('footer').innerHTML = jst('footer');
-    // или для jQuery
+    // Обычный способ
+    document.getElementById('example').innerHTML = jst('example');
+    
+    // для jQuery
     $('#example').jst('example');
 </script>
   ```
 
 ##Использование в nodejs
   ```JavaScript
-require('./templates/all.jst.js');
+require('./all.jst.js');
 ...
 var content = jst('example');
   ```
   
 ## Передача и вставка параметров
 Для вывода данных в шаблоне используется запись`<%= data %>`.
-Значения null или undefined заменяются на пустую строку.
-HTML при вставки экранируется.
+Значения null или undefined заменяются на пустую строку, HTML при вставки экранируется.
 
-Для вставки без экранирования HTML используется запись `<%! data %>`.
+Для вставки без HTML-экранирования используется запись `<%! data %>`.
   ```HTML
 <template name="example" params="word">
     Hello <%= word %>! <!-- С экранированием HTML -->
@@ -78,8 +79,9 @@ HTML при вставки экранируется.
   
 ## Параметры по умолчанию
   ```HTML
-<template name="example" params="word = 'world'">
-    Hello <%= world %>!
+<template name="example" params="title, str = 'world'">
+    <h2><%= title %></h1>
+    Hello <%= str %>!
 </template>
   ```
   
@@ -217,14 +219,14 @@ $('#content').jstEach('item', [1, 2, 3]);
 ## Фильтры
 Фильтр позволяет преобразовать данные перед их вставкой в шаблон.
 
-По умолчанию на весь вывод данных накладывается фильтр _undef (замена null и undefined на пустую строку).
+По умолчанию на весь вывод данных накладывается фильтр _undef (замена null и undefined на пустую строку). 
 При использовании записи вида '<%= a %>' накладывается фильтр html.
 
-Короткая запись фильтра - `<%= data | trim %>`
-Длинная - `<%= filter.trim(data) %>`
+Короткая запись фильтра - `<%= data | trim %>` 
+Длинная - `<%= filter.trim(data) %>` 
 
-Можно указывать несколько фильтров, порядок выполнения слева направо.
-`<%= data | stripTags | trim | truncate(8) %>`
+Можно указывать несколько фильтров, порядок выполнения слева направо. 
+`<%= data | stripTags | trim | truncate(8) %>` 
 `<%= filter.truncate(filter.trim(filter.stripTags(data), 8))) %>`
 
 ## Поддерживаемые фильтры
@@ -234,12 +236,12 @@ $('#content').jstEach('item', [1, 2, 3]);
 `<%= '  hello  world!  ' | trim %>` → `hello world!`
         
 ###ltrim
-Удалить пробелы с начала строки
+Удалить пробелы с начала строки 
 `<%= data | ltrim %>`  
 `<%= '  hello  world!  ' | trim %>` → `hello world!  `
 
 ###rtrim
-Удалить пробелы с конца строки
+Удалить пробелы с конца строки 
 `<%= data | ltrim %>`  
 `<%= '  hello  world!  ' | trim %>` → `  hello world!`  
 
@@ -269,34 +271,34 @@ $('#content').jstEach('item', [1, 2, 3]);
 `<%= 'Dog' | lcfirst %>` → `dog`
         
 ###first
-Вывести первый элемент массива или первый символ строки
+Вывести первый элемент массива или первый символ строки 
 `<%= data | first %>`  
-`<%= [2, 3, 4] | first %>` → `2`
-`<%= 'Cat' | first %>` → 'C'
+`<%= [2, 3, 4] | first %>` → `2` 
+`<%= 'Cat' | first %>` → `C`
 
 ###last
-Вывести последний элемент массива или последний символ строки
+Вывести последний элемент массива или последний символ строки 
 `<%= data | last %>`  
-`<%= [2, 3, 4] | last %>` → `4`
+`<%= [2, 3, 4] | last %>` → `4` 
 `<%= 'Cat' | last %>` → `t`
 
 ###prepend
-Добавить строку перед значением
+Добавить строку перед значением 
 `<%= data | prepend(string) %>`  
 `<%= 'world!' | prepend('Hello ') %>` → `Hello world!`
 
 ###append
-Добавить строку после значения
+Добавить строку после значения 
 `<%= data | append(string) %>`  
 `<%= 'Hello ' | prepend('world!') %>` → `Hello world!`
 
 ###repeat
 Повторить строку нужное количество раз  
 `<%= data | repeat(count) %>`  
-`<%= 'many ' | repeat(3) %>` → `many many many `  
+`<%= 'many ' | repeat(3) %>` → `many many many ` 
     
 ###remove
-Удалить текст по регулярному выражению   
+Удалить текст по регулярному выражению  
 `<%= data | remove(regexp) %>`  
 `<%= 'hello world!' | remove('l') %>` → `heo word!`
     
@@ -316,7 +318,7 @@ $('#content').jstEach('item', [1, 2, 3]);
 `<%= '<p>123</p>' | stripTags %>` → `123`
 
 ###join
-Склевание массива в строку
+Склевание массива в строку 
 `<%= data | join(string) %>`  
 `<%= [1, 2, 3] | join(' ') %>` → `1 2 3`
 
@@ -324,7 +326,7 @@ $('#content').jstEach('item', [1, 2, 3]);
 Экранирование HTML  
 `<%= '<p>123</p>' %>` → `&lt;p&gt;123&lt;/p&gt;`  
 `<%= data | html %>` → `&amp;lt;p&amp;gt;123&amp;lt;/p&amp;gt;` - двойное экранирование  
-`<%!  '<p>123</p>' %>` → `<p>123</p>`
+`<%!  '<p>123</p>' %>` → `<p>123</p>` 
 `<%!  data | html %>` → `&lt;p&gt;123&lt;/p&gt;`
 
 ###unhtml
@@ -336,32 +338,32 @@ $('#content').jstEach('item', [1, 2, 3]);
 `<%= myUrl | uri %>`
 
 ###void
-Запрет вывода значения
+Запрет вывода значения 
 `<%= data | void %>`
 
-###json
-Вывести json - JSON.stringify(object)
+###json 
+Вывести json - JSON.stringify(object) 
 `<%= data | json %>`  
 `<%= [1, 2, 3] |  json %>` → `[1, 2, 3]`
         
-###log
-Дополнительно выводим  данные и в консоль (console.log)
-`<%= data | log %>`  
+###log 
+Дополнительно выводим  данные и в консоль (console.log) 
+`<%= data | log %>` 
 
-###_undef (для служебного использования)
+###_undef (для служебного использования) 
 Заменить `undefined` или `null` на пустую строку, данный фильтр используется по умолчанию при любой вставки данных.
         
 ###Как добавить свой фильтр?
   ```JavaScript
-jst.filter.myFilter = function (str, param1, param2, ...) {
+jst.filter.myFilter = function (str, param) {
     //...
     return str;
 };
   ```
 
 ## Отладка 
-После компиляции каждый шаблон выполняется с помощью eval.
-В случае ошибки, шаблон в результирующий код не включается,  вместо этого вставляется `console.warn('...')` с описанием ошибки.
+После компиляции каждый шаблон выполняется с помощью eval. 
+В случае ошибки, шаблон в результирующий код не включается,  вместо этого вставляется `console.warn('...')` с названием шаблона и описанием ошибки.
 
 При вызове в коде неизвестного шаблона генерируется исключение.
 
