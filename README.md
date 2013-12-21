@@ -15,10 +15,15 @@
   
 ## Использование в коммандной строке
 `jst_compiler ./example.jst` - компиляция одного шаблона в файл ./example.jst.js 
+
 `jst_compiler ./example.jst ./file.jst.js` - компиляция одного шаблона в файл ./file.jst.js  
+
 `jst_compiler ./examples` - компиляция папки с шаблонами в файл ./all.jst.js
+
 `jst_compiler ./examples ./examples.jst.js` - компиляция папки с шаблонами в файл ./examples.jst.js
+
 `jst_compiler -h` - вызов справки
+
 `jst_compiler -v` - версия компилятора
 
 ## Быстрый старт
@@ -26,31 +31,30 @@
 1. Создаём файл с расширением .jst - `example.jst`
 1. Содержание файла:
   ```HTML
-  <template name="example">
+<template name="example">
     Hello world!
-  </template>
+</template>
   ```
 
 1. `jst_compiler ./example.jst`
 1. Подключаем на странице:
   ```HTML
-  ...  
-  <!-- Скомпилированные шаблоны и jst-ядро -->
-  <script src="./all.jst.js"></script>
-  ...
-  <script>
+<!-- Скомпилированные шаблоны и jst-ядро -->
+<script src="./all.jst.js"></script>
+...
+<script>
     document.getElementById('footer').innerHTML = jst('footer');
-    // или
+    // или для jQuery
     $('#footer').jst('footer');
-  </script>
+</script>
   ```
 
 ## Пример шаблона (example.jst):
   ```HTML
-  <!-- Простейший шаблон -->
-  <template name="example">
+<!-- Простейший шаблон -->
+<template name="example">
     Hello world!
-  </template>
+</template>
   ````
   
 ## Передача и вставка параметров
