@@ -54,10 +54,6 @@
     <%= filter.repeat(text, length) %>
 </template>
 
-<template name="filter-indent" params="text, pre">
-    <%= filter.indent(text, pre) %>
-</template>
-
 <template name="filter-remove" params="text, search">
     <%= filter.remove(text, search) %>
 </template>
@@ -116,4 +112,12 @@
 
 <template name="filter-void" params="data">
     <%= data | void %>
+</template>
+
+<template name="filter-append" params="data">
+    <%= data | append('456') %>
+</template>
+
+<template name="filter-prepend" params="data">
+    <%= data | prepend('123') %>
 </template>
