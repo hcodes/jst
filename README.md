@@ -41,7 +41,6 @@
   ```HTML
 <!-- Скомпилированные шаблоны и jst-ядро -->
 <script src="./all.jst.js"></script>
-...
 <script>
     document.getElementById('footer').innerHTML = jst('footer');
     // или для jQuery
@@ -49,6 +48,7 @@
 </script>
   ```
 
+ 
 ## Пример шаблона (example.jst):
   ```HTML
 <!-- Простейший шаблон -->
@@ -64,49 +64,57 @@ HTML при вставки экранируется.
 
 Для вставки без экранирования HTML используется запись `<%! myVar %>`.
   ```HTML
-  <template name="example" params="word">
+<template name="example" params="word">
     Hello <%= word %>! <!-- С экранированием HTML -->
-  </template>
+</template>
 
-  <template name="example" params="word">
+<template name="example" params="word">
     Hello <%! word %>! <!-- Без экранирования HTML -->
-  </template>
+</template>
   ````
   
 ## Параметры по умолчанию
   ```HTML
-  <template name="example" params="word = 'world'">
+<template name="example" params="word = 'world'">
     Hello <%= world %>!
-  </template>
+</template>
   ````
   
 ## Условия
-    <template name="example" params="x">
-        <% if (x) { %>
-            Yes
-        <% } else {%>
-            No
-        <% } %>
-    </template>
-
+  ```HTML
+<template name="example" params="x">
+    <% if (x) { %>
+        Yes
+    <% } else {%>
+        No
+    <% } %>
+</template>
+  ```
+  
 ## Использование JavaScript в шаблонах
-    <template name="example" params="word">
-        Hello<% var b = word || 'world'; %> <%= b %>!
-    </template>
-      
+  ```HTML
+<template name="example" params="word">
+    Hello<% var b = word || 'world'; %> <%= b %>!
+</template>
+  ```
+  
 ## Комментарии 
-    <template name="example" params="word">
-        Hello <%# мой комментарий %>!
-    </template>
+  ```HTML
+<template name="example" params="word">
+    Hello <%# мой комментарий %>!
+</template>
+  ```
             
 ## Вызов шаблона из шаблона
-    <template name="example" params="x">
-        <%= template('another_template', x) %>
-    </template>
+  ```HTML
+<template name="example" params="x">
+    <%= template('another_template', x) %>
+</template>
 
-    <template name="another_template" params="x">
-        ...
-    </template>
+<template name="another_template" params="x">
+    ...
+</template>
+  ```
 
 ## Вызов блока
       <template name="example" params="x">
