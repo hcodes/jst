@@ -1,0 +1,18 @@
+<template name="attr">
+    <p<%! attr('id', 'content') %>></p>
+</template>
+
+<template name="each" params="element, index">
+    <%= element %>,<%= index %>;
+</template>
+
+<template name="each-inside" params="data">
+    <%= each('each', data) %>
+</template>
+
+<template name="each-block" params="data">
+    <block name="first" params="element, index">
+        <%= element %>,<%= index %>;
+    </block>
+    <%= eachBlock('first', data) %>
+</template>

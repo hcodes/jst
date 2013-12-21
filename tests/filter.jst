@@ -19,7 +19,15 @@
 </template>
 
 <template name="filter-trim" params="a">
-    <%= filter.trim(a) %>
+    <%= a | trim %>
+</template>
+
+<template name="filter-ltrim" params="a">
+    <%= a | ltrim %>
+</template>
+
+<template name="filter-rtrim" params="a">
+    <%= a | rtrim %>
 </template>
 
 <template name="filter-upper" params="a">
@@ -46,16 +54,20 @@
     <%= filter.repeat(text, length) %>
 </template>
 
-<template name="filter-indent" params="text, pre">
-    <%= filter.indent(text, pre) %>
-</template>
-
 <template name="filter-remove" params="text, search">
     <%= filter.remove(text, search) %>
 </template>
 
 <template name="filter-replace" params="text, search, replace">
     <%= filter.replace(text, search, replace) %>
+</template>
+
+<template name="filter-first" params="text">
+    <%= text | first %>
+</template>
+
+<template name="filter-last" params="text">
+    <%= text | last %>
 </template>
 
 <template name="filter-_undef" params="a">
@@ -92,4 +104,20 @@
 
 <template name="escape-html-short-filter-trim-replace-trim" params="a">
     <%= a | trim | replace('1', ' ') | trim %>
+</template>
+
+<template name="filter-className" params="cl">
+    <%= cl | className %>
+</template>
+
+<template name="filter-void" params="data">
+    <%= data | void %>
+</template>
+
+<template name="filter-append" params="data">
+    <%= data | append('456') %>
+</template>
+
+<template name="filter-prepend" params="data">
+    <%= data | prepend('123') %>
 </template>

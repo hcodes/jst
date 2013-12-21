@@ -9,7 +9,8 @@ test('Основное', function () {
     equal(jst('empty-string'), '', 'Вставка ничего даёт пустую строку.');
     
     equal(jst('quotes'), '\'\'\'', 'Одинарные кавычки.');
-    equal(jst('quotes-with-slash', '123'), '\\\'\\\'\\\'123\'\'\'\' \\\'\\\'\\\'', 'Одинарные кавычки с обратным слешом.');
+
+    equal(jst('quotes-with-slash', '123'), "\\\'\\\'\\\'123&#39;\'\'\' \\\'\\\'\\\'", 'Одинарные кавычки с обратным слешом.');
     
     equal(typeof jst.get('without-inline-js'), 'string', 'Шаблон без вставки значение и инлайн-js компилируется в строку.');
     equal(typeof jst.get('with-inline-js'), 'function', 'Шаблон со вставкой значений или инлайн-js компилируется в функцию.');
@@ -35,7 +36,7 @@ test('Параметры', function () {
 });
 
 test('Фильтры', function () {
-    equal(jst('filter-html', '<div class="test">&&&</div>'), '&lt;div class=&quot;test&quot;&gt;&amp;&amp;&amp;&lt;/div&gt;', 'html, string');    
+    equal(jst('filter-html', '<div class="test">&&&</div>'), '&lt;div class=&quot;test&quot;&gt;&amp;&amp;&amp;&lt;&#x2F;div&gt;', 'html, string');    
     equal(jst('filter-html', 123), '123', 'html, number');    
     equal(jst('filter-html', {}), '[object Object]', 'html, object');    
     equal(jst('filter-html', ''), '', 'html, ""');    
@@ -77,6 +78,34 @@ test('Фильтры', function () {
     equal(jst('filter-trim', null), '', 'trim, null');    
     equal(jst('filter-trim', undefined), '', 'trim, undefined');    
     
+    equal(jst('filter-first', 'Hello world!'), 'H', 'first, string');    
+    equal(jst('filter-first', ['first', 'second']), 'first', 'first, array');    
+    equal(jst('filter-first', true), 'true', 'first, boolean');    
+    equal(jst('filter-first', 123), '123', 'first, number');    
+    equal(jst('filter-first', null), '', 'first, null');    
+    equal(jst('filter-first', undefined), '', 'first, undefined');    
+    
+    equal(jst('filter-last', 'Hello world!'), '!', 'last, string');    
+    equal(jst('filter-last', ['first', 'second']), 'second', 'last, array');    
+    equal(jst('filter-last', true), 'true', 'last, boolean');    
+    equal(jst('filter-last', 123), '123', 'last, number');    
+    equal(jst('filter-last', null), '', 'last, null');    
+    equal(jst('filter-last', undefined), '', 'last, undefined');    
+
+    equal(jst('filter-ltrim', '      Hello world!'), 'Hello world!', 'ltrim, string');    
+    equal(jst('filter-ltrim', 123456), '123456', 'ltrim, number');    
+    equal(jst('filter-ltrim', {}), '[object Object]', 'ltrim, object');    
+    equal(jst('filter-ltrim', ''), '', 'ltrim, ""');    
+    equal(jst('filter-ltrim', null), '', 'ltrim, null');    
+    equal(jst('filter-ltrim', undefined), '', 'ltrim, undefined');    
+
+    equal(jst('filter-rtrim', 'Hello world!             '), 'Hello world!', 'rtrim, string');    
+    equal(jst('filter-rtrim', 123456), '123456', 'rtrim, number');    
+    equal(jst('filter-rtrim', {}), '[object Object]', 'rtrim, object');    
+    equal(jst('filter-rtrim', ''), '', 'rtrim, ""');    
+    equal(jst('filter-rtrim', null), '', 'rtrim, null');    
+    equal(jst('filter-rtrim', undefined), '', 'rtrim, undefined');    
+    
     equal(jst('filter-upper', 'hello world!'), 'HELLO WORLD!', 'upper, string');    
     equal(jst('filter-upper', 123456), '123456', 'upper, number');    
     equal(jst('filter-upper', {}), '[OBJECT OBJECT]', 'upper, object');    
@@ -117,14 +146,7 @@ test('Фильтры', function () {
     equal(jst('filter-repeat', '', 3), '', 'repeat, ""');
     equal(jst('filter-repeat', null, 3), '', 'repeat, null');
     equal(jst('filter-repeat', undefined, 3), '', 'repeat, undefined');
-    
-    equal(jst('filter-indent', 'Hello world!\nHello world!\nHello world!', '- '), '- Hello world!\n- Hello world!\n- Hello world!', 'indent, string');    
-    equal(jst('filter-indent', 123456, '- '), '- 123456', 'indent, number');    
-    equal(jst('filter-indent', {}, '- '), '- [object Object]', 'indent, object');    
-    equal(jst('filter-indent', '', '- '), '', 'indent, ""');
-    equal(jst('filter-indent', null, '- '), '', 'indent, null');
-    equal(jst('filter-indent', undefined, '- '), '', 'indent, undefined');
-    
+        
     equal(jst('filter-remove', 'Hello world!', 'Hello'), ' world!', 'remove, string');    
     equal(jst('filter-remove', 123456, '123'), '456', 'remove, number');    
     equal(jst('filter-remove', {}, /\[object/), ' Object]', 'remove, object');    
@@ -149,14 +171,50 @@ test('Фильтры', function () {
     equal(jst('short-filter-trim-replace', '  <p>123</p>  '), '<p>023</p>', 'Краткая запись вложенных фильтров: trim | replace(..., ...)');    
     equal(jst('short-filter-trim-replace-trim', '  <p>123</p>  '), '<p> 23</p>', 'Краткая запись вложенных фильтров: trim | replace(..., ...) | trim');    
 
-    equal(jst('escape-html-short-filter-trim', '   <p>123</p>   '), '&lt;p&gt;123&lt;/p&gt;', 'Экранирование html, краткая запись фильтра trim');    
-    equal(jst('escape-html-short-filter-replace', '  <p>123</p>  '), '  &lt;p&gt;023&lt;/p&gt;  ', 'Экранирование html, краткая запись фильтра replace');    
-    equal(jst('escape-html-short-filter-trim-replace', '  <p>123</p>  '), '&lt;p&gt;023&lt;/p&gt;', 'Экранирование html, краткая запись вложенных фильтров: trim | replace(..., ...)');    
-    equal(jst('escape-html-short-filter-trim-replace-trim', '  <p>123</p>  '), '&lt;p&gt; 23&lt;/p&gt;', 'Экранирование html, краткая запись вложенных фильтров: trim | replace(..., ...) | trim');    
+    equal(jst('escape-html-short-filter-trim', '   <p>123</p>   '), '&lt;p&gt;123&lt;&#x2F;p&gt;', 'Экранирование html, краткая запись фильтра trim');    
+    equal(jst('escape-html-short-filter-replace', '  <p>123</p>  '), '  &lt;p&gt;023&lt;&#x2F;p&gt;  ', 'Экранирование html, краткая запись фильтра replace');    
+    equal(jst('escape-html-short-filter-trim-replace', '  <p>123</p>  '), '&lt;p&gt;023&lt;&#x2F;p&gt;', 'Экранирование html, краткая запись вложенных фильтров: trim | replace(..., ...)');    
+    equal(jst('escape-html-short-filter-trim-replace-trim', '  <p>123</p>  '), '&lt;p&gt; 23&lt;&#x2F;p&gt;', 'Экранирование html, краткая запись вложенных фильтров: trim | replace(..., ...) | trim');    
+    
+    equal(jst('filter-className', ['one', 'two', 'three']), 'one two three', 'className, cборка CSS-класса');    
+    
+    equal(jst('filter-void', [1, 2, 3]), '', 'void');
+    
+    equal(jst('filter-append', '123'), '123456', 'append');
+    equal(jst('filter-prepend', '456'), '123456', 'prepend');
 });
 
 test('Блоки', function () {
     equal(jst('block1x'), 'Blocks:block1x block1<br />block1x block2<br />block1x block3', 'Блоки');
     equal(jst('block2x'), 'Blocks:block1x block1<br />block2x block2<br />block2x block3', 'Наследование 1 уровень вложенности');
     equal(jst('block3x'), 'Blocks:block1x block1<br />block2x block2<br />block3x block3', 'Наследование 2 уровня вложенности');
+    equal(jst('block.page'), '123abc101112', 'Наследование 2 уровня вложенности');
+    equal(jst('block.page.empty.constructor'), '123abc101112', 'Наследование 2 уровня вложенности, пустой конструктор');
+});
+
+test('jquery', function () {
+    $('body').append('<div id="test-jst"></div>');
+    
+    var el = $('#test-jst');
+    el.jst('jquery', 123);
+    equal(jst('jquery', '123'), el.html(), '$(\'...\').jst()');
+    
+    el.jstEach('each', [1, 2, 3]);
+    equal(jst.each('each', [1, 2, 3]), el.html(), '$(\'...\').jstEach()');
+    
+    $('#test-jst').remove();
+});
+
+test('Методы', function () {
+    equal(jst.attr('name', 'test'), ' name="test" ', 'jst.attr -> name="test"');
+    equal(jst.attr('name', '"\'<html>\'"'), ' name=\"&quot;&#39;&lt;html&gt;&#39;&quot;\" ', 'jst.attr -> name="\'<html>\'"');
+    
+    equal(jst('attr'), '<p id="content" ></p>', '<%! attr() %>');
+    
+    equal(jst.each('each', [1, 2, 3]), '1,0;2,1;3,2;', 'jst.each');
+    
+    equal(jst('each-inside', [1, 2, 3]), '1,0;2,1;3,2;', '<%= each() %>');
+    
+    equal(jst.eachBlock('each-block', 'first', [1, 2, 3]), '1,0;2,1;3,2;', 'jst.block()');
+    equal(jst('each-block', [1, 2, 3]), '1,0;2,1;3,2;', '<%= eachBlock() %>');
 });

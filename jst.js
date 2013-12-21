@@ -15,13 +15,15 @@ var jst = function (name) {
     
     switch(typeof f) {
         case 'function':
-            return f.apply(this, Array.prototype.slice.call(arguments, 1));
+            f._name = name;
+            return f.apply(f, Array.prototype.slice.call(arguments, 1));
         break;
         case 'string':
             return f;
         break;
         case 'object':
             obj = f['__jst_constructor'];
+            f._name = name;
             return typeof obj == 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 1));
         break;
         case 'undefined':
@@ -42,10 +44,11 @@ var jst = function (name) {
 jst.block = function (template, name) {
     var f = jst._tmpl[template];
     if (typeof f == 'object') {
+        f._name = template;
         var obj = f[name];
         var typeObj = typeof obj;
         if (typeObj == 'undefined') {
-            throw new Error('Вызов несуществующего jst-блока "' + name + '" шаблон "' + template + '".');
+            throw new Error('Вызов несуществующего jst-блока "' + name + '" у шаблона "' + template + '".');
         } else {
             return typeObj == 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 2));
         }
@@ -64,15 +67,21 @@ jst.block = function (template, name) {
  * @param {*} context - контекст
  * @return {string}
 */
-jst.forEach = function (template, data, context) {
-    var text = [];
-    var i, len = data.length;
+jst.each = function (template, data, context) {
+    if (!data) {
+        return '';
+    }
+    
+    var text = [],
+        len = data.length,
+        i;
+        
     context = context || {};
-    if (Object.prototype.toString.call(data) === "[object Array]") { // Array.isArray
+    if (jst.isArray(data)) {
         for (i = 0; i < len; i++) {
             text.push(jst.call(context, template, data[i], i, data));
         }
-    } else {
+    } else if (typeof data == 'object') {
         for (i in data) {
             if (data.hasOwnProperty(i)) {
                 text.push(jst.call(context, template, data[i], i, data));
@@ -92,11 +101,11 @@ jst.forEach = function (template, data, context) {
  * @param {*} context - контекст
  * @return {string}
 */
-jst.forEachBlock = function (template, blockName, data, context) {
+jst.eachBlock = function (template, blockName, data, context) {
     var text = [];
     var i, len = data.length;
     context = context || {};
-    if (Object.prototype.toString.call(data) === "[object Array]") { // Array.isArray
+    if (jst.isArray(data)) {
         for (i = 0; i < len; i++) {
             text.push(jst.block.call(context, template, blockName, data[i], i, data));
         }
@@ -109,6 +118,21 @@ jst.forEachBlock = function (template, blockName, data, context) {
     }
     
     return text.join('');
+};
+
+/**
+ * Для удобной вставки атрибута в HTML
+ *
+ * @param {string} name - название атрибута
+ * @param {string} name - значение атрибута
+ * @return {string}
+*/
+jst.attr = function (name, value) {
+    if (name && value) {
+        return ' ' + jst.filter.html(name) + '="' + jst.filter.html(value) + '" ';
+    } else {
+        return ' ';
+    }
 };
 
 
@@ -159,6 +183,10 @@ jst._extend = function (childName, parentName) {
         child.prototype = tmpl[parentName];
         child.extended = true;
         tmpl[childName] = new child;
+
+        if (!tmpl[childName]['__jst_constructor']  && tmpl[parentName]['__jst_constructor']) {
+            tmpl[childName]['__jst_constructor'] = tmpl[parentName]['__jst_constructor'];
+        }        
     };
     
     f(childName, parentName);
@@ -233,20 +261,6 @@ jst._guid = 0;
  * @namespace 
 */
 jst.filter = {
-    // Экранирование HTML
-    html: function (str) {
-        return this._undef(str).replace(/&/g, '&amp;')
-            .replace(/"/g, '&quot;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');    
-    },    
-    // Разэкранирование HTML
-    unhtml: function (str) {
-        return this._undef(str).replace(/\&quot;/g, '"')
-            .replace(/\&gt;/g, '>')
-            .replace(/\&lt;/g, '<')
-            .replace(/\&amp;/g, '&');
-    },
     // Удаление HTML-тегов
     stripTags: function (str) {
         return  this._undef(str).replace(/<\/?[^>]+>/g, '');
@@ -262,9 +276,21 @@ jst.filter = {
         
        return str.substr(0, length);    
     },
-    // Удаление пробелов с начала и конца строки
-    trim: function (str) {
-        return this._undef(str).trim();
+    // Первый элемент для массива, для строки первый символ
+    first: function (obj) {
+        if (jst.isArray(obj) || typeof obj == 'string') {
+            return obj[0];
+        }
+        
+        return this._undef(obj);
+    },
+    // Последний элемент для массива, для строки последний символ
+    last: function (obj) {
+        if (jst.isArray(obj) || typeof obj == 'string') {
+            return obj[obj.length - 1];
+        }
+        
+        return this._undef(obj);
     },
     // Перевод символов в верхний регистр
     upper: function (str) {
@@ -295,17 +321,6 @@ jst.filter = {
         
         return new Array(num).join(this._undef(str));
     },
-    // К переносам строки добавляем нужный отступ
-    indent: function (str, pre) {
-        str = this._undef(str).replace(/\r\n/g, '\n');
-        pre = '' + pre;
-        
-        if (!str) {
-            return str;
-        }
-        
-        return pre + str.split(/\n|\r/).join('\n' + pre);
-    },
     // Удаление текста по рег. выражению 
     remove: function (str, search) {
         return this._undef(str).split(search).join('');
@@ -314,10 +329,100 @@ jst.filter = {
     replace: function (str, search, replace) {
         return this._undef(str).split(search).join(replace);
     },
+    // Удаление пробелов с начала и конца строки
+    trim: function (str) {
+        return this._trim(this._undef(str));
+    },
+    // Удаление пробелов с начала
+    ltrim: function (str) {
+        return this._undef(str).replace(/^\s+/g, '');
+    },
+    // Удаление пробелов c конца строки
+    rtrim: function (str) {
+        return this._undef(str).replace(/\s+$/g, '');
+    },
+    // Добавить текст перед вставкой текста
+    prepend: function (str, text) {
+        return this._undef(text) + this._undef(str);
+    },
+    // Добавить текст после вставкой текста
+    append: function (str, text) {
+        return this._undef(str) + this._undef(text);
+    },
+    // Сгруппировать массив по разделителю
+    join: function (obj, separator) {
+        if (jst.isArray(obj)) {
+            return obj.join(separator);
+        }
+        
+        return this._undef(obj);
+    },
+    // Вывод пустоты (для отладки)
+    'void': function () {
+        return;
+    },
+    // Построение CSS-класса для HTML-атрибута class
+    className: function (arr) {
+        return jst.isArray(arr) ? arr.join(' ') : arr;
+    },
     // Замена undefined или null на пустую строку (для служебного использования)
     _undef: function (str) {
         return typeof str === 'undefined' || str === null ? '' : '' + str;
     }
+};
+
+(function () {
+    var entityMap = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        '\'': '&#39;',
+        '/': '&#x2F;'
+    };
+    
+    var unEntityMap = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#39;': '\'',
+        '&#x2F;': '/'
+    };
+    
+    // Экранирование HTML
+    jst.filter.html = function (str) {
+        return this._undef(str).replace(/[&<>"'\/]/g, function (s) {
+            return entityMap[s];
+        });
+    };
+    
+    // Разэкранирование HTML
+    jst.filter.unhtml = function (str) {
+        return this._undef(str).replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&#x2F;/g, function (s) {
+            return unEntityMap[s];
+        });
+    };
+})();
+
+/**
+ * Удаление пробелов с начала и конца строки
+ * @param {string} str 
+ * @param {boolean}
+*/
+jst.filter._trim = String.prototype.trim ? function (str) {
+    return str.trim();
+} : function (str) {
+    return str.replace(/^\s+|\s+$/g, '');
+};
+
+/**
+ * Проверка на массив
+ * @param {*} obj
+ * @param {boolean}
+*/
+jst.isArray = Array.isArray || function (obj) {
+    return Object.prototype.toString.call(obj) === "[object Array]";
 };
 
 /**
@@ -377,16 +482,14 @@ if (typeof jQuery != 'undefined') {
         this.html(jst.apply(this, arguments));
         return this;
     };
+    
+    jQuery.fn.jstEach = function () {
+        this.html(jst.each.apply(this, arguments));
+        
+    };
 }
 
 // Для работы в nodejs
 if (typeof global != 'undefined') {
     global.jst = jst;
 }
-
-// Хелпер для BEMHTML
-jst.bem = function (block, params) {
-    params = params || {};
-    params.block = block;
-    return BEMHTML.apply(BEM.JSON.build(params));
-};
