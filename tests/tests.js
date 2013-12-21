@@ -188,6 +188,8 @@ test('Блоки', function () {
     equal(jst('block1x'), 'Blocks:block1x block1<br />block1x block2<br />block1x block3', 'Блоки');
     equal(jst('block2x'), 'Blocks:block1x block1<br />block2x block2<br />block2x block3', 'Наследование 1 уровень вложенности');
     equal(jst('block3x'), 'Blocks:block1x block1<br />block2x block2<br />block3x block3', 'Наследование 2 уровня вложенности');
+    equal(jst('block.page'), '123abc101112', 'Наследование 2 уровня вложенности');
+    equal(jst('block.page.empty.constructor'), '123abc101112', 'Наследование 2 уровня вложенности, пустой конструктор');
 });
 
 test('jquery', function () {

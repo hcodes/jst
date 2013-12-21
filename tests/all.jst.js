@@ -15,13 +15,15 @@ var jst = function (name) {
     
     switch(typeof f) {
         case 'function':
-            return f.apply(this, Array.prototype.slice.call(arguments, 1));
+            f._name = name;
+            return f.apply(f, Array.prototype.slice.call(arguments, 1));
         break;
         case 'string':
             return f;
         break;
         case 'object':
             obj = f['__jst_constructor'];
+            f._name = name;
             return typeof obj == 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 1));
         break;
         case 'undefined':
@@ -42,10 +44,11 @@ var jst = function (name) {
 jst.block = function (template, name) {
     var f = jst._tmpl[template];
     if (typeof f == 'object') {
+        f._name = template;
         var obj = f[name];
         var typeObj = typeof obj;
         if (typeObj == 'undefined') {
-            throw new Error('Вызов несуществующего jst-блока "' + name + '" шаблон "' + template + '".');
+            throw new Error('Вызов несуществующего jst-блока "' + name + '" у шаблона "' + template + '".');
         } else {
             return typeObj == 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 2));
         }
@@ -180,6 +183,10 @@ jst._extend = function (childName, parentName) {
         child.prototype = tmpl[parentName];
         child.extended = true;
         tmpl[childName] = new child;
+
+        if (!tmpl[childName]['__jst_constructor']  && tmpl[parentName]['__jst_constructor']) {
+            tmpl[childName]['__jst_constructor'] = tmpl[parentName]['__jst_constructor'];
+        }        
     };
     
     f(childName, parentName);
@@ -490,7 +497,6 @@ if (typeof global != 'undefined') {
 /* Шаблон автоматически сгенерирован с помощью jst, не редактируйте его. */
 (function () {
     var attr = jst.attr;
-    var bem = jst.bem;
     var block = jst.block;
     var each = jst.each;
     var filter = jst.filter;
@@ -502,7 +508,8 @@ if (typeof global != 'undefined') {
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'block1x';
-var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var _this = this;
+var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
@@ -523,7 +530,8 @@ var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'block2x';
-var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var _this = this;
+var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
@@ -543,7 +551,8 @@ var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'block3x';
-var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var _this = this;
+var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
@@ -562,7 +571,8 @@ var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'foreach-block';
-var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var _this = this;
+var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += filter.html(forEachBlock('block1', [1,2,3])) + filter.html(forEachBlock('block2', [1,2,3]));
 
@@ -573,7 +583,8 @@ var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst
         this['block2'] = function (name) {
     var __jst = '';
 var __jst_template = 'foreach-block';
-var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var _this = this;
+var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += filter.html(name);
 
@@ -586,10 +597,88 @@ var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst
 })();
 
 jst._tmpl['nnn'] = '1 2 3 4 999';
+(function () {
+    var f = function () {
+        this['__jst_constructor'] = '';
+
+        this['head'] = '123';
+        this['footer'] = '101112';
+        this['main'] = function () {
+    var __jst = '';
+var __jst_template = 'page';
+var _this = this;
+var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
+    __jst += filter.html(block('head')) + filter.html(block('content')) + filter.html(block('footer'));
+
+    return __jst;
+};
+    };
+
+    jst._tmplExtend['page'] = f;
+    f.extend  = '';
+})();
+
+(function () {
+    var f = function () {
+        this['__jst_constructor'] = function () {
+    var __jst = '';
+var __jst_template = 'block.page';
+var _this = this;
+var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
+    __jst += filter.html(block('main'));
+
+    return __jst;
+};
+
+        this['content'] = 'abc';
+    };
+
+    jst._tmplExtend['block.page'] = f;
+    f.extend  = 'page';
+})();
+
+(function () {
+    var f = function () {
+        this['__jst_constructor'] = function () {
+    var __jst = '';
+var __jst_template = 'page.constructor';
+var _this = this;
+var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
+    __jst += filter.html(block('head')) + filter.html(block('content')) + filter.html(block('footer'));
+
+    return __jst;
+};
+
+        this['head'] = '123';
+        this['footer'] = '101112';
+    };
+
+    jst._tmplExtend['page.constructor'] = f;
+    f.extend  = '';
+})();
+
+(function () {
+    var f = function () {
+        this['__jst_constructor'] = '';
+
+        this['content'] = 'abc';
+    };
+
+    jst._tmplExtend['block.page.empty.constructor'] = f;
+    f.extend  = 'page.constructor';
+})();
+
     jst._init('block1x');
     jst._init('foreach-block');
+    jst._init('page');
+    jst._init('page.constructor');
     jst._extend('block2x', 'block1x');
     jst._extend('block3x', 'block2x');
+    jst._extend('block.page', 'page');
+    jst._extend('block.page.empty.constructor', 'page.constructor');
 
 /* --- filter.jst --- */
 jst._tmpl['filter-html'] = function (a) {
@@ -879,7 +968,8 @@ jst._tmpl['each-inside'] = function (data) {
         this['__jst_constructor'] = function (data) {
     var __jst = '';
 var __jst_template = 'each-block';
-var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var _this = this;
+var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += filter.html(eachBlock('first', data));
 
@@ -889,7 +979,8 @@ var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst
         this['first'] = function (element, index) {
     var __jst = '';
 var __jst_template = 'each-block';
-var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; 
+var _this = this;
+var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; 
     __jst += filter.html(element) + ',' + filter.html(index) + ';';
 

@@ -15,13 +15,15 @@ var jst = function (name) {
     
     switch(typeof f) {
         case 'function':
-            return f.apply(this, Array.prototype.slice.call(arguments, 1));
+            f._name = name;
+            return f.apply(f, Array.prototype.slice.call(arguments, 1));
         break;
         case 'string':
             return f;
         break;
         case 'object':
             obj = f['__jst_constructor'];
+            f._name = name;
             return typeof obj == 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 1));
         break;
         case 'undefined':
@@ -42,10 +44,11 @@ var jst = function (name) {
 jst.block = function (template, name) {
     var f = jst._tmpl[template];
     if (typeof f == 'object') {
+        f._name = template;
         var obj = f[name];
         var typeObj = typeof obj;
         if (typeObj == 'undefined') {
-            throw new Error('Вызов несуществующего jst-блока "' + name + '" шаблон "' + template + '".');
+            throw new Error('Вызов несуществующего jst-блока "' + name + '" у шаблона "' + template + '".');
         } else {
             return typeObj == 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 2));
         }
@@ -180,6 +183,10 @@ jst._extend = function (childName, parentName) {
         child.prototype = tmpl[parentName];
         child.extended = true;
         tmpl[childName] = new child;
+
+        if (!tmpl[childName]['__jst_constructor']  && tmpl[parentName]['__jst_constructor']) {
+            tmpl[childName]['__jst_constructor'] = tmpl[parentName]['__jst_constructor'];
+        }        
     };
     
     f(childName, parentName);

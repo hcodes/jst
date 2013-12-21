@@ -11,7 +11,7 @@ var pth = require('path');
 var vm = require('vm');
 
 var Compiler = {
-    version: '2.1.11',
+    version: '2.2.0',
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов
@@ -42,7 +42,6 @@ var Compiler = {
             res = '\n(function () {' +
                 ['',
                     'var attr = jst.attr;',
-                    'var bem = jst.bem;',
                     'var block = jst.block;',
                     'var each = jst.each;',
                     'var filter = jst.filter;',
@@ -351,7 +350,8 @@ var Compiler = {
         
         if (data.hasBlock) {
             js += 'var __jst_template = \'' + this.quot(data.template) + '\';\n';
-            js += 'var block = function (name) { return jst.block.apply(this, [__jst_template].concat(Array.prototype.slice.call(arguments)));}; \n';
+            js += 'var _this = this;\n';
+            js += 'var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; \n';
             js += 'var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; \n';
         }
         

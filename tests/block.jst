@@ -48,3 +48,42 @@
 <template name="nnn" params="a">
 1 2 3 4                                        999
 </template>
+
+<template name="page">
+    <block name="head">
+        123
+    </block>
+    <block name="footer">
+        101112
+    </block>
+    <block name="main">
+        <%= block('head') %>
+        <%= block('content') %>
+        <%= block('footer') %>
+    </block>
+</template>
+
+<template name="block.page" extend="page">
+    <block name="content">
+        abc
+    </block>
+    <%= block('main') %>
+</template>
+
+<template name="page.constructor">
+    <block name="head">
+        123
+    </block>
+    <block name="footer">
+        101112
+    </block>
+    <%= block('head') %>
+    <%= block('content') %>
+    <%= block('footer') %>
+</template>
+
+<template name="block.page.empty.constructor" extend="page.constructor">
+    <block name="content">
+        abc
+    </block>
+</template>
