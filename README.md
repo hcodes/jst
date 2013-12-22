@@ -1,6 +1,8 @@
 # jst
 Клиентский и серверный шаблонизатор на JavaScript
-  
+
+[![Build Status](https://travis-ci.org/hcodes/jst.png?branch=master)](https://travis-ci.org/hcodes/jst)
+
 Возможности:
 + Скорость генерации
 + Параметры для шаблонов и блоков
