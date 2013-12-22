@@ -22,6 +22,8 @@
 
 `jst_compiler ./examples ./examples.jst.js` - компиляция папки с шаблонами в файл `./examples.jst.js`
 
+`jst_compiler -w ./examples ./examples.jst.js` - компиляция папки с шаблонами в файл `./examples.jst.js` без jst-ядра
+
 `jst_compiler -h` - вызов справки
 
 `jst_compiler -v` - версия компилятора
@@ -292,9 +294,9 @@ $('#content').jstEach('item', [1, 2, 3]);
 ###html
 Экранирование HTML  
 `<%= '<p>123</p>' %>` → `&lt;p&gt;123&lt;/p&gt;`  
-`<%= data | html %>` → `&amp;lt;p&amp;gt;123&amp;lt;/p&amp;gt;` - двойное экранирование  
+`<%= '<p>123</p>' | html %>` → `&amp;lt;p&amp;gt;123&amp;lt;/p&amp;gt;` - двойное экранирование  
 `<%!  '<p>123</p>' %>` → `<p>123</p>`  
-`<%!  data | html %>` → `&lt;p&gt;123&lt;/p&gt;`
+`<%!  '<p>123</p>' | html %>` → `&lt;p&gt;123&lt;/p&gt;`
 
 ###unhtml
 Разэкранировать HTML  

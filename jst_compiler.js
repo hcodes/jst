@@ -11,7 +11,6 @@ var pth = require('path');
 var vm = require('vm');
 
 var Compiler = {
-    version: '2.2.0',
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов
@@ -50,7 +49,7 @@ var Compiler = {
         }
         
         var outText = this.autoGen(res);
-        if (prefs && prefs.paste) {
+        if (prefs && !prefs.withoutKernel) {
             outText = this.includeKernel(outText);
         }
         
@@ -627,7 +626,7 @@ if (require.main == module) {
             fileOut = fileOut || './all.jst.js';
             
             var fd = fs.openSync(fileOut, 'w+');
-            var jst = program.paste ? Compiler.includeKernel() : '';
+            var jst = program.withoutKernel ? '' : Compiler.includeKernel();
             fs.writeSync(fd, jst + buildTemplates(filesIn));
             fs.closeSync(fd);
         },
@@ -666,14 +665,12 @@ if (require.main == module) {
         };
 
     program
-        .version(Compiler.version)
+        .version(JSON.parse(fs.readFileSync(__dirname + '/package.json')).version)
         .usage('[options] <directory-or-file> [directory-or-file, ...]')
         .option('-d, --debug', 'debugging mode')
-        .option('-f, --find', 'Find templates')
-        .option('-p, --paste', 'Paste the kernel for templates, require a flag "--all", jst_compiler --all --paste ./my_dir ./all.js.jst')    
-        .option('-a, --all', 'All templates compile in one file, jst_compiler --all ./my_dir ./all.js.jst')
+        .option('-w, --without-kernel', 'Complitaion without jst-kernel')
         .parse(process.argv);
-
+        
     var fileArgv =  getFirstFileArg();
     var fileIn = process.argv[fileArgv];
     var fileOut = process.argv[fileArgv + 1];
@@ -691,36 +688,26 @@ if (require.main == module) {
 
     if (isDir(fileIn)) {
         files = findTemplates(fileIn);
-        if (!program.find) {
-            if (program.all) {
-                buildTemplatesInFile(files, fileOut);
-            } else {
-                files.forEach(function (el) {
-                    buildTemplateInFile(el);
-                });
-            }
-         }
+        buildTemplatesInFile(files, fileOut);
     } else {
         files.push(fileIn);
         buildTemplateInFile(fileIn, fileOut);
     }
 
-    if (files.length) {
-        if (program.debug || program.find) {
-            console.log('Всего шаблонов: ' + files.length + '\n------------------\n' + files.join('\n'));
-        }
+    if (files.length && program.debug) {
+        console.log('Всего шаблонов: ' + files.length + '\n------------------\n' + files.join('\n'));
     } else {
         console.log('Файлы с шаблонами (*.jst) не найдены.');
     }
 
-    //process.exit(0);
+    process.exit(0);
 } else {
-    exports.compile = function(files) {
+    exports.compile = function (files) {
         var res = [];
-        files.forEach(function(el) {
+        files.forEach(function (el) {
             res.push([require('fs').readFileSync(el, 'utf-8'), el]);
         });
 
-        return Compiler.build(res, '', {paste: true});
+        return Compiler.build(res, '');
     };
 }
