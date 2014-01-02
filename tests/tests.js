@@ -228,16 +228,22 @@ test('Блоки', function () {
 });
 
 test('jquery', function () {
+    // jquery-методы
     $('body').append('<div id="test-jst"></div>');
-    
     var el = $('#test-jst');
     el.jst('jquery', 123);
     equal(jst('jquery', '123'), el.html(), '$(\'...\').jst()');
-    
     el.jstEach('each', [1, 2, 3]);
     equal(jst.each('each', [1, 2, 3]), el.html(), '$(\'...\').jstEach()');
-    
     $('#test-jst').remove();
+
+    // jst.bind()
+    $('body').append('<div id="test-bind"></div>');
+    var temp = jst.bind('test-bind', 'jst-bind', 'Hello world!');
+    equal($('#test-bind').html(), 'Hello world!', 'jst.bind');
+    temp.update('Hello');
+    equal($('#test-bind').html(), 'Hello', '.update()');
+    $('#test-bind').remove();
 });
 
 test('Методы', function () {

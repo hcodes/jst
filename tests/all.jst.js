@@ -194,68 +194,39 @@ jst._extend = function (childName, parentName) {
 };
 
 /**
- * Привязка шаблона с данными к DOM ноде
+ * Привязка шаблона с данными к DOM ноде и последующим обновлением по методу update()
  *
  * @param {string|DOMNode} - id или DOM нода вставки результаты выполнения шаблона
  * @param {string} - название шаблона
  * @return {Object}
 */
 jst.bind = function (container, name) {
-    var elem = typeof container == 'string' ? document.getElementById(containter) : container;
-    var result = undefined;
-    var params = Array.prototype.slice(arguments, 2);
-    if (!params.length) {
-        params = undefined;
-    }
+    var elem = typeof container == 'string' ? document.getElementById(container) : container;
+    var params = Array.prototype.slice.call(arguments, 2);
     
     if (elem && name) {
         var jstParams = [name];
-        if (params) {
+        if (params.length) {
             jstParams = jstParams.concat(params);
         }
         
-        result = jst.apply(this, jstParams);
-        elem.innerHTML = result;
+        elem.innerHTML = jst.apply(this, jstParams);
     }
 
-    var obj = {
-        name: name,
-        container: container,
-        elem: elem,
-        params: params,
-        result: result,
-        guid: jst.guid(),
-        block: function (name) {
-            //findBlock
-        },
+    return {
         update: function () {
-            var params;
-            var jstParams = [obj.name];
+            var bufJstParams = [name];
             if (arguments.length) {
-                jstParams = jstParams.concat(arguments);
+                bufJstParams = bufJstParams.concat(Array.prototype.slice.call(arguments));
+                jstParams = bufJstParams;
+            } else {
+                bufJstParams = jstParams;
             }
             
-            obj.params = params;
-            obj.result = jst.apply(this, jstParams);
-            if (obj.elem) {
-                obj.elem.innerHTML = obj.result;
-            }
+            elem.innerHTML = jst.apply(this, bufJstParams);
         }
     };
-    
-    return obj;
 };
-
-/**
- * Идентификатор для шаблона
- *
- * @return {number}
-*/
-jst.guid = function () {
-    return jst._guid++;
-};
-
-jst._guid = 0;
 
 /**
  * Фильтры шаблонизатора (расширяемые)
@@ -840,6 +811,12 @@ jst._tmpl['filter-prepend'] = function (data) {
 
 /* --- jquery.jst --- */
 jst._tmpl['jquery'] = function (content) {
+    var __jst = '';
+    __jst += filter.html(content);
+
+    return __jst;
+};
+jst._tmpl['jst-bind'] = function (content) {
     var __jst = '';
     __jst += filter.html(content);
 
