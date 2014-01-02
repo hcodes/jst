@@ -1,4 +1,6 @@
-# jst [![Build Status](https://travis-ci.org/hcodes/jst.png?branch=master)](https://travis-ci.org/hcodes/jst)
+[![Build Status](https://travis-ci.org/hcodes/jst.png?branch=master)](https://travis-ci.org/hcodes/jst)
+
+# jst 
 Клиентский и серверный шаблонизатор на JavaScript
 
 Возможности:
@@ -9,6 +11,9 @@
 + Блоки (подшаблоны)
 + Блочное наследование
 + Экранирование HTML по умолчанию
+
+## Лицензия
+MIT
 
 ## Установка
 `npm install jst_compiler -g`

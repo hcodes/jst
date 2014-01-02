@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * jst - клиентский и серверный шаблонизатор на JavaScript 
- * License: MIT
+ * jst - клиентский и серверный шаблонизатор на JavaScript
+ * Лицензия: MIT
  */
 
 require('./jst.js');
