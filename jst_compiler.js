@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * jst - клиентский и серверный шаблонизатор на JavaScript
- * Лицензия: MIT
+ * jst - the client and server JavaScript templating engine
+ * License: MIT
  */
 
 require('./jst.js');
@@ -66,14 +66,14 @@ var Compiler = {
         var inFile = this._inFile();
         
         if (!this.checkOpenCloseTag(text)) {
-            return this.templateConsole('Неравное количество открытых и закрытых тегов <template>' + inFile);
+            return this.templateConsole('Unequal number of open and closed tags <template> ' + inFile);
         }
         
         var buf = [];
         var templates = text.match(/\<template(([\n\r]|.)*?)\<\/template\>/gm);
         
         if (!templates) {
-            return this.templateConsole('Нет jst-шаблонов' + inFile);
+            return this.templateConsole('No jst-templates ' + inFile);
         }
 
         templates.forEach(function (el, num) {
@@ -136,14 +136,14 @@ var Compiler = {
             return {
                 error: {
                     code: 1,
-                    text: 'Нет имени (name) у шаблона № ' + num + inFile
+                    text: 'No name of the template # ' + num + inFile
                 }
             };
         }
         
         if (typeof this._sameTemplateName[name] != 'undefined') {
             var files = [this._fileName, this._sameTemplateName[name]];
-            console.log('Предупреждение: несколько шаблонов с одинаковым именем (name) "' + name + '". ' + (files[0] == files[1] ? 'Файл: ' + files[0] : 'Файлы:' + files.join(', ')));
+            console.log('Warning: multiple templates with the same name "' + name + '". ' + (files[0] == files[1] ? 'File: ' + files[0] : 'Files:' + files.join(', ')));
         } else {
             this._sameTemplateName[name] = this._fileName;
         }        
@@ -152,7 +152,7 @@ var Compiler = {
             return {
                 error: {
                     code: 2,
-                    text: 'Некорректное название параметра (params) у шаблона "' + name + '" - "' + params + '"' + inFile
+                    text: 'Incorrect parameter name from template "' + name + '" - "' + params + '"' + inFile
                 }
             };
         }
@@ -182,7 +182,7 @@ var Compiler = {
             return {
                 error: {
                     code: 4,
-                    text: 'Ошибка компиляции jst-шаблона "' + name + '"' + inFile
+                    text: 'Compilation error jst-template "' + name + '"' + inFile
                 }
             };
         }
@@ -240,14 +240,14 @@ var Compiler = {
             return {
                 error: {
                     code: 10,
-                    text: 'Нет имени (name) у блока № ' + num + ' в шаблоне ' + template + inFile
+                    text: 'No name of block num. ' + num + ' in the template ' + template + inFile
                 }
             };
         }
         
         if (typeof this._sameBlockName[name] != 'undefined') {
             var files = [this._fileName, this._sameBlockName[name]];
-            console.log('Предупреждение: несколько блоков с одинаковым именем (name) "' + name + '" в шаблоне "' + template + '". ' + (files[0] == files[1] ? 'Файл: ' + files[0] : 'Файлы:' + files.join(', ')));
+            console.log('Warning: several blocks with the same name "' + name + '" in the template "' + template + '". ' + (files[0] == files[1] ? 'The file: ' + files[0] : 'Files:' + files.join(', ')));
         } else {
             this._sameBlockName[name] = this._fileName;
         }        
@@ -256,7 +256,7 @@ var Compiler = {
             return {
                 error: {
                     code: 12,
-                    text: 'Некорректное название параметра (params) у блока ' + name + ' в шаблоне "' + template + '" - "' + params + '"' + inFile
+                    text: 'Incorrect parameter name the block "' + name + '" in the template "' + template + '" - "' + params + '"' + inFile
                 }
             };
         }
@@ -287,7 +287,7 @@ var Compiler = {
             return {
                 error: {
                     code: 14,
-                    text: 'Ошибка компиляции jst-блока "' + name + '" в шаблоне "' + template + '" ' + inFile
+                    text: 'Compilation error jst-block "' + name + '" in the template "' + template + '" ' + inFile
                 }
             };
         }
@@ -569,7 +569,7 @@ var Compiler = {
             
         return res;
     },
-    // Проверка на равенство количество открытых и закрытых тегов <template>
+    // Проверка на одинаковое количество открытых и закрытых тегов <template>
     checkOpenCloseTag: function (text) {
         var isError = false;
         var open = text.match(/<template/g);
@@ -586,7 +586,7 @@ var Compiler = {
         return !isError;
     },
     autoGen: function (text) {
-        var auto = '/* Шаблон автоматически сгенерирован с помощью jst, не редактируйте его. */';
+        var auto = '/* The template automatically generated by jst, not edit it. */';
         
         return auto + text + '\n\n' + auto;
     },
@@ -677,12 +677,12 @@ if (require.main == module) {
     var files = [];
 
     if (!fileIn) {
-        console.log('Не указан файл шаблона.\nПример: jst_compiler ./example.jst');
+        console.log('Not specified template file.\nExample: jst_compiler ./example.jst');
         process.exit(1);
     }
 
     if (!fs.existsSync(fileIn)) {
-        console.log('Файл или папка с шаблонами "' + fileIn + '" не найдены.');
+        console.log('File or templates folder "' + fileIn + '" not found.');
         process.exit(1);
     }    
 
@@ -694,10 +694,12 @@ if (require.main == module) {
         buildTemplateInFile(fileIn, fileOut);
     }
 
-    if (files.length && program.debug) {
-        console.log('Всего шаблонов: ' + files.length + '\n------------------\n' + files.join('\n'));
+    if (files.length) {
+        if (program.debug) {
+            console.log('All templates: ' + files.length + '\n------------------\n' + files.join('\n'));
+        }
     } else {
-        console.log('Файлы с шаблонами (*.jst) не найдены.');
+        console.log('Files with templates (*.jst) not found.');
     }
 
     process.exit(0);
