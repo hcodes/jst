@@ -103,6 +103,10 @@ jst.each = function (template, data, context) {
  * @return {string}
 */
 jst.eachBlock = function (template, blockName, data, context) {
+    if (!data) {
+        return '';
+    }
+    
     var text = [];
     var i, len = data.length;
     context = context || {};
