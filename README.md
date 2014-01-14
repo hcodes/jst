@@ -270,7 +270,7 @@ $('#content').jstEach('item', [1, 2, 3]);
 
 ###append
 Добавить строку после значения  
-`<%= 'Hello ' | prepend('world!') %>` → `Hello world!`
+`<%= 'Hello ' | append('world!') %>` → `Hello world!`
 
 ###repeat
 Повторить строку нужное количество раз  
@@ -326,9 +326,9 @@ jst.filter.myFilter = function (str, param) {
 ## Сохранение пробелов между jst-тегами
   ```HTML
 <template name="example" params="x, y">
-    <%= x %> hello world! <%= y %> <!-- xhello world!y -->
-    <%= x +%> hello world!  <%= y %> <!-- x hello world!y -->
-    <%= x +%> hello world!  <%=+ y %> <!-- x hello world! y -->
+    <%= 'x' %> hello world! <%= 'y' %> <!-- xhello world!y -->
+    <%= 'x' +%> hello world!  <%= 'y' %> <!-- x hello world!y -->
+    <%= 'x' +%> hello world!  <%=+ 'y' %> <!-- x hello world! y -->
 </template>      
   ```
 
