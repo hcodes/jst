@@ -5,6 +5,7 @@
         "url": "https://github.com/hcodes"
     },
     "name": "jst_compiler",
+    "main": "jst_compiler.js",
     "description": "Client and server template engine at JavaScript",
     "version": "2.2.4",
     "homepage": "https://github.com/hcodes/jst",
