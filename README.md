@@ -18,7 +18,7 @@ MIT
 ## Установка
 `npm install jst_compiler -g`
   
-## Использование в коммандной строке
+## Использование в командной строке
 `jst_compiler ./example.jst` - компиляция одного шаблона в файл `./example.jst.js` 
 
 `jst_compiler ./example.jst ./file.jst.js` - компиляция одного шаблона в файл `./file.jst.js`  
