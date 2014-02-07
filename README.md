@@ -51,14 +51,14 @@ MIT
 <!-- Скомпилированные шаблоны и jst-ядро -->
 <script src="./all.jst.js"></script>
 ...
-<div id="example"></div>
+<div id="container"></div>
 ...
 <script>
     // Обычный способ
-    document.getElementById('example').innerHTML = jst('example');
+    document.getElementById('container').innerHTML = jst('example');
     
     // для jQuery
-    $('#example').jst('example');
+    $('#container').jst('example');
 </script>
   ```
 
