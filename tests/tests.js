@@ -225,6 +225,9 @@ test('Блоки', function () {
     equal(jst('block3x'), 'Blocks:block1x block1<br />block2x block2<br />block3x block3', 'Наследование 2 уровня вложенности');
     equal(jst('block.page'), '123abc101112', 'Наследование 2 уровня вложенности');
     equal(jst('block.page.empty.constructor'), '123abc101112', 'Наследование 2 уровня вложенности, пустой конструктор');
+    
+    equal(jst('withBlocks'), '123456', 'Шаблон с блоками');
+    equal(jst('withoutBlocks'), '123', 'Шаблон без блоков, но с наследованием');
 });
 
 test('jquery', function () {

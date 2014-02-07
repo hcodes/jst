@@ -171,6 +171,7 @@ var Compiler = {
             params: params,
             concatenation: concatenation,
             content: content,
+            extend: extend,
             hasBlock: hasBlock
         });
         
@@ -187,12 +188,14 @@ var Compiler = {
             };
         }
         
-        if (hasBlock) {
+        if (hasBlock || extend) {
                 var tab = this._tab;
                 var bufBlock = '(function () {\n';
                 bufBlock += tab  + 'var f = function () {\n';
                 bufBlock += tab + tab + 'this[\'__jst_constructor\'] = ' + f.withoutNamespace + ';\n';
-                bufBlock += this.blocks(text, name);
+                if (hasBlock) {
+                    bufBlock += this.blocks(text, name);
+                }
                 bufBlock += tab + '};\n\n';
                 bufBlock += tab + this.defaultNamespace + 'Extend[\'' + this.quot(name) + '\'] = f;\n';
                 bufBlock += tab + 'f.extend  = \'' + this.quot(extend) + '\';\n';
@@ -333,7 +336,7 @@ var Compiler = {
             withoutNamespace: text
         }    
     },
-    // Построение из шаблона js-фунцию
+    // Построение из шаблона js-функцию
     withInlineJS: function (data) {
         var that = this;
         var tab = this._tab;
@@ -347,7 +350,7 @@ var Compiler = {
         };
         var js = this.defaultValues(data.params) + tab + "var __jst = " + con.init + ";\n";
         
-        if (data.hasBlock) {
+        if (data.hasBlock || data.extend) {
             js += 'var __jst_template = \'' + this.quot(data.template) + '\';\n';
             js += 'var _this = this;\n';
             js += 'var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; \n';

@@ -87,3 +87,19 @@
         abc
     </block>
 </template>
+
+<template name="withBlocks">
+    <block name="block1">
+        123
+    </block>
+    <block name="block2">
+        456
+    </block>
+    
+    <%= block('block1') %>
+    <%= block('block2') %>
+</template>
+
+<template name="withoutBlocks" extend="withBlocks">
+    <%= block('block1') %>
+</template>

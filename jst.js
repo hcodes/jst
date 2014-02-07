@@ -3,6 +3,12 @@
 //// Лицензия: MIT
 ///////////////////////////////////////////////////////////////
 
+(function () {
+
+if (typeof jst != 'undefined') {
+    return;
+}
+
 /**
  * Вызов шаблонизатора
  *
@@ -140,7 +146,6 @@ jst.attr = function (name, value) {
     }
 };
 
-
 /**
  * Инициализация шаблона с блоками
  *
@@ -233,7 +238,7 @@ jst.bind = function (container, name) {
 };
 
 /**
- * Фильтры шаблонизатора (расширяемые)
+ * Фильтры шаблонизатора
  * @namespace 
 */
 jst.filter = {
@@ -279,11 +284,13 @@ jst.filter = {
     // Первый символ в верхний регистр
     ucfirst: function (str) {
         str = this._undef(str);
+        
         return str.substr(0, 1).toUpperCase() + str.substr(1);
     },
     // Первый символ в нижний регистр
     lcfirst: function (str) {
         str = this._undef(str);
+        
         return str.substr(0, 1).toLowerCase() + str.substr(1);
     },
     // Удаление повторяющихся пробелов 
@@ -413,28 +420,40 @@ jst._tmpl = {};
 */
 jst._tmplExtend = {};
 
-/**
- * jst-хелпер для jQuery
- * @param {string} template - название шаблона
- * @param {...*} var_args
-*/
-if (typeof jQuery != 'undefined') {
-    jQuery.fn.jst = function () {
-        this.html(jst.apply(this, arguments));
-        return this;
-    };
-    
-    jQuery.fn.jstEach = function () {
-        this.html(jst.each.apply(this, arguments));
-        
-    };
-    
-    jQuery.fn.jstEachBlock = function () {
-        this.html(jst.eachBlock.apply(this, arguments));
-    };    
-}
 
-// Для работы в nodejs
+// Для nodejs
 if (typeof global != 'undefined') {
     global.jst = jst;
 }
+
+// Для браузера
+if (typeof window != 'undefined') {
+    window.jst = jst;
+    
+    /**
+     * jst-хелпер для jQuery
+     * @param {string} template - название шаблона
+     * @param {...*} var_args
+    */
+    if (typeof jQuery != 'undefined') {
+        window.jQuery.fn.jst = function () {
+            this.html(jst.apply(this, arguments));
+            
+            return this;
+        };
+        
+        window.jQuery.fn.jstEach = function () {
+            this.html(jst.each.apply(this, arguments));
+            
+            return this;
+        };
+        
+        window.jQuery.fn.jstEachBlock = function () {
+            this.html(jst.eachBlock.apply(this, arguments));
+            
+            return this;
+        };    
+    }
+}
+
+})();

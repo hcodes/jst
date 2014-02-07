@@ -1,0 +1,1 @@
+node ../jst_compiler.js -a -p ./ ./all.jst.js
