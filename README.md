@@ -345,6 +345,13 @@ jst.filter.myFilter = function (str, param) {
     Hello <%# мой комментарий %>!
 </template>
   ```
+  ```HTML
+<template name="example" params="word">
+    Hello <%# мой
+    многострочный
+    комментарий %>!
+</template>
+  ```
 
 ## Отладка 
 После компиляции каждый шаблон выполняется с помощью eval. 
