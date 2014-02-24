@@ -5,7 +5,7 @@
 
 (function () {
 
-if (typeof jst != 'undefined') {
+if (typeof jst === 'function') {
     return;
 }
 
@@ -31,7 +31,7 @@ var jst = function (name) {
         case 'object':
             obj = f['__jst_constructor'];
             f._name = name;
-            return typeof obj == 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 1));
+            return typeof obj === 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 1));
         break;
         case 'undefined':
             throw new Error('Вызов несуществующего jst-шаблона "' + name + '".');
@@ -50,14 +50,14 @@ var jst = function (name) {
 */
 jst.block = function (template, name) {
     var f = jst._tmpl[template];
-    if (typeof f == 'object') {
+    if (typeof f === 'object') {
         f._name = template;
         var obj = f[name];
         var typeObj = typeof obj;
-        if (typeObj == 'undefined') {
+        if (typeObj === 'undefined') {
             throw new Error('Вызов несуществующего jst-блока "' + name + '" у шаблона "' + template + '".');
         } else {
-            return typeObj == 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 2));
+            return typeObj === 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 2));
         }
     } else {
         throw new Error('Вызов несуществующего jst-шаблона "' + template + '".');
@@ -88,7 +88,7 @@ jst.each = function (template, data, context) {
         for (i = 0; i < len; i++) {
             text.push(jst.call(context, template, data[i], i, data));
         }
-    } else if (typeof data == 'object') {
+    } else if (typeof data === 'object') {
         for (i in data) {
             if (data.hasOwnProperty(i)) {
                 text.push(jst.call(context, template, data[i], i, data));
@@ -173,10 +173,10 @@ jst._extend = function (childName, parentName) {
         var child = jst._tmplExtend[childName];
         var parent = jst._tmplExtend[parentName];
         
-        if (typeof child == 'undefined') {
+        if (typeof child === 'undefined') {
                 throw new Error('При наследовании не найден jst-шаблон "' + childName + '".');
                 return;
-        } else if (typeof parent == 'undefined') {
+        } else if (typeof parent === 'undefined') {
                 throw new Error('При наследовании не найден jst-шаблон "' + parentName + '".');
                 return;
         }
@@ -210,7 +210,7 @@ jst._extend = function (childName, parentName) {
  * @return {Object}
 */
 jst.bind = function (container, name) {
-    var elem = typeof container == 'string' ? document.getElementById(container) : container;
+    var elem = typeof container === 'string' ? document.getElementById(container) : container;
     var params = Array.prototype.slice.call(arguments, 2);
     
     if (elem && name) {
@@ -259,7 +259,7 @@ jst.filter = {
     },
     // Первый элемент для массива, для строки первый символ
     first: function (obj) {
-        if (jst.isArray(obj) || typeof obj == 'string') {
+        if (jst.isArray(obj) || typeof obj === 'string') {
             return obj[0];
         }
         
@@ -267,7 +267,7 @@ jst.filter = {
     },
     // Последний элемент для массива, для строки последний символ
     last: function (obj) {
-        if (jst.isArray(obj) || typeof obj == 'string') {
+        if (jst.isArray(obj) || typeof obj === 'string') {
             return obj[obj.length - 1];
         }
         
@@ -438,6 +438,12 @@ if (typeof window != 'undefined') {
     if (typeof jQuery != 'undefined') {
         window.jQuery.fn.jst = function () {
             this.html(jst.apply(this, arguments));
+            
+            return this;
+        };
+        
+        window.jQuery.fn.jstBlock = function () {
+            this.html(jst.block.apply(this, arguments));
             
             return this;
         };
