@@ -72,9 +72,10 @@ jst.block = function (template, name) {
  * @param {string} template - название шаблона
  * @param {(Array|Object)} data - данные
  * @param {*} context - контекст
+ * @param {*} params - параметры
  * @return {string}
 */
-jst.each = function (template, data, context) {
+jst.each = function (template, data, context, params) {
     if (!data) {
         return '';
     }
@@ -86,12 +87,12 @@ jst.each = function (template, data, context) {
     context = context || {};
     if (jst.isArray(data)) {
         for (i = 0; i < len; i++) {
-            text.push(jst.call(context, template, data[i], i, data));
+            text.push(jst.call(context, template, data[i], i, data, params));
         }
     } else if (typeof data === 'object') {
         for (i in data) {
             if (data.hasOwnProperty(i)) {
-                text.push(jst.call(context, template, data[i], i, data));
+                text.push(jst.call(context, template, data[i], i, data, params));
             }
         }
     }
@@ -106,9 +107,10 @@ jst.each = function (template, data, context) {
  * @param {string} blockName - название блока
  * @param {(Array|Object)} data - данные
  * @param {*} context - контекст
+ * @param {*} params - параметры
  * @return {string}
 */
-jst.eachBlock = function (template, blockName, data, context) {
+jst.eachBlock = function (template, blockName, data, context, params) {
     if (!data) {
         return '';
     }
@@ -118,12 +120,12 @@ jst.eachBlock = function (template, blockName, data, context) {
     context = context || {};
     if (jst.isArray(data)) {
         for (i = 0; i < len; i++) {
-            text.push(jst.block.call(context, template, blockName, data[i], i, data));
+            text.push(jst.block.call(context, template, blockName, data[i], i, data, params));
         }
     } else {
         for (i in data) {
             if (data.hasOwnProperty(i)) {
-                text.push(jst.block.call(context, template, blockName, data[i], i, data));
+                text.push(jst.block.call(context, template, blockName, data[i], i, data, params));
             }
         }
     }
