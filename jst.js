@@ -70,12 +70,11 @@ jst.block = function (template, name) {
  * Цикличный вызов шаблона
  *
  * @param {string} template - название шаблона
- * @param {(Array|Object)} data - данные
- * @param {*} context - контекст
+ * @param {(Array|Object)} data - данные по которым происходит перебор
  * @param {*} params - параметры
  * @return {string}
 */
-jst.each = function (template, data, context, params) {
+jst.each = function (template, data, params) {
     if (!data) {
         return '';
     }
@@ -84,15 +83,14 @@ jst.each = function (template, data, context, params) {
         len = data.length,
         i;
         
-    context = context || {};
     if (jst.isArray(data)) {
         for (i = 0; i < len; i++) {
-            text.push(jst.call(context, template, data[i], i, data, params));
+            text.push(jst(template, data[i], i, data, params));
         }
     } else if (typeof data === 'object') {
         for (i in data) {
             if (data.hasOwnProperty(i)) {
-                text.push(jst.call(context, template, data[i], i, data, params));
+                text.push(jst(template, data[i], i, data, params));
             }
         }
     }
@@ -105,27 +103,27 @@ jst.each = function (template, data, context, params) {
  *
  * @param {string} template - название шаблона
  * @param {string} blockName - название блока
- * @param {(Array|Object)} data - данные
- * @param {*} context - контекст
+ * @param {(Array|Object)} data - данные по которым происходит перебор
  * @param {*} params - параметры
  * @return {string}
 */
-jst.eachBlock = function (template, blockName, data, context, params) {
+jst.eachBlock = function (template, blockName, data, params) {
     if (!data) {
         return '';
     }
     
-    var text = [];
-    var i, len = data.length;
-    context = context || {};
+    var text = [],
+        i,
+        len = data.length;
+        
     if (jst.isArray(data)) {
         for (i = 0; i < len; i++) {
-            text.push(jst.block.call(context, template, blockName, data[i], i, data, params));
+            text.push(jst.block(template, blockName, data[i], i, data, params));
         }
     } else {
         for (i in data) {
             if (data.hasOwnProperty(i)) {
-                text.push(jst.block.call(context, template, blockName, data[i], i, data, params));
+                text.push(jst.block(template, blockName, data[i], i, data, params));
             }
         }
     }

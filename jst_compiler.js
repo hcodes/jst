@@ -354,7 +354,7 @@ var Compiler = {
             js += 'var __jst_template = \'' + this.quot(data.template) + '\';\n';
             js += 'var _this = this;\n';
             js += 'var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; \n';
-            js += 'var eachBlock = function (blockName, data, context) { return jst.eachBlock(__jst_template, blockName, data, context); }; \n';
+            js += 'var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; \n';
         }
         
         var content = this._fixLineEnd(this.fixQuotes(data.content));
