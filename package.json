@@ -24,5 +24,7 @@
     "engines": {
         "node": "*"
     },
-    "bin": "jst_compiler.js"
+    "bin": {
+        "jst_compiler": "./bin/jst_compiler.js"
+    },
 }
