@@ -599,14 +599,9 @@ var Compiler = {
 };
 
 if (require.main == module) {
-    var program = require('commander');
-    
-    var isDir = function (path) {
+    var program = require('commander'),
+        isDir = function (path) {
             return fs.statSync(path).isDirectory();
-        },
-        buildTemplate = function (fileIn) {
-            var template = fs.readFileSync(fileIn, 'utf-8');
-            return Compiler.build(template, fileIn);
         },
         buildTemplates = function (files) {
             var res = [];
@@ -616,24 +611,21 @@ if (require.main == module) {
             
             return Compiler.build(res);
         },
-        buildTemplateInFile = function (fileIn, fileOut) {
+        buildTemplatesInFile = function (filesIn, fileOut, withoutKernel) {
             if (!fileOut) {
-                fileOut = fileIn + '.js';
+                if (filesIn.length === 1 && !isDir(filesIn[0])) {
+                    fileOut = filesIn[0] + '.js';
+                } else {
+                    fileOut = './all.jst.js';
+                }
             }
             
             var fd = fs.openSync(fileOut, 'w+');
-            fs.writeSync(fd, buildTemplate(fileIn));
-            fs.closeSync(fd);
-        },
-        buildTemplatesInFile = function (filesIn, fileOut) {
-            fileOut = fileOut || './all.jst.js';
-            
-            var fd = fs.openSync(fileOut, 'w+');
-            var jst = program.withoutKernel ? '' : Compiler.includeKernel();
+            var jst = withoutKernel ? '' : Compiler.includeKernel();
             fs.writeSync(fd, jst + buildTemplates(filesIn));
             fs.closeSync(fd);
         },
-        findTemplates = function (path) {
+        findTemplates = function (files) {
             var res = [];
             var find = function (path) {
                 var files = fs.readdirSync(path);
@@ -647,7 +639,13 @@ if (require.main == module) {
                 });
             };
             
-            find(path);
+            files.forEach(function(el) {
+                if (isDir(el)) {
+                    find(el);
+                } else {
+                    res.push(el);
+                }
+            });
             
             return res;
         },
@@ -675,27 +673,32 @@ if (require.main == module) {
         .parse(process.argv);
         
     var fileArgv =  getFirstFileArg();
-    var fileIn = process.argv[fileArgv];
+    var fileIn = [];
     var fileOut = process.argv[fileArgv + 1];
     var files = [];
+    
+    (process.argv[fileArgv] || '').split(':').forEach(function(el) {
+        el = el.trim();
+        
+        if (el) {
+            fileIn.push(el);
+        }
+    });
 
-    if (!fileIn) {
+    if (!fileIn.length) {
         console.log('Not specified template file.\nExample: jst_compiler ./example.jst');
         process.exit(1);
     }
 
-    if (!fs.existsSync(fileIn)) {
-        console.log('File or templates folder "' + fileIn + '" not found.');
-        process.exit(1);
-    }    
-
-    if (isDir(fileIn)) {
-        files = findTemplates(fileIn);
-        buildTemplatesInFile(files, fileOut);
-    } else {
-        files.push(fileIn);
-        buildTemplateInFile(fileIn, fileOut);
-    }
+    fileIn.forEach(function(el) {
+        if (!fs.existsSync(el)) {
+            console.log('File or templates folder "' + el + '" not found.');
+            process.exit(1);
+        }
+    });
+    
+    files = findTemplates(fileIn);
+    buildTemplatesInFile(files, fileOut, program.withoutKernel);
 
     if (files.length) {
         if (program.debug) {
@@ -707,12 +710,26 @@ if (require.main == module) {
 
     process.exit(0);
 } else {
-    exports.compile = function (files) {
-        var res = [];
-        files.forEach(function (el) {
-            res.push([require('fs').readFileSync(el, 'utf-8'), el]);
-        });
+    module.exports = {
+        compileFile: function(file, prefs) {
+            return this.compileFiles(file, prefs);
+        },
+        compileFiles: function (files, prefs) {
+            var res = [];
+            var fs = require('fs');
+            
+            if (typeof files === 'string') {
+                files = [files];
+            }
+            
+            files.forEach(function (el) {
+                res.push([fs.readFileSync(el, 'utf-8'), el]);
+            });
 
-        return Compiler.build(res, '');
+            return Compiler.build(res, '', prefs);
+        },
+        compileText: function (text, prefs) {
+            return Compiler.build(text, '', prefs);
+        }
     };
 }
