@@ -30,6 +30,9 @@
 
 `jst_compiler -v` - версия компилятора
 
+## Плагин для сборки с Gulp
+[gulp-jst_compiler](https://github.com/hcodes/gulp-jst_compiler)
+
 ## Быстрый старт
 1. `npm install jst_compiler -g`
 1. Создаём файл с расширением .jst - `example.jst`:
