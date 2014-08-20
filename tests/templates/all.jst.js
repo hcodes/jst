@@ -5,7 +5,14 @@
 
 (function () {
 
-if (typeof jst === 'function') {
+'use strict';
+
+var hasGlobal = typeof global !== 'undefined',
+    glob =  hasGlobal ? global : window,
+    slice = Array.prototype.slice,
+    JST_CONSTR = '__jst_constructor';
+
+if (typeof glob.jst === 'function') {
     return;
 }
 
@@ -23,15 +30,15 @@ var jst = function (name) {
     switch(typeof f) {
         case 'function':
             f._name = name;
-            return f.apply(f, Array.prototype.slice.call(arguments, 1));
+            return f.apply(f, slice.call(arguments, 1));
         break;
         case 'string':
             return f;
         break;
         case 'object':
-            obj = f['__jst_constructor'];
+            obj = f[JST_CONSTR];
             f._name = name;
-            return typeof obj === 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 1));
+            return typeof obj === 'string' ? obj : obj.apply(f, slice.call(arguments, 1));
         break;
         case 'undefined':
             throw new Error('Вызов несуществующего jst-шаблона "' + name + '".');
@@ -52,12 +59,14 @@ jst.block = function (template, name) {
     var f = jst._tmpl[template];
     if (typeof f === 'object') {
         f._name = template;
-        var obj = f[name];
-        var typeObj = typeof obj;
+        
+        var obj = f[name],
+            typeObj = typeof obj;
+            
         if (typeObj === 'undefined') {
             throw new Error('Вызов несуществующего jst-блока "' + name + '" у шаблона "' + template + '".');
         } else {
-            return typeObj === 'string' ? obj : obj.apply(f, Array.prototype.slice.call(arguments, 2));
+            return typeObj === 'string' ? obj : obj.apply(f, slice.call(arguments, 2));
         }
     } else {
         throw new Error('Вызов несуществующего jst-шаблона "' + template + '".');
@@ -135,7 +144,7 @@ jst.eachBlock = function (template, blockName, data, params) {
  * Для удобной вставки атрибута в HTML
  *
  * @param {string} name - название атрибута
- * @param {string} name - значение атрибута
+ * @param {string} value - значение атрибута
  * @return {string}
 */
 jst.attr = function (name, value) {
@@ -149,7 +158,7 @@ jst.attr = function (name, value) {
 /**
  * Инициализация шаблона с блоками
  *
- * @param {string} name имя шаблона 
+ * @param {string} name - имя шаблона 
 */
 jst._init = function (name) {
     var tmpl = jst._tmpl;
@@ -169,15 +178,18 @@ jst._init = function (name) {
 */
 jst._extend = function (childName, parentName) {
     var f = function (childName, parentName) {
-        var tmpl = jst._tmpl;
-        var child = jst._tmplExtend[childName];
-        var parent = jst._tmplExtend[parentName];
+        var tmpl = jst._tmpl,
+            child = jst._tmplExtend[childName],
+            parent = jst._tmplExtend[parentName],
+            warning = function(template) {
+                return 'При наследовании не найден jst-шаблон "' + childName + '".';
+            };
         
         if (typeof child === 'undefined') {
-                throw new Error('При наследовании не найден jst-шаблон "' + childName + '".');
+                throw new Error(warning(childName));
                 return;
         } else if (typeof parent === 'undefined') {
-                throw new Error('При наследовании не найден jst-шаблон "' + parentName + '".');
+                throw new Error(warning(parentName));
                 return;
         }
         
@@ -194,9 +206,9 @@ jst._extend = function (childName, parentName) {
         child.extended = true;
         tmpl[childName] = new child;
 
-        if (!tmpl[childName]['__jst_constructor']  && tmpl[parentName]['__jst_constructor']) {
-            tmpl[childName]['__jst_constructor'] = tmpl[parentName]['__jst_constructor'];
-        }        
+        if (!tmpl[childName][JST_CONSTR]  && tmpl[parentName][JST_CONSTR]) {
+            tmpl[childName][JST_CONSTR] = tmpl[parentName][JST_CONSTR];
+        }
     };
     
     f(childName, parentName);
@@ -210,8 +222,8 @@ jst._extend = function (childName, parentName) {
  * @return {Object}
 */
 jst.bind = function (container, name) {
-    var elem = typeof container === 'string' ? document.getElementById(container) : container;
-    var params = Array.prototype.slice.call(arguments, 2);
+    var elem = typeof container === 'string' ? document.getElementById(container) : container,
+        params = slice.call(arguments, 2);
     
     if (elem && name) {
         var jstParams = [name];
@@ -226,7 +238,7 @@ jst.bind = function (container, name) {
         update: function () {
             var bufJstParams = [name];
             if (arguments.length) {
-                bufJstParams = bufJstParams.concat(Array.prototype.slice.call(arguments));
+                bufJstParams = bufJstParams.concat(slice.call(arguments));
                 jstParams = bufJstParams;
             } else {
                 bufJstParams = jstParams;
@@ -248,14 +260,16 @@ jst.filter = {
     },
     // Экранирование урла
     uri: function (str) {
-        return encodeURI(this._undef(str)).replace(/%5B/g, '[').replace(/%5D/g, ']');
+        return glob.encodeURI(this._undef(str)).replace(/%5B/g, '[').replace(/%5D/g, ']');
     },
     // Обрезание строки нужной длины
     truncate: function (str, length) {
         str = this._undef(str);
-        if (!str || str.length <= length) { return str; }
+        if (!str || str.length <= length) {
+            return str;
+        }
         
-       return str.substr(0, length);    
+       return str.substr(0, length);
     },
     // Первый элемент для массива, для строки первый символ
     first: function (obj) {
@@ -405,7 +419,7 @@ jst.filter._trim = String.prototype.trim ? function (str) {
  * @param {boolean}
 */
 jst.isArray = Array.isArray || function (obj) {
-    return Object.prototype.toString.call(obj) === "[object Array]";
+    return Object.prototype.toString.call(obj) === '[object Array]';
 };
 
 /**
@@ -420,45 +434,40 @@ jst._tmpl = {};
 */
 jst._tmplExtend = {};
 
+glob.jst = jst;
 
-// Для nodejs
-if (typeof global != 'undefined') {
-    global.jst = jst;
-}
-
-// Для браузера
-if (typeof window != 'undefined') {
-    window.jst = jst;
-    
+if (!hasGlobal) {
     /**
      * jst-хелпер для jQuery
      * @param {string} template - название шаблона
      * @param {...*} var_args
     */
-    if (typeof jQuery != 'undefined') {
-        window.jQuery.fn.jst = function () {
+    if (typeof jQuery !== 'undefined') {
+        var fn = window.jQuery.fn;
+        
+        fn.jst = function () {
             this.html(jst.apply(this, arguments));
             
             return this;
         };
         
-        window.jQuery.fn.jstBlock = function () {
+        fn.jstBlock = function () {
             this.html(jst.block.apply(this, arguments));
             
             return this;
         };
         
-        window.jQuery.fn.jstEach = function () {
+        fn.jstEach = function () {
             this.html(jst.each.apply(this, arguments));
             
             return this;
         };
         
-        window.jQuery.fn.jstEachBlock = function () {
+        fn.jstEachBlock = function () {
             this.html(jst.eachBlock.apply(this, arguments));
             
             return this;
-        };    
+        };
     }
 }
 
@@ -472,7 +481,7 @@ if (typeof window != 'undefined') {
     var filter = jst.filter;
     var template = jst;
 
-/* --- block.jst --- */
+/* --- templates\block.jst --- */
 (function () {
     var f = function () {
         this['__jst_constructor'] = function () {
@@ -691,7 +700,7 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
     jst._extend('block.page.empty.constructor', 'page.constructor');
     jst._extend('withoutBlocks', 'withBlocks');
 
-/* --- filter.jst --- */
+/* --- templates\filter.jst --- */
 jst._tmpl['filter-html'] = function (a) {
     var __jst = '';
     __jst += filter._undef(filter.html(a));
@@ -879,7 +888,7 @@ jst._tmpl['filter-prepend'] = function (data) {
     return __jst;
 };
 
-/* --- jquery.jst --- */
+/* --- templates\jquery.jst --- */
 jst._tmpl['jquery'] = function (content) {
     var __jst = '';
     __jst += filter.html(content);
@@ -893,7 +902,7 @@ jst._tmpl['jst-bind'] = function (content) {
     return __jst;
 };
 
-/* --- main.jst --- */
+/* --- templates\main.jst --- */
 jst._tmpl['trim'] = '';
 jst._tmpl['without-trim'] = ' 123 ';
 jst._tmpl['without-trim-delete-spaces'] = '       123      ';
@@ -961,7 +970,7 @@ jst._tmpl['call-template2'] = function (a) {
     return __jst;
 };
 
-/* --- method.jst --- */
+/* --- templates\method.jst --- */
 jst._tmpl['attr'] = function () {
     var __jst = '';
     __jst += '<p' + filter._undef(attr('id', 'content')) + '></p>';
@@ -1011,7 +1020,7 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
 
     jst._init('each-block');
 
-/* --- params.jst --- */
+/* --- templates\params.jst --- */
 jst._tmpl['without-params'] = function () {
     var __jst = '';
     __jst += filter.html(2 + 2);
@@ -1031,33 +1040,33 @@ jst._tmpl['with-4-params'] = function (a, b, c, d) {
     return __jst;
 };
 jst._tmpl['default-params'] = function (x, y, z) {
-    z = typeof z === "undefined" ? "world" : z;
     y = typeof y === "undefined" ? 2 : y;
+    z = typeof z === "undefined" ? "world" : z;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y + 2) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-array'] = function (x, y, z) {
-    z = typeof z === "undefined" ? "world" : z;
     y = typeof y === "undefined" ? [1,3,4] : y;
+    z = typeof z === "undefined" ? "world" : z;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y[1]) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-object'] = function (x, y, z) {
-    z = typeof z === "undefined" ? "world" : z;
     y = typeof y === "undefined" ? {"x":1,"y":3,"z":4} : y;
+    z = typeof z === "undefined" ? "world" : z;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z);
 
     return __jst;
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
-    z = typeof z === "undefined" ? {"x":2,"y":4,"z":5} : z;
     y = typeof y === "undefined" ? {"x":1,"y":3,"z":4} : y;
     w = typeof w === "undefined" ? {"x":"a","y":{"a":1}} : w;
+    z = typeof z === "undefined" ? {"x":2,"y":4,"z":5} : z;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 

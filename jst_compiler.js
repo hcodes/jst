@@ -5,27 +5,26 @@
  * License: MIT
  */
 
-require('./jst.js');
-var fs = require('fs');
-var pth = require('path');
-var vm = require('vm');
+require('./lib/kernel.js');
+
+var fs = require('fs'),
+    pth = require('path'),
+    vm = require('vm');
 
 var Compiler = {
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
     // Построение шаблонов
     build: function (text, fileName, prefs) {
-        this._sameTemplateName = {};
-        
         var res = [];
         
+        this._sameTemplateName = {};
         
         // Для размещения шаблонов из нескольких файлов в один общий файл
         if (Array.isArray(text)) {
             text.forEach(function (el) {
                 this._fileName = el[1];
-                res.push(this.fileMark());
-                res.push(this._build(el[0]));
+                res.push(this.fileMark(), this._build(el[0]));
             }, this);
         } else  {
             this._fileName = fileName;
@@ -37,7 +36,7 @@ var Compiler = {
         
         // Есть шаблоны в виде функций, чтобы не помещать в каждую функцию служебные переменные,
         // вынесим их в одно место через замыкание
-        if (res.search(/function/) != -1) {
+        if (res.search(/function/) !== -1) {
             res = '\n(function () {' +
                 ['',
                     'var attr = jst.attr;',
@@ -102,14 +101,9 @@ var Compiler = {
     },
     // Построение одного шаблона
     template: function (text, num) {
-        var res = this._template(text, num);
-        var text = '';
-        if (res.error) {
-            text = this.templateConsole(res.error.text);
-        } else {
-            text = res.normal;
-        }
-        
+        var res = this._template(text, num),
+            text = res.error ?  this.templateConsole(res.error.text) : res.normal;
+       
         return '\n' + text;
     },
     _inFile: function () {
@@ -141,7 +135,7 @@ var Compiler = {
             };
         }
         
-        if (typeof this._sameTemplateName[name] != 'undefined') {
+        if (typeof this._sameTemplateName[name] !== 'undefined') {
             var files = [this._fileName, this._sameTemplateName[name]];
             console.log('Warning: multiple templates with the same name "' + name + '". ' + (files[0] == files[1] ? 'File: ' + files[0] : 'Files:' + files.join(', ')));
         } else {
@@ -189,8 +183,9 @@ var Compiler = {
         }
         
         if (hasBlock || extend) {
-                var tab = this._tab;
-                var bufBlock = '(function () {\n';
+                var tab = this._tab,
+                    bufBlock = '(function () {\n';
+                    
                 bufBlock += tab  + 'var f = function () {\n';
                 bufBlock += tab + tab + 'this[\'__jst_constructor\'] = ' + f.withoutNamespace + ';\n';
                 if (hasBlock) {
@@ -200,6 +195,7 @@ var Compiler = {
                 bufBlock += tab + this.defaultNamespace + 'Extend[\'' + this.quot(name) + '\'] = f;\n';
                 bufBlock += tab + 'f.extend  = \'' + this.quot(extend) + '\';\n';
                 bufBlock += '})();\n';
+                
                 if (extend) {
                     this._extend.push([name, extend]);
                 }
@@ -217,8 +213,8 @@ var Compiler = {
         return text.search(/(?:\<block)(?:.*\>)(([\n\r]|.)*)(?:\<\/block\>)/) != -1;
     },
     blocks: function (text, template) {
-        var buf = [];
-        var blocks = text.match(/\<block(([\n\r]|.)*?)\<\/block\>/gm);
+        var buf = [],
+            blocks = text.match(/\<block(([\n\r]|.)*?)\<\/block\>/gm);
         
         this._sameBlockName = {};
         blocks.forEach(function (el, num) {
@@ -229,15 +225,15 @@ var Compiler = {
         return '\n' + buf.join('\n') + '\n';
     },
     _block: function (text, num, template) {
-        var buf = text.match(/(?:\<block)(?:.*\>)(([\n\r]|.)*)(?:\<\/block\>)/m);
-        var params = this.getAttr(text, 'params', true);
-        var name =  this.getAttr(text, 'name', true);
-        var trimm = this.getAttr(text, 'trim', true);
-        var deleteSpaces = this.getAttr(text, 'delete-spaces', true);
-        var concatenation = this.getAttr(text, 'concatenation', true) == 'array'  ? 'array' : 'string';
-        var content = ('' + (buf[1] || ''));
-        var inFile = this._inFile();
-        var tab = this._tab;
+        var buf = text.match(/(?:\<block)(?:.*\>)(([\n\r]|.)*)(?:\<\/block\>)/m),
+            params = this.getAttr(text, 'params', true),
+            name =  this.getAttr(text, 'name', true),
+            trimm = this.getAttr(text, 'trim', true),
+            deleteSpaces = this.getAttr(text, 'delete-spaces', true),
+            concatenation = this.getAttr(text, 'concatenation', true) == 'array'  ? 'array' : 'string',
+            content = ('' + (buf[1] || '')),
+            inFile = this._inFile(),
+            tab = this._tab;
         
         if (!name) {
             return {
@@ -306,11 +302,12 @@ var Compiler = {
     },
     // Проверка атрибута на включение
     isOn: function (t) {
-        return !!(t != 'no' && t != 'none' && t !== 'false' && t != 'off');
+        return !!(t !== 'no' && t !== 'none' && t !== 'false' && t !== 'off');
     },
     // Проверка на корректность названия переменной в js
     isCorrectNameVariable: function (name) {
         var re  = /^[a-z$_][\w$_]*$/i;
+        
         return re.test(name);
     },
     // Вывод ошибки
@@ -338,17 +335,17 @@ var Compiler = {
     },
     // Построение из шаблона js-функцию
     withInlineJS: function (data) {
-        var that = this;
-        var tab = this._tab;
-        var con = {
-            init: "''",
-            push: "__jst += '",
-            above: "' + __jst-empty-quotes__ filter._undef($1) + '",
-            aboveHTML: "' + __jst-empty-quotes__ filter.html($1) + '",
-            close: "' __jst-empty-quotes__;",
-            ret: "__jst"
-        };
-        var js = this.defaultValues(data.params) + tab + "var __jst = " + con.init + ";\n";
+        var that = this,
+            tab = this._tab,
+            con = {
+                init: "''",
+                push: "__jst += '",
+                above: "' + __jst-empty-quotes__ filter._undef($1) + '",
+                aboveHTML: "' + __jst-empty-quotes__ filter.html($1) + '",
+                close: "' __jst-empty-quotes__;",
+                ret: "__jst"
+            },
+            js = this.defaultValues(data.params) + tab + "var __jst = " + con.init + ";\n";
         
         if (data.hasBlock || data.extend) {
             js += 'var __jst_template = \'' + this.quot(data.template) + '\';\n';
@@ -435,8 +432,9 @@ var Compiler = {
     },
     // Добавить фильтры
     addShortFilters: function (str) {
-        var res = '';
-        var buf = str.split(/(?:[^|])\|(?!\|)/);
+        var res = '',
+            buf = str.split(/(?:[^|])\|(?!\|)/);
+            
         // Если нет фильтров, то возвращаем строку как есть
         if (buf.length < 2) {
             return str;
@@ -499,13 +497,13 @@ var Compiler = {
     },
     // Построение параметров у шаблона
     params: function (params) {
-        var res = [];
-        var resWithIndex = [];
-        var sandbox = {};
-        var script;
-        var buf;
-        var len = 0;
-        var that = this;
+        var res = [],
+            resWithIndex = [],
+            sandbox = {},
+            script,
+            buf,
+            len = 0,
+            that = this;
         
         // Позиция параметра в параметрах - params="a, b, c"
         var getPosition = function (params, name) {
@@ -555,10 +553,10 @@ var Compiler = {
     },
     // Построение значений по умолчанию у параметров шаблона
     defaultValues: function (params) {
-        var res = '';
-        var tab = this._tab;
-        var sandbox = {};
-        var script;
+        var res = '',
+            tab = this._tab,
+            sandbox = {},
+            script;
         
         if (params.search('=') != -1) {
             script = vm.createScript('var ' + params);
@@ -574,9 +572,9 @@ var Compiler = {
     },
     // Проверка на одинаковое количество открытых и закрытых тегов <template>
     checkOpenCloseTag: function (text) {
-        var isError = false;
-        var open = text.match(/<template/g);
-        var close = text.match(/<\/template>/g);
+        var isError = false,
+            open = text.match(/<template/g),
+            close = text.match(/<\/template>/g);
         
         if (!open || !close) {
             isError = true;
@@ -594,7 +592,7 @@ var Compiler = {
         return auto + text + '\n\n' + auto;
     },
     includeKernel: function (text) {
-        return fs.readFileSync(__dirname + '/jst.js') + '\n\n' + (text || '');
+        return fs.readFileSync(__dirname + '/lib/kernel.js') + '\n\n' + (text || '');
     }
 };
 
@@ -620,24 +618,25 @@ if (require.main == module) {
                 }
             }
             
-            var fd = fs.openSync(fileOut, 'w+');
-            var jst = withoutKernel ? '' : Compiler.includeKernel();
+            var fd = fs.openSync(fileOut, 'w+'),
+                jst = withoutKernel ? '' : Compiler.includeKernel();
+                
             fs.writeSync(fd, jst + buildTemplates(filesIn));
             fs.closeSync(fd);
         },
         findTemplates = function (files) {
-            var res = [];
-            var find = function (path) {
-                var files = fs.readdirSync(path);
-                files.forEach(function (el) {
-                    var file = pth.join(path, el);
-                    if (isDir(file)) {
-                        find(file);
-                    } else if (file.search(/\.jst$/) !== -1) {
-                        res.push(file);
-                    }
-                });
-            };
+            var res = [],
+                find = function (path) {
+                    var files = fs.readdirSync(path);
+                    files.forEach(function (el) {
+                        var file = pth.join(path, el);
+                        if (isDir(file)) {
+                            find(file);
+                        } else if (file.search(/\.jst$/) !== -1) {
+                            res.push(file);
+                        }
+                    });
+                };
             
             files.forEach(function(el) {
                 if (isDir(el)) {
@@ -672,10 +671,10 @@ if (require.main == module) {
         .option('-w, --without-kernel', 'Complitaion without jst-kernel')
         .parse(process.argv);
         
-    var fileArgv =  getFirstFileArg();
-    var fileIn = [];
-    var fileOut = process.argv[fileArgv + 1];
-    var files = [];
+    var fileArgv =  getFirstFileArg(),
+        fileIn = [],
+        fileOut = process.argv[fileArgv + 1],
+        files = [];
     
     (process.argv[fileArgv] || '').split(':').forEach(function(el) {
         el = el.trim();

@@ -1,1 +1,0 @@
-node ../jst_compiler.js -d ./
