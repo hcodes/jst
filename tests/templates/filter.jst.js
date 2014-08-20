@@ -112,7 +112,7 @@ jst.each = function (template, data, params) {
  *
  * @param {string} template - название шаблона
  * @param {string} blockName - название блока
- * @param {(Array|Object)} data - данные по которым происходит перебор
+ * @param {(Array|Object)} data - данные для перебора
  * @param {*} params - параметры
  * @return {string}
 */

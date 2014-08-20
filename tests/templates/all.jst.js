@@ -112,7 +112,7 @@ jst.each = function (template, data, params) {
  *
  * @param {string} template - название шаблона
  * @param {string} blockName - название блока
- * @param {(Array|Object)} data - данные по которым происходит перебор
+ * @param {(Array|Object)} data - данные для перебора
  * @param {*} params - параметры
  * @return {string}
 */
@@ -966,6 +966,18 @@ jst._tmpl['call-template'] = function (a) {
 jst._tmpl['call-template2'] = function (a) {
     var __jst = '';
     __jst += filter.html(a + 10);
+
+    return __jst;
+};
+jst._tmpl['multiline-comment'] = function () {
+    var __jst = '';
+    __jst += 'Hello!';
+
+    return __jst;
+};
+jst._tmpl['comment'] = function () {
+    var __jst = '';
+    __jst += 'Hello!';
 
     return __jst;
 };
