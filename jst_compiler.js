@@ -11,6 +11,17 @@ var fs = require('fs'),
     pth = require('path'),
     vm = require('vm');
 
+var log = function(str, type) {
+    var item = {
+        'debug': ['\x1B[35m', '\x1B[39m'], // blue
+        'info': ['\x1B[32m', '\x1B[39m'], // green
+        'error': ['\x1B[31m', '\x1B[39m'], // red 
+        'warn': ['\x1B[33m', '\x1B[39m'] // yellow
+    }[type];
+    
+    return console.log(item[0] + str + item[1]);
+};
+    
 var Compiler = {
     defaultNamespace: 'jst._tmpl',
     _tab: '    ',
@@ -116,7 +127,7 @@ var Compiler = {
         var name =  this.getAttr(text, 'name');
         var trimm = this.getAttr(text, 'trim');
         var deleteSpaces = this.getAttr(text, 'delete-spaces');
-        var concatenation = this.getAttr(text, 'concatenation') == 'array'  ? 'array' : 'string';
+        var concatenation = this.getAttr(text, 'concatenation') === 'array'  ? 'array' : 'string';
         var extend = this.getAttr(text, 'extend');
         var content = ('' + (buf[1] || ''));
         var inFile = this._inFile();
@@ -137,7 +148,7 @@ var Compiler = {
         
         if (typeof this._sameTemplateName[name] !== 'undefined') {
             var files = [this._fileName, this._sameTemplateName[name]];
-            console.log('Warning: multiple templates with the same name "' + name + '". ' + (files[0] == files[1] ? 'File: ' + files[0] : 'Files:' + files.join(', ')));
+            log('Warning: multiple templates with the same name "' + name + '". ' + (files[0] == files[1] ? 'File: ' + files[0] : 'Files:' + files.join(', ')), 'warn');
         } else {
             this._sameTemplateName[name] = this._fileName;
         }        
@@ -172,8 +183,8 @@ var Compiler = {
         try {
             eval(f.test);
         } catch(e) {
-            console.log(e.toString());
-            console.log(f.test)
+            log(e.toString(), 'error');
+            log(f.test, 'error')
             return {
                 error: {
                     code: 4,
@@ -244,9 +255,9 @@ var Compiler = {
             };
         }
         
-        if (typeof this._sameBlockName[name] != 'undefined') {
+        if (typeof this._sameBlockName[name] !== 'undefined') {
             var files = [this._fileName, this._sameBlockName[name]];
-            console.log('Warning: several blocks with the same name "' + name + '" in the template "' + template + '". ' + (files[0] == files[1] ? 'The file: ' + files[0] : 'Files:' + files.join(', ')));
+            log('Warning: several blocks with the same name "' + name + '" in the template "' + template + '". ' + (files[0] == files[1] ? 'The file: ' + files[0] : 'Files:' + files.join(', ')), 'warn');
         } else {
             this._sameBlockName[name] = this._fileName;
         }        
@@ -281,8 +292,8 @@ var Compiler = {
         try {
             eval(f.test);
         } catch(e) {
-            console.log(e.toString());
-            console.log(f.test)
+            log(e.toString(), 'error');
+            log(f.test, 'error');
             return {
                 error: {
                     code: 14,
@@ -312,11 +323,11 @@ var Compiler = {
     },
     // Вывод ошибки
     error: function (text) {
-        console.log('Error: ' + text + '\n');
+        log('Error: ' + text + '\n', 'error');
     },
     // Построение шаблона в строку или js-функцию
     transform: function (data) {
-        if (data.content.search(/\<\%/) == -1) {
+        if (data.content.search(/\<\%/) === -1) {
             return this.withoutInlineJS(data);
         } else {
             return this.withInlineJS(data);
@@ -349,8 +360,8 @@ var Compiler = {
         
         if (data.hasBlock || data.extend) {
             js += 'var __jst_template = \'' + this.quot(data.template) + '\';\n';
-            js += 'var _this = this;\n';
-            js += 'var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; \n';
+            js += 'var __jst_this = this;\n';
+            js += 'var block = function (name) { return jst.block.apply(__jst_this, [__jst_this._name].concat(Array.prototype.slice.call(arguments)));}; \n';
             js += 'var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; \n';
         }
         
@@ -382,12 +393,12 @@ var Compiler = {
         
         js += tab + con.push + content + con.close + "\n\n" + tab + "return " + con.ret + ";";
             
-        js = js.replace(/\+ \'\' \+ __jst-empty-quotes__ /g, '+ ');    
-        js = js.replace(/= \'\' \+ __jst-empty-quotes__ /g, '= ');    
-        js = js.replace(/\! \'\' \+ __jst-empty-quotes__ /g, '= ');    
-        js = js.replace(/ \+ '' __jst-empty-quotes__;/g, ';');    
-        js = js.replace(/ __jst-empty-quotes__/g, '');    
-        js = js.replace(/    __jst \+= '';/g, '');    
+        js = js.replace(/\+ \'\' \+ __jst-empty-quotes__ /g, '+ ');
+        js = js.replace(/= \'\' \+ __jst-empty-quotes__ /g, '= ');
+        js = js.replace(/\! \'\' \+ __jst-empty-quotes__ /g, '= ');
+        js = js.replace(/ \+ '' __jst-empty-quotes__;/g, ';');
+        js = js.replace(/ __jst-empty-quotes__/g, '');
+        js = js.replace(/    __jst \+= '';/g, '');
             
         var text = 'function (' + this.params(data.params) + ') {\n';
         text += js;
@@ -417,7 +428,7 @@ var Compiler = {
             newBuf = [];
             
         buf.forEach(function (el) {
-            if (el.search(/%>/) != -1) {
+            if (el.search(/%>/) !== -1) {
                 var buf2 = el.split('%>');
                 buf2[1] = this.quot(buf2[1]);
                 el = buf2.join('%>');
@@ -522,7 +533,7 @@ var Compiler = {
         
         if (params) {
             // Если есть параметры по умолчанию, честно разбираем их
-            if (params.search('=') != -1) {
+            if (params.search('=') !== -1) {
                 script = vm.createScript('var ' + params);
                 script.runInNewContext(sandbox);
                 for (var i in sandbox) {
@@ -558,11 +569,11 @@ var Compiler = {
             sandbox = {},
             script;
         
-        if (params.search('=') != -1) {
+        if (params.search('=') !== -1) {
             script = vm.createScript('var ' + params);
             script.runInNewContext(sandbox);
             for (var i in sandbox) {
-                if (sandbox.hasOwnProperty(i) && sandbox[i] != undefined) {
+                if (sandbox.hasOwnProperty(i) && sandbox[i] !== undefined) {
                     res += tab + i + ' = typeof ' + i + ' === "undefined" ? ' + JSON.stringify(sandbox[i]) + ' : ' + i + ';\n';
                 }
             }
@@ -580,7 +591,7 @@ var Compiler = {
             isError = true;
         }
         
-        if (open && close && open.length != close.length) {
+        if (open && close && open.length !== close.length) {
             isError = true;
         }
         
@@ -656,7 +667,7 @@ if (require.main == module) {
                     return;
                 }
                 
-                if (el.search(/^--?[\w]/) != -1) {
+                if (el.search(/^--?[\w]/) !== -1) {
                     max = i + 1;
                 }            
             });
@@ -668,13 +679,14 @@ if (require.main == module) {
         .version(JSON.parse(fs.readFileSync(__dirname + '/package.json')).version)
         .usage('[options] <directory-or-file> [directory-or-file, ...]')
         .option('-d, --debug', 'debugging mode')
-        .option('-w, --without-kernel', 'Complitaion without jst-kernel')
+        .option('-w, --without-kernel', 'Compilation without jst-kernel')
         .parse(process.argv);
         
     var fileArgv =  getFirstFileArg(),
         fileIn = [],
         fileOut = process.argv[fileArgv + 1],
-        files = [];
+        files = [],
+        timeA = Date.now();
     
     (process.argv[fileArgv] || '').split(':').forEach(function(el) {
         el = el.trim();
@@ -685,13 +697,13 @@ if (require.main == module) {
     });
 
     if (!fileIn.length) {
-        console.log('Not specified template file.\nExample: jst_compiler ./example.jst');
+        log('Not specified template file.\nExample: jst_compiler ./example.jst', 'warn');
         process.exit(1);
     }
 
     fileIn.forEach(function(el) {
         if (!fs.existsSync(el)) {
-            console.log('File or templates folder "' + el + '" not found.');
+            log('File or templates folder "' + el + '" not found.', 'warn');
             process.exit(1);
         }
     });
@@ -701,10 +713,16 @@ if (require.main == module) {
 
     if (files.length) {
         if (program.debug) {
-            console.log('All templates: ' + files.length + '\n------------------\n' + files.join('\n'));
+            var buf = '';
+            files.forEach(function(el, i) {
+                buf += (i + 1) + '.' + el + '\n';
+            });
+            
+            log(buf, 'debug');
+            log('Completed in ' + (Date.now() - timeA) + ' ms.', 'debug');
         }
     } else {
-        console.log('Files with templates (*.jst) not found.');
+        log('Files with templates (*.jst) not found.', 'warn');
     }
 
     process.exit(0);

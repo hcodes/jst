@@ -487,8 +487,8 @@ if (!hasGlobal) {
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'block1x';
-var _this = this;
-var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var __jst_this = this;
+var block = function (name) { return jst.block.apply(__jst_this, [__jst_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
@@ -509,8 +509,8 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'block2x';
-var _this = this;
-var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var __jst_this = this;
+var block = function (name) { return jst.block.apply(__jst_this, [__jst_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
@@ -530,8 +530,8 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'block3x';
-var _this = this;
-var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var __jst_this = this;
+var block = function (name) { return jst.block.apply(__jst_this, [__jst_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; 
     __jst += 'Blocks:' + filter.html(block('block1')) + '<br />' + filter.html(block('block2')) + '<br />' + filter.html(block('block3'));
 
@@ -550,8 +550,8 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'foreach-block';
-var _this = this;
-var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var __jst_this = this;
+var block = function (name) { return jst.block.apply(__jst_this, [__jst_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; 
     __jst += filter.html(forEachBlock('block1', [1,2,3])) + filter.html(forEachBlock('block2', [1,2,3]));
 
@@ -562,8 +562,8 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
         this['block2'] = function (name) {
     var __jst = '';
 var __jst_template = 'foreach-block';
-var _this = this;
-var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var __jst_this = this;
+var block = function (name) { return jst.block.apply(__jst_this, [__jst_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; 
     __jst += filter.html(name);
 
@@ -585,8 +585,8 @@ jst._tmpl['nnn'] = '1 2 3 4 999';
         this['main'] = function () {
     var __jst = '';
 var __jst_template = 'page';
-var _this = this;
-var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var __jst_this = this;
+var block = function (name) { return jst.block.apply(__jst_this, [__jst_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; 
     __jst += filter.html(block('head')) + filter.html(block('content')) + filter.html(block('footer'));
 
@@ -603,8 +603,8 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'block.page';
-var _this = this;
-var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var __jst_this = this;
+var block = function (name) { return jst.block.apply(__jst_this, [__jst_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; 
     __jst += filter.html(block('main'));
 
@@ -623,8 +623,8 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'page.constructor';
-var _this = this;
-var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var __jst_this = this;
+var block = function (name) { return jst.block.apply(__jst_this, [__jst_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; 
     __jst += filter.html(block('head')) + filter.html(block('content')) + filter.html(block('footer'));
 
@@ -655,8 +655,8 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'withBlocks';
-var _this = this;
-var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var __jst_this = this;
+var block = function (name) { return jst.block.apply(__jst_this, [__jst_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; 
     __jst += filter.html(block('block1')) + filter.html(block('block2'));
 
@@ -676,8 +676,8 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
         this['__jst_constructor'] = function () {
     var __jst = '';
 var __jst_template = 'withoutBlocks';
-var _this = this;
-var block = function (name) { return jst.block.apply(_this, [_this._name].concat(Array.prototype.slice.call(arguments)));}; 
+var __jst_this = this;
+var block = function (name) { return jst.block.apply(__jst_this, [__jst_this._name].concat(Array.prototype.slice.call(arguments)));}; 
 var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_template, blockName, data, params); }; 
     __jst += filter.html(block('block1'));
 
