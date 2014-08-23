@@ -5,9 +5,9 @@
         "url": "https://github.com/hcodes"
     },
     "name": "jst_compiler",
-    "main": "jst_compiler.js",
+    "main": "index.js",
     "description": "Client and server template engine at JavaScript",
-    "version": "2.2.10",
+    "version": "2.2.11",
     "homepage": "https://github.com/hcodes/jst",
     "repository": {
         "type": "git",
@@ -25,6 +25,6 @@
         "node": "*"
     },
     "bin": {
-        "jst_compiler": "./jst_compiler.js"
+        "jst_compiler": "./bin/cli.js"
     }
 }
