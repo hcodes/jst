@@ -1,4 +1,4 @@
-test('2 ядра вместе', function () {
-    equal(jst.has('filter-html'), true, 'Наличие шаблона в filter.jst.js');
-    equal(jst.has('block3x'), true, 'Наличие шаблона в block.jst.js');
+test('2 kernels together', function () {
+    equal(jst.has('filter-html'), true, 'Availability template filter.jst.js');
+    equal(jst.has('block3x'), true, 'Availability template block.jst.js');
 });

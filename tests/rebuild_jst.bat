@@ -1,3 +1,3 @@
-node ../jst_compiler.js ./templates/ ./templates/all.jst.js
-node ../jst_compiler.js ./templates/filter.jst
-node ../jst_compiler.js ./templates/block.jst
+node ../bin/cli.js ./templates/ ./templates/all.jst.js
+node ../bin/cli.js ./templates/filter.jst
+node ../bin/cli.js ./templates/block.jst
