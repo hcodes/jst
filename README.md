@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/hcodes/jst.png?branch=master)](https://travis-ci.org/hcodes/jst)
-
 [![NPM version](https://badge.fury.io/js/jst_compiler.svg)](http://badge.fury.io/js/jst_compiler)
 [![Build Status](https://travis-ci.org/hcodes/jst.png?branch=master)](https://travis-ci.org/hcodes/jst)
 [![Coverage Status](https://coveralls.io/repos/hcodes/jst/badge.png?branch=master)](https://coveralls.io/r/hcodes/jst)
