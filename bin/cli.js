@@ -40,21 +40,6 @@ var fs = require('fs'),
         });
         
         return res;
-    },
-    getFirstFileArg = function () {
-        var max = 2;
-
-        process.argv.forEach(function (el, i) {
-            if (i < 2) {
-                return;
-            }
-            
-            if (el.search(/^--?[\w]/) !== -1) {
-                max = i + 1;
-            }            
-        });
-        
-        return max;
     };
 
 program
@@ -64,12 +49,11 @@ program
     .option('-w, --without-kernel', 'Compilation without jst-kernel')
     .parse(process.argv);
     
-var fileArgv = getFirstFileArg(),
-    fileIn = [],
-    fileOut = process.argv[fileArgv + 1],
+var fileIn = [],
+    fileOut = program.args[1],
     timeA = Date.now();
 
-(process.argv[fileArgv] || '').split(':').forEach(function (el) {
+(program.args[0] || '').split(':').forEach(function (el) {
     el = el.trim();
     
     if (el) {

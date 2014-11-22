@@ -1,5 +1,5 @@
 node_modules/
-
+coverage/
 .project
 .metadata
 tmp/
@@ -7,6 +7,8 @@ tmp/
 *.bak
 *.swp
 *~.nib
+
+npm-debug.log
 
 # Windows image file caches
 Thumbs.db
