@@ -3,7 +3,7 @@
 'use strict';
 
 var hasGlobal = typeof global !== 'undefined',
-    glob =  hasGlobal ? global : window,
+    glob = hasGlobal ? global : window,
     slice = Array.prototype.slice,
     toString = Object.prototype.toString,
     isArray = Array.isArray || function (obj) {
@@ -147,6 +147,7 @@ var attr = function (name, value) {
         v = jst.filter._undef(value);
 
     if (n && v) {
+        v = isArray(v) ? v.join(' ') : v;
         return ' ' + jst.filter.html(n) + '="' + jst.filter.html(v) + '"';
     } else {
         return '';
@@ -206,11 +207,13 @@ jst._extend = function (childName, parentName) {
             };
         
         if (typeof child === 'undefined') {
-                throw new Error(warning(childName));
-                return;
+            throw new Error(warning(childName));
+
+            return;
         } else if (typeof parent === 'undefined') {
-                throw new Error(warning(parentName));
-                return;
+            throw new Error(warning(parentName));
+
+            return;
         }
         
         if (parent.extend) {
@@ -226,7 +229,7 @@ jst._extend = function (childName, parentName) {
         child.extended = true;
         tmpl[childName] = new child;
 
-        if (!tmpl[childName][JST_CONSTR]  && tmpl[parentName][JST_CONSTR]) {
+        if (!tmpl[childName][JST_CONSTR] && tmpl[parentName][JST_CONSTR]) {
             tmpl[childName][JST_CONSTR] = tmpl[parentName][JST_CONSTR];
         }
     };
@@ -388,39 +391,37 @@ jst.filter = {
     }
 };
 
-(function () {
-    var entityMap = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        '\'': '&#39;',
-        '/': '&#x2F;'
-    };
+var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    '\'': '&#39;',
+    '/': '&#x2F;'
+};
+
+var unEntityMap = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': '\'',
+    '&#x2F;': '/'
+};
     
-    var unEntityMap = {
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        '&#39;': '\'',
-        '&#x2F;': '/'
-    };
-    
-    // Экранирование HTML
-    jst.filter.html = function (str) {
-        return this._undef(str).replace(/[&<>"'\/]/g, function (s) {
-            return entityMap[s];
-        });
-    };
-    
-    // Разэкранирование HTML
-    jst.filter.unhtml = function (str) {
-        return this._undef(str).replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&#x2F;/g, function (s) {
-            return unEntityMap[s];
-        });
-    };
-})();
+// Экранирование HTML
+jst.filter.html = function (str) {
+    return this._undef(str).replace(/[&<>"'\/]/g, function (s) {
+        return entityMap[s];
+    });
+};
+
+// Разэкранирование HTML
+jst.filter.unhtml = function (str) {
+    return this._undef(str).replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&#x2F;/g, function (s) {
+        return unEntityMap[s];
+    });
+};
 
 /**
  * Удаление пробелов с начала и конца строки
@@ -495,7 +496,7 @@ if (!hasGlobal) {
     var filter = jst.filter;
     var template = jst;
 
-/* --- ./templates/block.jst --- */
+/* --- block.jst --- */
 (function () {
     var f = function () {
         this['__jst_constructor'] = function () {

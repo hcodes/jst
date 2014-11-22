@@ -3,7 +3,7 @@
 'use strict';
 
 var hasGlobal = typeof global !== 'undefined',
-    glob =  hasGlobal ? global : window,
+    glob = hasGlobal ? global : window,
     slice = Array.prototype.slice,
     toString = Object.prototype.toString,
     isArray = Array.isArray || function (obj) {
@@ -147,6 +147,7 @@ var attr = function (name, value) {
         v = jst.filter._undef(value);
 
     if (n && v) {
+        v = isArray(v) ? v.join(' ') : v;
         return ' ' + jst.filter.html(n) + '="' + jst.filter.html(v) + '"';
     } else {
         return '';
@@ -206,11 +207,13 @@ jst._extend = function (childName, parentName) {
             };
         
         if (typeof child === 'undefined') {
-                throw new Error(warning(childName));
-                return;
+            throw new Error(warning(childName));
+
+            return;
         } else if (typeof parent === 'undefined') {
-                throw new Error(warning(parentName));
-                return;
+            throw new Error(warning(parentName));
+
+            return;
         }
         
         if (parent.extend) {
@@ -226,7 +229,7 @@ jst._extend = function (childName, parentName) {
         child.extended = true;
         tmpl[childName] = new child;
 
-        if (!tmpl[childName][JST_CONSTR]  && tmpl[parentName][JST_CONSTR]) {
+        if (!tmpl[childName][JST_CONSTR] && tmpl[parentName][JST_CONSTR]) {
             tmpl[childName][JST_CONSTR] = tmpl[parentName][JST_CONSTR];
         }
     };
@@ -388,39 +391,37 @@ jst.filter = {
     }
 };
 
-(function () {
-    var entityMap = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        '\'': '&#39;',
-        '/': '&#x2F;'
-    };
+var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    '\'': '&#39;',
+    '/': '&#x2F;'
+};
+
+var unEntityMap = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': '\'',
+    '&#x2F;': '/'
+};
     
-    var unEntityMap = {
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        '&#39;': '\'',
-        '&#x2F;': '/'
-    };
-    
-    // Экранирование HTML
-    jst.filter.html = function (str) {
-        return this._undef(str).replace(/[&<>"'\/]/g, function (s) {
-            return entityMap[s];
-        });
-    };
-    
-    // Разэкранирование HTML
-    jst.filter.unhtml = function (str) {
-        return this._undef(str).replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&#x2F;/g, function (s) {
-            return unEntityMap[s];
-        });
-    };
-})();
+// Экранирование HTML
+jst.filter.html = function (str) {
+    return this._undef(str).replace(/[&<>"'\/]/g, function (s) {
+        return entityMap[s];
+    });
+};
+
+// Разэкранирование HTML
+jst.filter.unhtml = function (str) {
+    return this._undef(str).replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&#x2F;/g, function (s) {
+        return unEntityMap[s];
+    });
+};
 
 /**
  * Удаление пробелов с начала и конца строки
@@ -495,7 +496,7 @@ if (!hasGlobal) {
     var filter = jst.filter;
     var template = jst;
 
-/* --- templates\block.jst --- */
+/* --- block.jst --- */
 (function () {
     var f = function () {
         this['__jst_constructor'] = function () {
@@ -714,7 +715,7 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
     jst._extend('block.page.empty.constructor', 'page.constructor');
     jst._extend('withoutBlocks', 'withBlocks');
 
-/* --- templates\filter.jst --- */
+/* --- filter.jst --- */
 jst._tmpl['filter-html'] = function (a) {
     var __jst = '';
     __jst += filter._undef(filter.html(a));
@@ -902,7 +903,7 @@ jst._tmpl['filter-prepend'] = function (data) {
     return __jst;
 };
 
-/* --- templates\jquery.jst --- */
+/* --- jquery.jst --- */
 jst._tmpl['jquery'] = function (content) {
     var __jst = '';
     __jst += filter.html(content);
@@ -916,7 +917,7 @@ jst._tmpl['jst-bind'] = function (content) {
     return __jst;
 };
 
-/* --- templates\main.jst --- */
+/* --- main.jst --- */
 jst._tmpl['trim'] = '';
 jst._tmpl['without-trim'] = ' 123 ';
 jst._tmpl['without-trim-delete-spaces'] = '       123      ';
@@ -996,7 +997,7 @@ jst._tmpl['comment'] = function () {
     return __jst;
 };
 
-/* --- templates\method.jst --- */
+/* --- method.jst --- */
 jst._tmpl['attr'] = function () {
     var __jst = '';
     __jst += '<p' + filter._undef(attr('id', 'content')) + '></p>';
@@ -1046,7 +1047,7 @@ var eachBlock = function (blockName, data, params) { return jst.eachBlock(__jst_
 
     jst._init('each-block');
 
-/* --- templates\params.jst --- */
+/* --- params.jst --- */
 jst._tmpl['without-params'] = function () {
     var __jst = '';
     __jst += filter.html(2 + 2);
@@ -1091,8 +1092,8 @@ jst._tmpl['default-params-object'] = function (x, y, z) {
 };
 jst._tmpl['default-params-some-objects'] = function (x, y, z, w) {
     y = typeof y === "undefined" ? {"x":1,"y":3,"z":4} : y;
-    z = typeof z === "undefined" ? {"x":2,"y":4,"z":5} : z;
     w = typeof w === "undefined" ? {"x":"a","y":{"a":1}} : w;
+    z = typeof z === "undefined" ? {"x":2,"y":4,"z":5} : z;
     var __jst = '';
     __jst += filter.html(x) + '_' + filter.html(y.z) + '_' + filter.html(z.x) + '_' + filter.html(w.x);
 
