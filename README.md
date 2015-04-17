@@ -91,7 +91,7 @@ var content = jst('example');
 ## Параметры по умолчанию
   ```HTML
 <template name="example" params="title, str = 'world'">
-    <h2><%= title %></h1>
+    <h2><%= title %></h2>
     Hello <%= str %>!
 </template>
   ```
