@@ -222,8 +222,8 @@ $('#content').jstEach('item', [1, 2, 3]);
 Короткая запись фильтра - `<%= data | trim %>`  
 Длинная - `<%= filter.trim(data) %>` 
 
-Можно указывать несколько фильтров, порядок выполнения - слева направо. 
-`<%= data | stripTags | trim | truncate(8) %>` 
+Можно указывать несколько фильтров, порядок выполнения - слева направо.<br/>
+`<%= data | stripTags | trim | truncate(8) %>`<br/>
 `<%= filter.truncate(filter.trim(filter.stripTags(data), 8))) %>`
 
 ## Поддерживаемые фильтры
