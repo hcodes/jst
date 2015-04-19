@@ -39,14 +39,14 @@
 [gulp-jst_compiler](https://github.com/hcodes/gulp-jst_compiler)
 
 ## Быстрый старт
-1. `npm install jst_compiler -g`
-1. Создаём файл с расширением .jst - `example.jst`:
++ `npm install jst_compiler -g`
++ Создаём файл с расширением .jst - `example.jst`:
 ```HTML
 <template name="example">
     Hello world!
 </template>
 ```
-1. `jst_compiler ./example.jst`
++ `jst_compiler ./example.jst`
 
 
 ##Подключение в браузере
