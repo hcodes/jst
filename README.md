@@ -15,6 +15,7 @@
 + Фильтры и возможность их расширения
 + Блоки (подшаблоны)
 + Экранирование HTML по умолчанию
++ Ядро и скомпилированные шаблоны в одном файле
 
 ## Установка
 `npm install jst_compiler -g`
@@ -32,7 +33,7 @@
 
 `jst_compiler -h` - вызов справки
 
-`jst_compiler -v` - версия компилятора
+`jst_compiler -V` - версия компилятора
 
 ## Плагин для сборки с Gulp
 [gulp-jst_compiler](https://github.com/hcodes/gulp-jst_compiler)
@@ -40,11 +41,11 @@
 ## Быстрый старт
 1. `npm install jst_compiler -g`
 1. Создаём файл с расширением .jst - `example.jst`:
-  ```HTML
+```HTML
 <template name="example">
     Hello world!
 </template>
-  ```
+```
 
 1. `jst_compiler ./example.jst`
 
@@ -66,12 +67,12 @@
 </script>
   ```
 
-##Использование в nodejs
-  ```JavaScript
+##Использование в Node.js
+```js
 require('./all.jst.js'); // Скомпилированные шаблоны и ядро
 ...
 var content = jst('example');
-  ```
+```
   
 ## Передача и вставка параметров
 Для вывода данных в шаблоне используется запись`<%= data %>`.
@@ -116,10 +117,10 @@ var content = jst('example');
 ## Вызов шаблона из шаблона
   ```HTML
 <template name="example" params="x">
-    <%= template('another_template', x) %>
+    <%! template('myAnotherTemplate', x) %>
 </template>
 
-<template name="another_template" params="x">
+<template name="myAnotherTemplate" params="x">
     ...
 </template>
   ```
@@ -136,21 +137,21 @@ var content = jst('example');
         ...
     </block>
 
-    <%= block('block1', x) %>
-    <%= block('block2') %>
+    <%= block('block1', x) %> <!-- HTML экранируется -->
+    <%! block('block2') %> <!-- HTML не экранируется -->
 
 </template>
   ```
 
 ## Циклы в шаблонах
   ```HTML
-<template name="for" params="items">
+<template name="myTemplate" params="items">
     ...
-    <%= each('item', items) %>
+    <%= each('myAnotherTemplate', items) %>
     ...
 </template>
         
-<template name="item" params="element, index">
+<template name="myAnotherTemplate" params="element, index">
     ...
     <%= element %>
     ...
@@ -169,12 +170,12 @@ $('#content').jstEach('item', [1, 2, 3]);
 
 ### Циклы в блоках
   ```HTML
-<template name="for" params="items">
-    <block name="block" params="element, index">
+<template name="myTemplate" params="items">
+    <block name="myBlock" params="element, index">
         <%= element %>
     </block>
 
-    <%= eachBlock('block', items) %>
+    <%= eachBlock('myBlock', items) %>
 
 </template>
   ```
@@ -183,10 +184,10 @@ $('#content').jstEach('item', [1, 2, 3]);
   ```HTML
 <script>
     // Обычный способ
-    var content = jst.eachBlock('for', 'item', [1, 2, 3]);
+    var content = jst.eachBlock('myTemplate', 'myBlock', [1, 2, 3]);
     
     // Для jQuery
-    $('#content').jstEachBlock('for', 'item', [1, 2, 3]);
+    $('#content').jstEachBlock('myTemplate', 'myBlock', [1, 2, 3]);
 </script>
   ```
 ## Наследование
@@ -203,8 +204,8 @@ $('#content').jstEach('item', [1, 2, 3]);
         ...
     </block>
 
-    <%= block('block1', x) %>
-    <%= block('block2') %>
+    <%= block('block1', x) %> <!-- HTML экранируется -->
+    <%! block('block2') %> <!-- HTML не экранируется -->
 
 </template>
 
@@ -217,7 +218,7 @@ $('#content').jstEach('item', [1, 2, 3]);
 Фильтр позволяет преобразовать данные перед их вставкой в шаблон.
 
 По умолчанию на весь вывод данных накладывается фильтр `_undef` (замена `null` и `undefined` на пустую строку). 
-При использовании записи вида `<%= a %>` накладывается фильтр `html`.
+При использовании записи вида `<%! a %>` `html` не экранируется, а при `<%= a %>` накладывается фильтр `html`.
 
 Короткая запись фильтра - `<%= data | trim %>`  
 Длинная - `<%= filter.trim(data) %>` 
@@ -311,7 +312,7 @@ $('#content').jstEach('item', [1, 2, 3]);
 ###unhtml
 Разэкранировать HTML:  
 `<%= data | unhtml %>`
-        
+
 ###uri    
 Экранировать урл:  
 `<%= myUrl | uri %>`
