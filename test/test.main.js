@@ -1,7 +1,7 @@
 var fs = require('fs'),
     assert = require('chai').assert;
 
-require('../templates/all.jst');
+require('./templates/all.jst');
 
 jst.add = function (name, template) {
     jst._tmpl[name] = template;
