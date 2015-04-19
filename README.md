@@ -1,10 +1,9 @@
 # jst 
 [![NPM version](https://img.shields.io/npm/v/jst_compiler.svg?style=flat)](https://www.npmjs.com/package/jst_compiler)
-[![Build Status](https://img.shields.io/travis/hcodes/jst_compiler.svg?style=flat)](https://travis-ci.org/hcodes/jst_compiler)
-[![Build Status](https://img.shields.io/appveyor/ci/hcodes/jst_compiler/master.svg?style=flat)](https://ci.appveyor.com/project/hcodes/jst_compiler)
-[![Coverage Status](https://img.shields.io/coveralls/hcodes/jst_compiler.svg?style=flat)](https://coveralls.io/r/hcodes/jst_compiler)<br/>
-[![Dependency Status](https://img.shields.io/david/hcodes/jst_compiler.svg)](https://david-dm.org/hcodes/jst_compiler)
-[![devDependency Status](https://img.shields.io/david/dev/hcodes/jst_compiler.svg)](https://david-dm.org/jst_compiler#info=devDependencies)
+[![Build Status](https://img.shields.io/travis/hcodes/jst.svg?style=flat)](https://travis-ci.org/hcodes/jst)
+[![Coverage Status](https://img.shields.io/coveralls/hcodes/jst.svg?style=flat)](https://coveralls.io/r/hcodes/jst)<br/>
+[![Dependency Status](https://img.shields.io/david/hcodes/jst.svg)](https://david-dm.org/hcodes/jst_compiler)
+[![devDependency Status](https://img.shields.io/david/dev/hcodes/jst.svg)](https://david-dm.org/hcodes/jst_compiler#info=devDependencies)
 
 Клиентский и серверный шаблонизатор на JavaScript
 
