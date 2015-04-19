@@ -1,9 +1,10 @@
-
 # jst 
-[![NPM version](https://badge.fury.io/js/jst_compiler.svg)](http://badge.fury.io/js/jst_compiler)
-[![Build Status](https://travis-ci.org/hcodes/jst.png?branch=master)](https://travis-ci.org/hcodes/jst)
-[![Coverage Status](https://coveralls.io/repos/hcodes/jst/badge.png?branch=master)](https://coveralls.io/r/hcodes/jst?branch=master)
-[![Dependency Status](https://gemnasium.com/hcodes/jst.svg)](https://gemnasium.com/hcodes/jst)
+[![NPM version](https://img.shields.io/npm/v/jst_compiler.svg?style=flat)](https://www.npmjs.com/package/jst_compiler)
+[![Build Status](https://img.shields.io/travis/hcodes/jst_compiler.svg?style=flat)](https://travis-ci.org/hcodes/jst_compiler)
+[![Build Status](https://img.shields.io/appveyor/ci/hcodes/jst_compiler/master.svg?style=flat)](https://ci.appveyor.com/project/hcodes/jst_compiler)
+[![Coverage Status](https://img.shields.io/coveralls/hcodes/jst_compiler.svg?style=flat)](https://coveralls.io/r/hcodes/jst_compiler)<br/>
+[![Dependency Status](https://img.shields.io/david/hcodes/jst_compiler.svg)](https://david-dm.org/hcodes/jst_compiler)
+[![devDependency Status](https://img.shields.io/david/dev/hcodes/jst_compiler.svg)](https://david-dm.org/jst_compiler#info=devDependencies)
 
 Клиентский и серверный шаблонизатор на JavaScript
 
@@ -52,7 +53,7 @@
 
 ##Подключение в браузере
 
-  ```HTML
+```HTML
 <!-- Скомпилированные шаблоны и ядро -->
 <script src="./all.jst.js"></script>
 ...
@@ -65,7 +66,7 @@
     // для jQuery
     $('#container').jst('example');
 </script>
-  ```
+```
 
 ##Использование в Node.js
 ```js
@@ -79,7 +80,7 @@ var content = jst('example');
 Значения null или undefined заменяются на пустую строку, HTML при вставки экранируется.
 
 Для вставки без HTML-экранирования используется запись `<%! data %>`.
-  ```HTML
+```HTML
 <template name="example" params="word">
     Hello <%= word %>! <!-- С экранированием HTML -->
 </template>
@@ -87,18 +88,18 @@ var content = jst('example');
 <template name="example" params="word">
     Hello <%! word %>! <!-- Без экранирования HTML -->
 </template>
-  ```
+```
   
 ## Параметры по умолчанию
-  ```HTML
+```HTML
 <template name="example" params="title, str = 'world'">
     <h2><%= title %></h2>
     Hello <%= str %>!
 </template>
-  ```
+```
   
 ## Условия
-  ```HTML
+```HTML
 <template name="example" params="x">
     <% if (x) { %>
         Yes
@@ -106,16 +107,16 @@ var content = jst('example');
         No
     <% } %>
 </template>
-  ```
+```
 Предпочтительное использование условий (тернарная версия):
-  ```HTML
+```HTML
 <template name="example" params="x">
     <%= x ? 'Yes' : 'No' %>
 </template>
-  ```
+```
 
 ## Вызов шаблона из шаблона
-  ```HTML
+```HTML
 <template name="example" params="x">
     <%! template('myAnotherTemplate', x) %>
 </template>
@@ -123,10 +124,10 @@ var content = jst('example');
 <template name="myAnotherTemplate" params="x">
     ...
 </template>
-  ```
+```
 
 ## Блоки(подшаблоны) и вызов блока
-  ```HTML
+```HTML
 <template name="example" params="x">
     <block name="block1" params="y">
         ...
@@ -141,10 +142,10 @@ var content = jst('example');
     <%! block('block2') %> <!-- HTML не экранируется -->
 
 </template>
-  ```
+```
 
 ## Циклы в шаблонах
-  ```HTML
+```HTML
 <template name="myTemplate" params="items">
     ...
     <%= each('myAnotherTemplate', items) %>
@@ -156,11 +157,11 @@ var content = jst('example');
     <%= element %>
     ...
 </template>
-  ```
+```
 Итерироваться можно как по массивам, так и по объектам.
   
 ### Вызов шаблона в цикле
-  ```JavaScript
+```js
 // Обычный способ
 var content = jst.each('item', [1, 2, 3]);
 
@@ -169,7 +170,7 @@ $('#content').jstEach('item', [1, 2, 3]);
 ```
 
 ### Циклы в блоках
-  ```HTML
+```HTML
 <template name="myTemplate" params="items">
     <block name="myBlock" params="element, index">
         <%= element %>
@@ -178,10 +179,10 @@ $('#content').jstEach('item', [1, 2, 3]);
     <%= eachBlock('myBlock', items) %>
 
 </template>
-  ```
+```
 
 ### Вызов блока в цикле
-  ```HTML
+```HTML
 <script>
     // Обычный способ
     var content = jst.eachBlock('myTemplate', 'myBlock', [1, 2, 3]);
@@ -189,11 +190,11 @@ $('#content').jstEach('item', [1, 2, 3]);
     // Для jQuery
     $('#content').jstEachBlock('myTemplate', 'myBlock', [1, 2, 3]);
 </script>
-  ```
+```
 ## Наследование
 Между шаблонами наследуются блоки. 
 Механизм наследования в шаблонах основан на прототипах в JavaScript. 
-  ```HTML
+```HTML
 <template name="one" params="x">
     <block name="block1" params="y">
         ...
@@ -212,7 +213,7 @@ $('#content').jstEach('item', [1, 2, 3]);
 <template name="two" params="x" extend="one">
     <%= block('block1', x) %>
 </template>
-  ```
+```
   
 ## Фильтры
 Фильтр позволяет преобразовать данные перед их вставкой в шаблон.
@@ -322,42 +323,42 @@ $('#content').jstEach('item', [1, 2, 3]);
 `<%= data | void %>`
         
 ###Как добавить свой фильтр?
-  ```JavaScript
+```js
 jst.filter.myFilter = function (str, param) {
     //...
     return str;
 };
-  ```
+```
 
 ## Сохранение пробелов между jst-тегами
-  ```HTML
+```HTML
 <template name="example" params="x, y">
     <%= 'x' %> hello world! <%= 'y' %> <!-- xhello world!y -->
     <%= 'x' +%> hello world!  <%= 'y' %> <!-- x hello world!y -->
     <%= 'x' +%> hello world!  <%=+ 'y' %> <!-- x hello world! y -->
 </template>      
-  ```
+```
 
 ## Использование JavaScript в шаблонах
-  ```HTML
+```HTML
 <template name="example" params="word">
     Hello<% var b = word || 'world'; %> <%= b %>!
 </template>
-  ```
+```
   
 ## Комментарии 
-  ```HTML
+```HTML
 <template name="example" params="word">
     Hello <%# мой комментарий %>!
 </template>
-  ```
-  ```HTML
+```
+```HTML
 <template name="example" params="word">
     Hello <%# мой
     многострочный
     комментарий %>!
 </template>
-  ```
+```
 
 ## Отладка 
 После компиляции каждый шаблон выполняется с помощью eval. 
@@ -366,11 +367,12 @@ jst.filter.myFilter = function (str, param) {
 При вызове в коде неизвестного шаблона генерируется исключение.
 
 Отладка в шаблонах:
-  ```HTML
+```HTML
 <template name="example" params="data">
     <% console.log(data) %>
 </template>
-  ```
+```
 
 
 ## [Лицензия](https://github.com/hcodes/jst/blob/master/LICENSE.md)
+MIT License
