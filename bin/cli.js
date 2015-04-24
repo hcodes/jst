@@ -9,6 +9,7 @@ var fs = require('fs'),
         return fs.statSync(path).isDirectory();
     },
     buildTemplates = function(filesIn, fileOut, withoutKernel) {
+        fileOut = fileOut || (filesIn.length === 1 ? filesIn[0].replace(/\.html?$/i, '') + '.js' : './all.jst.js');
 
         var fd = fs.openSync(fileOut, 'w+');
         fs.writeSync(fd, compiler.compileFiles(filesIn, {withoutKernel: withoutKernel}));
