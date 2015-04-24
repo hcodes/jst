@@ -1,4 +1,4 @@
-# jst 
+# jst
 [![NPM version](https://img.shields.io/npm/v/jst_compiler.svg?style=flat)](https://www.npmjs.com/package/jst_compiler)
 [![Build Status](https://img.shields.io/travis/hcodes/jst.svg?style=flat)](https://travis-ci.org/hcodes/jst)
 [![Coverage Status](https://img.shields.io/coveralls/hcodes/jst.svg?style=flat)](https://coveralls.io/r/hcodes/jst)<br/>
@@ -19,11 +19,11 @@
 
 ## Установка
 `npm install jst_compiler -g`
-  
-## Использование в командной строке
-`jst_compiler ./example.jst` - компиляция одного шаблона в файл `./example.jst.js` 
 
-`jst_compiler ./example.jst ./file.jst.js` - компиляция одного шаблона в файл `./file.jst.js`  
+## Использование в командной строке
+`jst_compiler ./example.jst` - компиляция одного шаблона в файл `./example.jst.js`
+
+`jst_compiler ./example.jst ./file.jst.js` - компиляция одного шаблона в файл `./file.jst.js`
 
 `jst_compiler ./examples` - компиляция папки с шаблонами в файл `./all.jst.js`
 
@@ -39,17 +39,17 @@
 [gulp-jst_compiler](https://github.com/hcodes/gulp-jst_compiler)
 
 ## Быстрый старт
-1. `npm install jst_compiler -g`
-2. Создаём файл с расширением .jst - `example.jst`:
++ `npm install jst_compiler -g`
++ Создаём файл с расширением .jst - `example.jst`:
 ```HTML
 <template name="example">
     Hello world!
 </template>
 ```
-3. `jst_compiler ./example.jst`
++ `jst_compiler ./example.jst`
 
 
-##Подключение в браузере
+## Подключение в браузере
 
 ```HTML
 <!-- Скомпилированные шаблоны и ядро -->
@@ -60,19 +60,19 @@
 <script>
     // Обычный способ
     document.getElementById('container').innerHTML = jst('example');
-    
+
     // для jQuery
     $('#container').jst('example');
 </script>
 ```
 
-##Использование в Node.js
+## Использование в Node.js
 ```js
 require('./all.jst.js'); // Скомпилированные шаблоны и ядро
 ...
 var content = jst('example');
 ```
-  
+
 ## Передача и вставка параметров
 Для вывода данных в шаблоне используется запись`<%= data %>`.
 Значения null или undefined заменяются на пустую строку, HTML при вставки экранируется.
@@ -87,7 +87,7 @@ var content = jst('example');
     Hello <%! word %>! <!-- Без экранирования HTML -->
 </template>
 ```
-  
+
 ## Параметры по умолчанию
 ```HTML
 <template name="example" params="title, str = 'world'">
@@ -95,7 +95,7 @@ var content = jst('example');
     Hello <%= str %>!
 </template>
 ```
-  
+
 ## Условия
 ```HTML
 <template name="example" params="x">
@@ -149,7 +149,7 @@ var content = jst('example');
     <%= each('myAnotherTemplate', items) %>
     ...
 </template>
-        
+
 <template name="myAnotherTemplate" params="element, index">
     ...
     <%= element %>
@@ -157,7 +157,7 @@ var content = jst('example');
 </template>
 ```
 Итерироваться можно как по массивам, так и по объектам.
-  
+
 ### Вызов шаблона в цикле
 ```js
 // Обычный способ
@@ -184,14 +184,14 @@ $('#content').jstEach('item', [1, 2, 3]);
 <script>
     // Обычный способ
     var content = jst.eachBlock('myTemplate', 'myBlock', [1, 2, 3]);
-    
+
     // Для jQuery
     $('#content').jstEachBlock('myTemplate', 'myBlock', [1, 2, 3]);
 </script>
 ```
 ## Наследование
-Между шаблонами наследуются блоки. 
-Механизм наследования в шаблонах основан на прототипах в JavaScript. 
+Между шаблонами наследуются блоки.
+Механизм наследования в шаблонах основан на прототипах в JavaScript.
 ```HTML
 <template name="one" params="x">
     <block name="block1" params="y">
@@ -212,115 +212,115 @@ $('#content').jstEach('item', [1, 2, 3]);
     <%= block('block1', x) %>
 </template>
 ```
-  
+
 ## Фильтры
 Фильтр позволяет преобразовать данные перед их вставкой в шаблон.
 
-По умолчанию на весь вывод данных накладывается фильтр `_undef` (замена `null` и `undefined` на пустую строку). 
+По умолчанию на весь вывод данных накладывается фильтр `_undef` (замена `null` и `undefined` на пустую строку).
 При использовании записи вида `<%! a %>` `html` не экранируется, а при `<%= a %>` накладывается фильтр `html`.
 
-Короткая запись фильтра - `<%= data | trim %>`  
-Длинная - `<%= filter.trim(data) %>` 
+Короткая запись фильтра - `<%= data | trim %>`
+Длинная - `<%= filter.trim(data) %>`
 
-Можно указывать несколько фильтров, порядок выполнения - слева направо. 
-`<%= data | stripTags | trim | truncate(8) %>` 
+Можно указывать несколько фильтров, порядок выполнения - слева направо.<br/>
+`<%= data | stripTags | trim | truncate(8) %>`<br/>
 `<%= filter.truncate(filter.trim(filter.stripTags(data), 8))) %>`
 
 ## Поддерживаемые фильтры
-###trim
-Удалить пробелы с начала и конца строки:  
+### trim
+Удалить пробелы с начала и конца строки:
 `<%= '  hello  world!  ' | trim %>` → `hello world!`
-        
-###ltrim
-Удалить пробелы с начала строки:  
+
+### ltrim
+Удалить пробелы с начала строки:
 `<%= '  hello  world!  ' | ltrim %>` → `hello world!  `
 
-###rtrim
-Удалить пробелы с конца строки:  
+### rtrim
+Удалить пробелы с конца строки:
 `<%= '  hello  world!  ' | rtrim %>` → `  hello world!`
 
-###truncate
-Обрезать строку до нужной длины:  
+### truncate
+Обрезать строку до нужной длины:
 `<%= '1234567' | truncate(3) %>` → `123`
 
-###upper
-Перевести символы в верхний регистр:  
+### upper
+Перевести символы в верхний регистр:
 `<%= 'john' | upper %>` → `JOHN`
-    
-###lower
-Перевести символы в нижний регистр:  
+
+### lower
+Перевести символы в нижний регистр:
 `<%= 'HoUsE' | lower %>` → `house`
 
-###ucfirst
-Первый символ в верхний регистр:  
+### ucfirst
+Первый символ в верхний регистр:
 `<%= 'alice' | ucfirst %>` → `Alice`
-    
-###lcfirst
-Первый символ в нижний регистр:  
+
+### lcfirst
+Первый символ в нижний регистр:
 `<%= 'Dog' | lcfirst %>` → `dog`
-        
-###first
-Вывести первый элемент массива или первый символ строки:  
-`<%= [2, 3, 4] | first %>` → `2`  
+
+### first
+Вывести первый элемент массива или первый символ строки:
+`<%= [2, 3, 4] | first %>` → `2`
 `<%= 'Cat' | first %>` → `C`
 
-###last
-Вывести последний элемент массива или последний символ строки:  
-`<%= [2, 3, 4] | last %>` → `4`  
+### last
+Вывести последний элемент массива или последний символ строки:
+`<%= [2, 3, 4] | last %>` → `4`
 `<%= 'Cat' | last %>` → `t`
 
-###prepend
-Добавить строку перед значением:  
+### prepend
+Добавить строку перед значением:
 `<%= 'world!' | prepend('Hello ') %>` → `Hello world!`
 
-###append
-Добавить строку после значения:  
+### append
+Добавить строку после значения:
 `<%= 'Hello ' | append('world!') %>` → `Hello world!`
 
-###repeat
-Повторить строку нужное количество раз:  
+### repeat
+Повторить строку нужное количество раз:
 `<%= 'many ' | repeat(3) %>` → `many many many `
-    
-###remove
-Удалить текст по регулярному выражению:  
+
+### remove
+Удалить текст по регулярному выражению:
 `<%= 'hello world!' | remove('l') %>` → `heo word!`
-    
-###replace
-Заменить текст по регулярному выражению:  
+
+### replace
+Заменить текст по регулярному выражению:
 `<%= 'Hello boss!' | replace('boss', 'Duck') %>` → `Hello Duck!`
-        
-###collapse
-Удалить повторяющиеся пробелы:  
+
+### collapse
+Удалить повторяющиеся пробелы:
 `<%= 'Dog' | collapse %>` → `dog`
-    
-###stripTags
-Удалить HTML-теги:  
+
+### stripTags
+Удалить HTML-теги:
 `<%= '<p>123</p>' | stripTags %>` → `123`
 
-###join
-Склеить массив в строку:  
+### join
+Склеить массив в строку:
 `<%= [1, 2, 3] | join(' ') %>` → `1 2 3`
 
-###html
-Экранировать HTML:  
-`<%= '<p>123</p>' %>` → `&lt;p&gt;123&lt;/p&gt;`  
-`<%= '<p>123</p>' | html %>` → `&amp;lt;p&amp;gt;123&amp;lt;/p&amp;gt;` - двойное экранирование  
-`<%!  '<p>123</p>' %>` → `<p>123</p>`  
+### html
+Экранировать HTML:
+`<%= '<p>123</p>' %>` → `&lt;p&gt;123&lt;/p&gt;`
+`<%= '<p>123</p>' | html %>` → `&amp;lt;p&amp;gt;123&amp;lt;/p&amp;gt;` - двойное экранирование
+`<%!  '<p>123</p>' %>` → `<p>123</p>`
 `<%!  '<p>123</p>' | html %>` → `&lt;p&gt;123&lt;/p&gt;`
 
-###unhtml
-Разэкранировать HTML:  
+### unhtml
+Разэкранировать HTML:
 `<%= data | unhtml %>`
 
-###uri    
-Экранировать урл:  
+### uri
+Экранировать урл:
 `<%= myUrl | uri %>`
 
-###void
-Запретить вывод значения:  
+### void
+Запретить вывод значения:
 `<%= data | void %>`
-        
-###Как добавить свой фильтр?
+
+### Как добавить свой фильтр?
 ```js
 jst.filter.myFilter = function (str, param) {
     //...
@@ -334,7 +334,7 @@ jst.filter.myFilter = function (str, param) {
     <%= 'x' %> hello world! <%= 'y' %> <!-- xhello world!y -->
     <%= 'x' +%> hello world!  <%= 'y' %> <!-- x hello world!y -->
     <%= 'x' +%> hello world!  <%=+ 'y' %> <!-- x hello world! y -->
-</template>      
+</template>
 ```
 
 ## Использование JavaScript в шаблонах
@@ -343,8 +343,8 @@ jst.filter.myFilter = function (str, param) {
     Hello<% var b = word || 'world'; %> <%= b %>!
 </template>
 ```
-  
-## Комментарии 
+
+## Комментарии
 ```HTML
 <template name="example" params="word">
     Hello <%# мой комментарий %>!
@@ -358,8 +358,8 @@ jst.filter.myFilter = function (str, param) {
 </template>
 ```
 
-## Отладка 
-После компиляции каждый шаблон выполняется с помощью eval. 
+## Отладка
+После компиляции каждый шаблон выполняется с помощью eval.
 В случае ошибки, шаблон в результирующий код не включается,  вместо этого вставляется `console.warn('...')` с названием шаблона и описанием ошибки.
 
 При вызове в коде неизвестного шаблона генерируется исключение.
