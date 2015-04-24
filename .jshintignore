@@ -1,0 +1,4 @@
+.*
+**/*.jst.js
+coverage/**
+node_modules/**

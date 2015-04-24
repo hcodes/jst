@@ -1,49 +1,57 @@
 {
-    "author": {
-        "name": "Denis Seleznev",
-        "email": "hcodes@yandex.ru",
-        "url": "https://github.com/hcodes"
-    },
-    "name": "jst_compiler",
-    "main": "index.js",
-    "description": "The client and server template engine in JavaScript",
-    "version": "2.2.15",
-    "homepage": "https://github.com/hcodes/jst",
-    "licenses": [
-        {
-            "type": "MIT",
-            "url": "https://github.com/hcodes/jst/blob/master/LICENSE.md"
-        }
-    ],      
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/hcodes/jst.git"
-    },
-    "keywords": [
-        "templates", "engine", "jst"
-    ],
-    "engines": {
-        "node": "*"
-    },
-    "bin": {
-        "jst_compiler": "./bin/cli.js"
-    },
-    "dependencies": {
-        "commander": "2.8.x"
-    },
-    "devDependencies": {
-        "mocha": "2.0.x",
-        "chai": "2.2.x",
-        "istanbul": "0.3.x"
-    },
-    "scripts": {
-        "test": "npm run-script unit-test-coverage",
-        "unit-test": "./node_modules/.bin/mocha -u bdd -R spec --recursive test",
-        "unit-test-coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -u bdd -R spec --recursive test"
-    },
-    "files": [
-      "bin",
-      "lib",
-      "LICENSE.md"
-    ]
+  "author": {
+    "name": "Denis Seleznev",
+    "email": "hcodes@yandex.ru",
+    "url": "https://github.com/hcodes"
+  },
+  "name": "jst_compiler",
+  "main": "index.js",
+  "description": "The client and server template engine in JavaScript",
+  "version": "2.3.0",
+  "homepage": "https://github.com/hcodes/jst",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/hcodes/jst/blob/master/LICENSE.md"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hcodes/jst.git"
+  },
+  "keywords": [
+    "templates",
+    "engine",
+    "jst"
+  ],
+  "engines": {
+    "node": "*"
+  },
+  "bin": {
+    "jst_compiler": "./bin/cli.js"
+  },
+  "dependencies": {
+    "chalk": "^1.0.0",
+    "commander": "2.8.x"
+  },
+  "devDependencies": {
+    "mocha": "2.0.x",
+    "chai": "2.2.x",
+    "istanbul": "0.3.x",
+    "jscs": "~1.12.0",
+    "jshint": "~2.7.0"
+  },
+  "scripts": {
+    "test": "npm run unit-test-coverage",
+    "build": "node ./bin/cli.js ./template -w ./template/all.jst.js && node bin/cli.js -w ./template/filter.jst ./template/filter.jst.js && node bin/cli.js -w ./template/block.jst ./template/block.jst.js",
+    "jscs": "./node_modules/.bin/jscs .",
+    "jshint": "./node_modules/.bin/jshint .",
+    "unit-test": "./node_modules/.bin/mocha -u bdd -R spec --recursive test",
+    "unit-test-coverage": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -u bdd -R spec --recursive test"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "LICENSE.md"
+  ]
 }

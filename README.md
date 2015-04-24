@@ -40,13 +40,13 @@
 
 ## Быстрый старт
 1. `npm install jst_compiler -g`
-1. Создаём файл с расширением .jst - `example.jst`:
+2. Создаём файл с расширением .jst - `example.jst`:
 ```HTML
 <template name="example">
     Hello world!
 </template>
 ```
-1. `jst_compiler ./example.jst`
+3. `jst_compiler ./example.jst`
 
 
 ##Подключение в браузере
