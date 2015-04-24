@@ -6,7 +6,7 @@
     var filter = jst.filter;
     var template = jst;
 
-/* --- ./template/block.jst --- */
+/* --- ./template/block.jst.html --- */
 (function() {
     var f = function() {
         this['__jstConstructor'] = function() {

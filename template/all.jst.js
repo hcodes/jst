@@ -6,7 +6,7 @@
     var filter = jst.filter;
     var template = jst;
 
-/* --- template\block.jst --- */
+/* --- template\block.jst.html --- */
 (function() {
     var f = function() {
         this['__jstConstructor'] = function() {
@@ -225,7 +225,7 @@ var eachBlock = function(blockName, data, params) { return jst.eachBlock(__jst_t
     jst._extend('block.page.empty.constructor', 'page.constructor');
     jst._extend('withoutBlocks', 'withBlocks');
 
-/* --- template\filter.jst --- */
+/* --- template\filter.jst.html --- */
 jst._tmpl['filter-html'] = function(a) {
     var __jst = '';
     __jst += filter._undef(filter.html(a));
@@ -413,7 +413,7 @@ jst._tmpl['filter-prepend'] = function(data) {
     return __jst;
 };
 
-/* --- template\jquery.jst --- */
+/* --- template\jquery.jst.html --- */
 jst._tmpl['jquery'] = function(content) {
     var __jst = '';
     __jst += filter.html(content);
@@ -427,7 +427,7 @@ jst._tmpl['jst-bind'] = function(content) {
     return __jst;
 };
 
-/* --- template\main.jst --- */
+/* --- template\main.jst.html --- */
 jst._tmpl['trim'] = '';
 jst._tmpl['without-trim'] = ' 123 ';
 jst._tmpl['without-trim-delete-spaces'] = '       123      ';
@@ -507,7 +507,7 @@ jst._tmpl['comment'] = function() {
     return __jst;
 };
 
-/* --- template\method.jst --- */
+/* --- template\method.jst.html --- */
 jst._tmpl['attr'] = function() {
     var __jst = '';
     __jst += '<p' + filter._undef(attr('id', 'content')) + '></p>';
@@ -557,7 +557,7 @@ var eachBlock = function(blockName, data, params) { return jst.eachBlock(__jst_t
 
     jst._init('each-block');
 
-/* --- template\params.jst --- */
+/* --- template\params.jst.html --- */
 jst._tmpl['without-params'] = function() {
     var __jst = '';
     __jst += filter.html(2 + 2);

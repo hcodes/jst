@@ -42,8 +42,8 @@
     "jshint": "~2.7.0"
   },
   "scripts": {
-    "test": "npm run unit-test-coverage",
-    "build": "node ./bin/cli.js ./template -w ./template/all.jst.js && node bin/cli.js -w ./template/filter.jst ./template/filter.jst.js && node bin/cli.js -w ./template/block.jst ./template/block.jst.js",
+    "test": "npm run jscs && npm run jshint && npm run build && npm run unit-test-coverage",
+    "build": "node ./bin/cli.js ./template -w ./template/all.jst.js && node bin/cli.js -w ./template/filter.jst.html ./template/filter.jst.js && node bin/cli.js -w ./template/block.jst.html ./template/block.jst.js",
     "jscs": "./node_modules/.bin/jscs .",
     "jshint": "./node_modules/.bin/jshint .",
     "unit-test": "./node_modules/.bin/mocha -u bdd -R spec --recursive test",

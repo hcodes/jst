@@ -9,7 +9,6 @@ var fs = require('fs'),
         return fs.statSync(path).isDirectory();
     },
     buildTemplates = function(filesIn, fileOut, withoutKernel) {
-        fileOut = fileOut || (filesIn.length === 1 ? filesIn[0] + '.js' : './all.jst.js');
 
         var fd = fs.openSync(fileOut, 'w+');
         fs.writeSync(fd, compiler.compileFiles(filesIn, {withoutKernel: withoutKernel}));
@@ -23,7 +22,7 @@ var fs = require('fs'),
                     var file = pth.join(path, el);
                     if(isDir(file)) {
                         find(file);
-                    } else if(file.search(/\.jst$/) !== -1) {
+                    } else if(file.search(/\.jst\.html$/) !== -1) {
                         res.push(file);
                     }
                 });
@@ -64,7 +63,7 @@ var fileIn = [],
 });
 
 if(!fileIn.length) {
-    log.warn('Not specified template file.\nExample: jst_compiler ./example.jst');
+    log.warn('Not specified template file.\nExample: jst_compiler ./example.jst.html');
     process.exit(1);
 }
 
@@ -89,7 +88,7 @@ if(files.length) {
         log.debug('Completed in ' + (Date.now() - timeA) + ' ms.');
     }
 } else {
-    log.warn('Files with templates (*.jst) not found.');
+    log.warn('Files with templates (*.jst.html) not found.');
 }
 
 process.exit(0);

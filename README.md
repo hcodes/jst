@@ -21,9 +21,9 @@
 `npm install jst_compiler -g`
 
 ## Использование в командной строке
-`jst_compiler ./example.jst` - компиляция одного шаблона в файл `./example.jst.js`
+`jst_compiler ./example.jst.html` - компиляция одного шаблона в файл `./example.jst.js`
 
-`jst_compiler ./example.jst ./file.jst.js` - компиляция одного шаблона в файл `./file.jst.js`
+`jst_compiler ./example.jst.html ./file.jst.js` - компиляция одного шаблона в файл `./file.jst.js`
 
 `jst_compiler ./examples` - компиляция папки с шаблонами в файл `./all.jst.js`
 
@@ -40,13 +40,13 @@
 
 ## Быстрый старт
 + `npm install jst_compiler -g`
-+ Создаём файл с расширением .jst - `example.jst`:
++ Создаём файл с расширением .jst.html - `example.jst.html`:
 ```HTML
 <template name="example">
     Hello world!
 </template>
 ```
-+ `jst_compiler ./example.jst`
++ `jst_compiler ./example.jst.html`
 
 
 ## Подключение в браузере

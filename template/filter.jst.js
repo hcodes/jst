@@ -6,7 +6,7 @@
     var filter = jst.filter;
     var template = jst;
 
-/* --- ./template/filter.jst --- */
+/* --- ./template/filter.jst.html --- */
 jst._tmpl['filter-html'] = function(a) {
     var __jst = '';
     __jst += filter._undef(filter.html(a));
