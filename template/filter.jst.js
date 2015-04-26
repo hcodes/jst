@@ -1,10 +1,10 @@
 
 (function() {
-    var attr = jst.attr;
-    var block = jst.block;
-    var each = jst.each;
-    var filter = jst.filter;
-    var template = jst;
+    var attr = jst.attr,
+        block = jst.block,
+        each = jst.each,
+        filter = jst.filter,
+        template = jst;
 
 /* --- ./template/filter.jst.html --- */
 jst._tmpl['filter-html'] = function(a) {
