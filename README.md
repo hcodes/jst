@@ -5,7 +5,7 @@
 [![Dependency Status](https://img.shields.io/david/hcodes/jst.svg)](https://david-dm.org/hcodes/jst)
 [![devDependency Status](https://img.shields.io/david/dev/hcodes/jst.svg)](https://david-dm.org/hcodes/jst#info=devDependencies)
 
-Клиентский и серверный шаблонизатор на JavaScript
+Клиентский и серверный шаблонизатор на JavaScript.
 
 Возможности:
 + Скорость
@@ -124,7 +124,7 @@ var content = jst('example');
 </template>
 ```
 
-## Блоки(подшаблоны) и вызов блока
+## Блоки (подшаблоны) и вызов блока
 ```HTML
 <template name="example" params="x">
     <block name="block1" params="y">
