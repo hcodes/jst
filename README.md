@@ -1,9 +1,8 @@
 # jst
 [![NPM version](https://img.shields.io/npm/v/jst_compiler.svg?style=flat)](https://www.npmjs.com/package/jst_compiler)
 [![Build Status](https://img.shields.io/travis/hcodes/jst.svg?style=flat)](https://travis-ci.org/hcodes/jst)
-[![Coverage Status](https://img.shields.io/coveralls/hcodes/jst.svg?style=flat)](https://coveralls.io/r/hcodes/jst)<br/>
+[![Coverage Status](https://img.shields.io/coveralls/hcodes/jst.svg?style=flat)](https://coveralls.io/r/hcodes/jst)
 [![Dependency Status](https://img.shields.io/david/hcodes/jst.svg)](https://david-dm.org/hcodes/jst)
-[![devDependency Status](https://img.shields.io/david/dev/hcodes/jst.svg)](https://david-dm.org/hcodes/jst#info=devDependencies)
 
 Клиентский и серверный шаблонизатор на JavaScript.
 
