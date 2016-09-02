@@ -7,7 +7,7 @@
   "name": "jst_compiler",
   "main": "index.js",
   "description": "The client and server template engine in JavaScript",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "homepage": "https://github.com/hcodes/jst",
   "license": "MIT",
   "repository": {
